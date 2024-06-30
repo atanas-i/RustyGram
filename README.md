@@ -1,5 +1,6 @@
-# Rusty Gram
+# RustyGram
 This project is an Android application designed to mimic the core features of Instagram. It serves as a hands-on learning experience for Android development, covering a wide range of concepts and technologies.
+
 
 ## Key Features to be Implemented
 #### User Authentication:
