@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">RustyGram</string>
+    <string name="home_screen">Home</string>
+    <string name="search_screen">Search\n</string>
+    <string name="profile_screen">Profile</string>
+    <string name="add_screen">Add</string>
+    <string name="reels_screen">Reels</string>
 </resources>

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.devtools.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -85,6 +86,9 @@ dependencies {
 
     //Coil
     implementation(libs.coil.compose)
+
+    //Serialization
+    implementation(libs.kotlinx.serialization.json)
 
     //Testing
     testImplementation(libs.junit)
