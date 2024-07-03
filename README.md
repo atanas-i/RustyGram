@@ -24,13 +24,13 @@ This project is an Android application designed to mimic the core features of In
 * Search for users by username or full name.
 
 #### Notifications:
-* Notify users of new followers, likes, comments, and mentions.
-* Direct Messaging:
-
+* Notify
 #### Learning Objectives:
 * Android Fundamentals: Activities, Layouts, Views, and UI design principles.
 * Networking: Making API calls to a backend service.
 * Data Persistence: Storing user preferences in the Datastore.
+  users of new followers, likes, comments, and mentions.
+* Direct Messaging:
 * Image Handling: Loading.
 
 #### Technology Stack:
