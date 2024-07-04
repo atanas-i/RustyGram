@@ -1,19 +1,24 @@
 package dev.rustybite.rustygram.presentation.ui.components
 
 import android.content.res.Configuration
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontFamily
@@ -66,6 +71,46 @@ fun RustyPrimaryButton(
 }
 
 
+@Composable
+fun RustySecondaryButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    backgroundColor: Color = Color.Transparent,
+    contentColor: Color = MaterialTheme.colorScheme.onBackground
+) {
+    val colors = ButtonDefaults.buttonColors(
+        containerColor = backgroundColor,
+        contentColor = contentColor,
+        //disabledContainerColor = backgroundColor
+    )
+
+    TextButton(
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = dimensionResource(id = R.dimen.sec_button_height))
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.btn_radius_round))),
+        border = BorderStroke(
+            width = dimensionResource(id = R.dimen.tf_border_width_small),
+            color = MaterialTheme.colorScheme.onBackground.copy(.6f),
+        ),
+        colors = colors,
+        enabled = enabled,
+    ) {
+        Text(
+            text = if (enabled) text else "",
+            style = baseline.labelLarge.copy(
+                fontFamily = displayFontFamily,
+                fontWeight = FontWeight.W600,
+                fontSize = TextUnit(dimensionResource(id = R.dimen.button_text_size).value, TextUnitType.Sp)
+            )
+        )
+    }
+}
+
+
 @Preview(showBackground = true, showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL
 )
@@ -80,7 +125,13 @@ private fun ButtonsPreview() {
                     .padding(16.dp)
             ) {
                 RustyPrimaryButton(
-                    text = "Button",
+                    text = "Primary Button",
+                    onClick = {},
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally),
+                )
+                RustySecondaryButton(
+                    text = "Secondary Button",
                     onClick = {},
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally),

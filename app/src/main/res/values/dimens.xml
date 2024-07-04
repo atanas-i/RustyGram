@@ -11,4 +11,5 @@
     <dimen name="btn_radius_round">50dp</dimen>
     <dimen name="button_height">45dp</dimen>
     <dimen name="button_text_size">17sp</dimen>
+    <dimen name="sec_button_height">43dp</dimen>
 </resources>
