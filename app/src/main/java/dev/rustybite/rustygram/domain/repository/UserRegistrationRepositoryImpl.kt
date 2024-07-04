@@ -7,11 +7,12 @@ import dev.rustybite.rustygram.domain.models.User
 import dev.rustybite.rustygram.util.RustyResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 /**
  * Implementations of the UserRegistrationRepository interface for handling user registration operations.
  */
-class UserRegistrationRepositoryImpl(private val service: RustyGramService) : UserRegistrationRepository {
+class UserRegistrationRepositoryImpl @Inject constructor(private val service: RustyGramService) : UserRegistrationRepository {
 
     /**
      * Register a new user with the provided email and password.
