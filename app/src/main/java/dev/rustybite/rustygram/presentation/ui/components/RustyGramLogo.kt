@@ -3,6 +3,7 @@ package dev.rustybite.rustygram.presentation.ui.components
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -56,6 +57,24 @@ fun RustyGramLogo(
 }
 
 
+@Composable
+fun RustyBiteLogo(
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = "RustyBite",
+        modifier = modifier,
+        textAlign = TextAlign.Center,
+        color = MaterialTheme.colorScheme.primary,
+        style = baseline.headlineLarge.copy(
+            fontFamily = FontFamily(Font(R.font.playwrite_us_trad)),
+            fontWeight = FontWeight.W600,
+        ),
+        textDecoration = TextDecoration.Underline
+    )
+}
+
+
 @Preview(
     showBackground = true, showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL
@@ -71,6 +90,7 @@ private fun RustyGramLogoPreview() {
                     .padding(16.dp)
             ) {
                 RustyGramLogo()
+                RustyBiteLogo()
             }
         }
     }
