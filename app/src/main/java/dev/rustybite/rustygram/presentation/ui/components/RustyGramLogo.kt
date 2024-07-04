@@ -1,22 +1,20 @@
 package dev.rustybite.rustygram.presentation.ui.components
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -32,27 +30,13 @@ import dev.rustybite.rustygram.presentation.ui.theme.baseline
 fun RustyGramLogo(
     modifier: Modifier = Modifier
 ) {
-    Text(
-        text = "RG",
+    val painter = if (isSystemInDarkTheme()) R.drawable.rusty_gram_logo_dark else R.drawable.rusty_gram_logo_light
+    Image(
+        painter = painterResource(id = painter),
+        contentDescription = stringResource(id = R.string.rusty_logo_description),
         modifier = modifier
-            .width(dimensionResource(id = R.dimen.logo_width))
-            .height(dimensionResource(id = R.dimen.logo_height))
-            .background(
-                brush = Brush.verticalGradient(
-                    listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary
-                    )
-                ),
-                shape = RoundedCornerShape(dimensionResource(id = R.dimen.shape_radius_medium)),
-            ),
-        textAlign = TextAlign.Center,
-        color = Color.White,
-        style = baseline.headlineLarge.copy(
-            fontFamily = FontFamily(Font(R.font.bodoni_moda_sc)),
-            fontWeight = FontWeight.W600,
-        ),
-        textDecoration = TextDecoration.LineThrough
+            .size(dimensionResource(id = R.dimen.logo_size_medium)),
+
     )
 }
 
