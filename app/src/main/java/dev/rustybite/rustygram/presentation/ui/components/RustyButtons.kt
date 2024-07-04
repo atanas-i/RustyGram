@@ -83,7 +83,6 @@ fun RustySecondaryButton(
     val colors = ButtonDefaults.buttonColors(
         containerColor = backgroundColor,
         contentColor = contentColor,
-        //disabledContainerColor = backgroundColor
     )
 
     TextButton(
@@ -95,6 +94,44 @@ fun RustySecondaryButton(
         border = BorderStroke(
             width = dimensionResource(id = R.dimen.tf_border_width_small),
             color = MaterialTheme.colorScheme.onBackground.copy(.6f),
+        ),
+        colors = colors,
+        enabled = enabled,
+    ) {
+        Text(
+            text = if (enabled) text else "",
+            style = baseline.labelLarge.copy(
+                fontFamily = displayFontFamily,
+                fontWeight = FontWeight.W600,
+                fontSize = TextUnit(dimensionResource(id = R.dimen.button_text_size).value, TextUnitType.Sp)
+            )
+        )
+    }
+}
+
+@Composable
+fun RustySemiPrimaryButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    backgroundColor: Color = Color.Transparent,
+    contentColor: Color = MaterialTheme.colorScheme.primary
+) {
+    val colors = ButtonDefaults.buttonColors(
+        containerColor = backgroundColor,
+        contentColor = contentColor,
+    )
+
+    TextButton(
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = dimensionResource(id = R.dimen.sec_button_height))
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.btn_radius_round))),
+        border = BorderStroke(
+            width = dimensionResource(id = R.dimen.tf_border_width_small),
+            color = MaterialTheme.colorScheme.primary,
         ),
         colors = colors,
         enabled = enabled,
@@ -132,6 +169,12 @@ private fun ButtonsPreview() {
                 )
                 RustySecondaryButton(
                     text = "Secondary Button",
+                    onClick = {},
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally),
+                )
+                RustySemiPrimaryButton(
+                    text = "Semi Primary Button",
                     onClick = {},
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally),
