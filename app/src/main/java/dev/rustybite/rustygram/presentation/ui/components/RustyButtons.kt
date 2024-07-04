@@ -2,7 +2,6 @@ package dev.rustybite.rustygram.presentation.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,11 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.googlefonts.Font
-import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -34,7 +29,6 @@ import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.presentation.ui.theme.RustyGramTheme
 import dev.rustybite.rustygram.presentation.ui.theme.baseline
 import dev.rustybite.rustygram.presentation.ui.theme.displayFontFamily
-import dev.rustybite.rustygram.presentation.ui.theme.provider
 
 @Composable
 fun RustyPrimaryButton(
@@ -90,7 +84,7 @@ fun RustySecondaryButton(
         modifier = modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = dimensionResource(id = R.dimen.sec_button_height))
-            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.btn_radius_round))),
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.shape_radius_round))),
         border = BorderStroke(
             width = dimensionResource(id = R.dimen.tf_border_width_small),
             color = MaterialTheme.colorScheme.onBackground.copy(.6f),
@@ -128,7 +122,7 @@ fun RustySemiPrimaryButton(
         modifier = modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = dimensionResource(id = R.dimen.sec_button_height))
-            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.btn_radius_round))),
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.shape_radius_round))),
         border = BorderStroke(
             width = dimensionResource(id = R.dimen.tf_border_width_small),
             color = MaterialTheme.colorScheme.primary,
