@@ -5,4 +5,10 @@
     <dimen name="border_radius_small">4dp</dimen>
     <dimen name="tf_radius_medium">8dp</dimen>
     <dimen name="tf_radius_large">12dp</dimen>
+    <dimen name="btn_radius_small">8dp</dimen>
+    <dimen name="btn_radius_medium">12dp</dimen>
+    <dimen name="btn_radius_large">16dp</dimen>
+    <dimen name="btn_radius_round">50dp</dimen>
+    <dimen name="button_height">45dp</dimen>
+    <dimen name="button_text_size">17sp</dimen>
 </resources>

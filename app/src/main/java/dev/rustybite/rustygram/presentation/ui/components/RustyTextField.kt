@@ -26,9 +26,9 @@ import dev.rustybite.rustygram.presentation.ui.theme.RustyGramTheme
 fun RustyTextField(
     value: String,
     onValueChange: (String) -> Unit,
+    label: String,
+    placeholder: String,
     modifier: Modifier = Modifier,
-    label: String = "",
-    placeholder: String = "",
     enabled: Boolean = true,
     isError: Boolean = false,
     trailingIcon: @Composable (() -> Unit)? = null,
