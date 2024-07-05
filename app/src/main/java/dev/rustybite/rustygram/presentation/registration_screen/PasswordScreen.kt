@@ -6,17 +6,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun OtpScreen(
+fun PasswordScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState = RegistrationUiState()
 
     Scaffold { paddingValues ->
-        OtpContent(
+        PasswordContent(
             uiState = uiState,
-            onOtpChange = { /*TODO*/ },
-            onSubmitOtp = { /*TODO*/ },
-            onResendOtp = { /*TODO*/ },
+            onPasswordChange = { /*TODO*/ },
+            onSubmitPassword = { /*TODO*/ },
             onHaveAccountClicked = { /*TODO*/ },
             modifier = modifier
                 .padding(paddingValues)

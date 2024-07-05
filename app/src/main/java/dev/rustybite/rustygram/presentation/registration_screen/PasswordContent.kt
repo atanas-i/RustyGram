@@ -27,11 +27,10 @@ import dev.rustybite.rustygram.presentation.ui.theme.baseline
 import dev.rustybite.rustygram.presentation.ui.theme.bodyFontFamily
 
 @Composable
-fun OtpContent(
+fun PasswordContent(
     uiState: RegistrationUiState,
-    onOtpChange: (String) -> Unit,
-    onSubmitOtp: () -> Unit,
-    onResendOtp: () -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onSubmitPassword: () -> Unit,
     onHaveAccountClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -41,14 +40,14 @@ fun OtpContent(
             .padding(dimensionResource(id = R.dimen.padding_medium))
     ) {
         Text(
-            text = stringResource(id = R.string.otp_screen_title),
+            text = stringResource(id = R.string.password_screen_title),
             style = baseline.headlineLarge.copy(
                 fontFamily = bodyFontFamily
             )
         )
         Spacer(modifier = modifier.height(dimensionResource(id = R.dimen.padding_large)))
         Text(
-            text = "${stringResource(id = R.string.otp_screen_subtitle)} ${uiState.email}.",
+            text = stringResource(id = R.string.password_screen_subtitle),
             style = baseline.bodyLarge.copy(
                 fontFamily = bodyFontFamily
             ),
@@ -56,9 +55,9 @@ fun OtpContent(
         Spacer(modifier = modifier.height(dimensionResource(id = R.dimen.padding_medium)))
         RustyTextField(
             value = uiState.email,
-            onValueChange = onOtpChange,
-            label = stringResource(id = R.string.confirmations_label),
-            placeholder = stringResource(id = R.string.otp_placeholder),
+            onValueChange = onPasswordChange,
+            label = stringResource(id = R.string.password_label),
+            placeholder = stringResource(id = R.string.password_placeholder),
             modifier = modifier
                 .padding(
                     vertical = dimensionResource(id = R.dimen.padding_small)
@@ -68,21 +67,11 @@ fun OtpContent(
         Spacer(modifier = modifier.height(dimensionResource(id = R.dimen.padding_medium)))
         RustyPrimaryButton(
             text = stringResource(id = R.string.button_next),
-            onClick = onSubmitOtp,
+            onClick = onSubmitPassword,
             modifier = modifier
                 .padding(
                     vertical = dimensionResource(id = R.dimen.padding_extra_small)
                 )
-        )
-        Spacer(modifier = modifier.height(dimensionResource(id = R.dimen.padding_extra_small)))
-        RustySecondaryButton(
-            text = stringResource(id = R.string.resend_otp_button),
-            onClick = onResendOtp,
-            modifier = modifier
-                .padding(
-                    vertical = dimensionResource(id = R.dimen.padding_extra_small)
-                )
-
         )
         Spacer(modifier = modifier.weight(1f))
         Column(
@@ -109,7 +98,7 @@ fun OtpContent(
     uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
-private fun OtpContentPreview() {
+private fun PasswordContentPreview() {
     RustyGramTheme {
         Surface(
             modifier = Modifier.fillMaxSize()
@@ -118,11 +107,10 @@ private fun OtpContentPreview() {
                 modifier = Modifier
                     .padding(16.dp)
             ) {
-                OtpContent(
+                PasswordContent(
                     uiState = RegistrationUiState(),
-                    onOtpChange = { /*TODO*/ },
-                    onSubmitOtp = { /*TODO*/ },
-                    onResendOtp = { /*TODO*/ },
+                    onPasswordChange = { /*TODO*/ },
+                    onSubmitPassword = { /*TODO*/ },
                     onHaveAccountClicked = { /*TODO*/ }
                 )
             }
