@@ -6,4 +6,11 @@
     <string name="add_screen">Add</string>
     <string name="reels_screen">Reels</string>
     <string name="rusty_logo_description">RustyGram logo</string>
+    <string name="email_placeholder">Enter your email</string>
+    <string name="email_label">Email</string>
+    <string name="registration_screen_title">What\'s your email?</string>
+    <string name="registration_screen_subtitle">Enter your email where you can be contacted. Not one will see this on your profile.</string>
+    <string name="button_next">Next</string>
+    <string name="sign_up_with_phone_button">Sign up with phone number</string>
+    <string name="already_have_account">I already have an account</string>
 </resources>
