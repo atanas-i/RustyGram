@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,11 +27,9 @@ import dev.rustybite.rustygram.presentation.ui.theme.baseline
 import dev.rustybite.rustygram.presentation.ui.theme.bodyFontFamily
 
 @Composable
-fun RegistrationContent(
+fun EmailContent(
     uiState: RegistrationUiState,
     onEmailChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit,
-    onConfirmPasswordChange: (String) -> Unit,
     onSubmitEmail: () -> Unit,
     onHaveAccountClicked: () -> Unit,
     onSignUpWithPhone: () -> Unit,
@@ -121,11 +118,9 @@ private fun RegistrationContentPreview() {
                 modifier = Modifier
                     .padding(16.dp)
             ) {
-                RegistrationContent(
+                EmailContent(
                     uiState = RegistrationUiState(),
                     onEmailChange = {},
-                    onPasswordChange = {},
-                    onConfirmPasswordChange = {},
                     onSubmitEmail = {},
                     onSignUpWithPhone = {},
                     onHaveAccountClicked = {}
