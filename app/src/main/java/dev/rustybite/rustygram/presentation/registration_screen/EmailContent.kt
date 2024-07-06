@@ -3,6 +3,7 @@ package dev.rustybite.rustygram.presentation.registration_screen
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -100,32 +101,6 @@ fun EmailContent(
                     .padding(dimensionResource(id = R.dimen.padding_extra_small))
                     .clickable { onHaveAccountClicked() }
             )
-        }
-    }
-}
-
-
-@Preview(showBackground = true, showSystemUi = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL
-)
-@Composable
-private fun RegistrationContentPreview() {
-    RustyGramTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-            ) {
-                EmailContent(
-                    uiState = RegistrationUiState(),
-                    onEmailChange = {},
-                    onSubmitEmail = {},
-                    onSignUpWithPhone = {},
-                    onHaveAccountClicked = {}
-                )
-            }
         }
     }
 }

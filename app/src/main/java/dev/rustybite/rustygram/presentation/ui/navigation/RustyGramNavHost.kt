@@ -1,8 +1,10 @@
 package dev.rustybite.rustygram.presentation.ui.navigation
 
 import android.widget.Toast
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -11,11 +13,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.toRoute
+import dev.rustybite.rustygram.presentation.registration_screen.EmailScreen
 import dev.rustybite.rustygram.presentation.ui.components.RustyBottomBar
 
 @Composable
 fun RustyGramNavHost(
     navHostController: NavHostController,
+    snackBarHostState: SnackbarHostState,
     bottomNavItems: List<BottomNavScreen>,
     modifier: Modifier = Modifier
 ) {
@@ -40,9 +44,18 @@ fun RustyGramNavHost(
     ) { paddingValues ->
         NavHost(
             navController = navHostController,
-            startDestination = BottomNavScreen.Home.route,
+            startDestination = RustyRoutes.RequestOtp,
             modifier = modifier.padding(paddingValues)
         ) {
+            composable<RustyRoutes.RequestOtp> {
+                EmailScreen(
+                    snackBarHostState = snackBarHostState,
+                    navigateToVerifyOtp = { navHostController.navigate(it.route) },
+                    popBackStack = { navHostController.popBackStack() },
+                )
+            }
+            composable<RustyRoutes.VerifyOtp> {  }
+            composable<RustyRoutes.Login> {  }
             composable(BottomNavScreen.Home.route) {  }
             composable(BottomNavScreen.Search.route) {  }
             composable(BottomNavScreen.AddPost.route) {  }

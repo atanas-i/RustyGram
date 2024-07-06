@@ -22,5 +22,6 @@
     <string name="password_screen_subtitle">Create a password with at least 6 letters or numbers. It should be something others can\'t guess.</string>
     <string name="password_placeholder">Password</string>
     <string name="password_label">Enter your password</string>
+    <string name="phone_login_feature_not_available">"Login with Phone No is not available for now. "</string>
 
 </resources>
