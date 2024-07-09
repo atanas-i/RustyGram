@@ -1,7 +1,9 @@
 package dev.rustybite.rustygram.presentation.registration_screen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.repository.UserRegistrationRepository
@@ -9,15 +11,13 @@ import dev.rustybite.rustygram.presentation.ui.navigation.RustyRoutes
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyEvents
 import dev.rustybite.rustygram.util.RustyResult
+import dev.rustybite.rustygram.util.TAG
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.encodeToJsonElement
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,18 +31,24 @@ class RegistrationViewModel @Inject constructor(
     val event = _event.receiveAsFlow()
 
     fun requestOtp(email: String) {
-        val body = JsonObject(mapOf("email" to Json.encodeToJsonElement(email)))
+
+        val body = JsonObject()
+        body.addProperty("email", email)
+
+        Log.d(TAG, "requestOtp: Message is $body ")
         viewModelScope.launch {
             registrationRepository.requestOtp(body).collectLatest { result ->
                 when (result) {
                     is RustyResult.Success -> {
-                        _event.send(RustyEvents.Navigate(RustyRoutes.RequestOtp))
+                        _event.send(RustyEvents.Navigate(RustyRoutes.VerifyOtp))
                     }
                     is RustyResult.Failure -> {
                         _uiState.value = _uiState.value.copy(
                             errorMessage = result.message,
                             loading = false
                         )
+                        Log.d(TAG, "requestOtp: Message is ${result.message} ")
+                        _event.send(RustyEvents.ShowSnackBar(result.message ?: ""))
                     }
                     is RustyResult.Loading -> {
                         _uiState.value = _uiState.value.copy(loading = true)

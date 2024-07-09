@@ -1,6 +1,5 @@
 package dev.rustybite.rustygram.presentation.registration_screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
+import dev.rustybite.rustygram.presentation.ui.navigation.RustyRoutes
 import dev.rustybite.rustygram.util.RustyEvents
 import kotlinx.coroutines.flow.collectLatest
 
@@ -20,6 +19,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun EmailScreen(
     snackBarHostState: SnackbarHostState,
     navigateToVerifyOtp: (RustyEvents.Navigate) -> Unit,
+    //navigateToLogin: (RustyEvents) -> Unit,
     popBackStack: (RustyEvents) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RegistrationViewModel = hiltViewModel()
@@ -29,7 +29,14 @@ fun EmailScreen(
     LaunchedEffect(viewModel.event) {
         viewModel.event.collectLatest { event ->
             when(event) {
-                is RustyEvents.Navigate -> navigateToVerifyOtp(event)
+                is RustyEvents.Navigate -> {
+                    navigateToVerifyOtp(event)
+//                    when(event.route) {
+//                        is RustyRoutes.VerifyOtp -> navigateToVerifyOtp(event)
+//                        else -> navigateToLogin(event)
+//                    }
+                    //navigateToLogin(event)
+                }
                 is RustyEvents.PopBackStack -> popBackStack(event)
                 is RustyEvents.ShowSnackBar -> snackBarHostState.showSnackbar(event.message)
                 is  RustyEvents.ShowToast -> Unit

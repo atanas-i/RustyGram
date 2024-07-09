@@ -24,15 +24,19 @@ object RustyGramModule {
 
     @Provides
     @Singleton
-    fun provideService(): RustyGramService = Retrofit.Builder()
+    fun provideRetrofit(): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-        .create(RustyGramService::class.java)
 
     @Provides
     @Singleton
-    fun provideRepository(service: RustyGramService): UserRegistrationRepository = UserRegistrationRepositoryImpl(service)
+    fun provideService(retrofit: Retrofit): RustyGramService = retrofit.create(RustyGramService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideRepository(service: RustyGramService, retrofit: Retrofit): UserRegistrationRepository =
+        UserRegistrationRepositoryImpl(service, retrofit)
 
     @Provides
     @Singleton

@@ -70,6 +70,7 @@ fun EmailContent(
         RustyPrimaryButton(
             text = stringResource(id = R.string.button_next),
             onClick = onSubmitEmail,
+            loading = uiState.loading,
             modifier = modifier
                 .padding(
                     vertical = dimensionResource(id = R.dimen.padding_extra_small)

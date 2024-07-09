@@ -68,6 +68,7 @@ fun OtpContent(
         Spacer(modifier = modifier.height(dimensionResource(id = R.dimen.padding_medium)))
         RustyPrimaryButton(
             text = stringResource(id = R.string.button_next),
+            loading = uiState.loading,
             onClick = onSubmitOtp,
             modifier = modifier
                 .padding(

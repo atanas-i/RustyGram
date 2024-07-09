@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,8 +35,8 @@ import dev.rustybite.rustygram.presentation.ui.theme.displayFontFamily
 fun RustyPrimaryButton(
     text: String,
     onClick: () -> Unit,
+    loading: Boolean,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
     backgroundColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = Color.White
 ) {
@@ -51,16 +52,24 @@ fun RustyPrimaryButton(
             .fillMaxWidth()
             .defaultMinSize(minHeight = dimensionResource(id = R.dimen.button_height)),
         colors = colors,
-        enabled = enabled
     ) {
-        Text(
-            text = if (enabled) text else "",
-            style = baseline.labelLarge.copy(
-                fontFamily = displayFontFamily,
-                fontWeight = FontWeight.W600,
-                fontSize = TextUnit(dimensionResource(id = R.dimen.button_text_size).value, TextUnitType.Sp)
+        if (loading) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically),
+                color = contentColor,
+                //strokeWidth = dimensionResource(id = R.dimen.tf_border_width_small)
             )
-        )
+        } else {
+            Text(
+                text = text,
+                style = baseline.labelLarge.copy(
+                    fontFamily = displayFontFamily,
+                    fontWeight = FontWeight.W600,
+                    fontSize = TextUnit(dimensionResource(id = R.dimen.button_text_size).value, TextUnitType.Sp)
+                )
+            )
+        }
     }
 }
 
@@ -138,42 +147,5 @@ fun RustySemiPrimaryButton(
                 fontSize = TextUnit(dimensionResource(id = R.dimen.button_text_size).value, TextUnitType.Sp)
             )
         )
-    }
-}
-
-
-@Preview(showBackground = true, showSystemUi = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL
-)
-@Composable
-private fun ButtonsPreview() {
-    RustyGramTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-            ) {
-                RustyPrimaryButton(
-                    text = "Primary Button",
-                    onClick = {},
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally),
-                )
-                RustySecondaryButton(
-                    text = "Secondary Button",
-                    onClick = {},
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally),
-                )
-                RustySemiPrimaryButton(
-                    text = "Semi Primary Button",
-                    onClick = {},
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally),
-                )
-            }
-        }
     }
 }
