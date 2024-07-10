@@ -23,4 +23,5 @@ interface RustyGramService {
     suspend fun verifyOtp(
         @Body body: JsonObject
     ): RustyResponse
+
 }

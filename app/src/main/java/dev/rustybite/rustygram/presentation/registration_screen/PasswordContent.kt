@@ -20,7 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.presentation.ui.components.RustyPrimaryButton
-import dev.rustybite.rustygram.presentation.ui.components.RustySecondaryButton
 import dev.rustybite.rustygram.presentation.ui.components.RustyTextField
 import dev.rustybite.rustygram.presentation.ui.theme.RustyGramTheme
 import dev.rustybite.rustygram.presentation.ui.theme.baseline
@@ -66,7 +65,7 @@ fun PasswordContent(
         )
         Spacer(modifier = modifier.height(dimensionResource(id = R.dimen.padding_medium)))
         RustyPrimaryButton(
-            text = stringResource(id = R.string.button_next),
+            text = stringResource(id = R.string.sign_up_button),
             loading = uiState.loading,
             onClick = onSubmitPassword,
             modifier = modifier

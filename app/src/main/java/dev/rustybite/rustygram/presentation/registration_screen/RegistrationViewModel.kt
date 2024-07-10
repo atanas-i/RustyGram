@@ -35,7 +35,6 @@ class RegistrationViewModel @Inject constructor(
         val body = JsonObject()
         body.addProperty("email", email)
 
-        Log.d(TAG, "requestOtp: Message is $body ")
         viewModelScope.launch {
             registrationRepository.requestOtp(body).collectLatest { result ->
                 when (result) {

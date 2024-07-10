@@ -8,9 +8,9 @@
     <string name="rusty_logo_description">RustyGram logo</string>
     <string name="email_placeholder">Enter your email</string>
     <string name="email_label">Email</string>
-    <string name="email_screen_title">What\'s your email?</string>
-    <string name="registration_screen_subtitle">Enter your email where you can be contacted. Not one will see this on your profile.</string>
-    <string name="button_next">Next</string>
+    <string name="sign_up_screen_title">What\'s your email and password?</string>
+    <string name="sign_up_screen_subtitle">Enter your email and your password to sign up. Not one will see this on your profile.</string>
+    <string name="sign_up_button">Sign Up</string>
     <string name="sign_up_with_phone_button">Sign up with phone number</string>
     <string name="already_have_account">I already have an account</string>
     <string name="otp_screen_title">Enter the confirmation code</string>
@@ -20,8 +20,8 @@
     <string name="resend_otp_button">I didn\'t get the code</string>
     <string name="password_screen_title">Create a password</string>
     <string name="password_screen_subtitle">Create a password with at least 6 letters or numbers. It should be something others can\'t guess.</string>
-    <string name="password_placeholder">Password</string>
-    <string name="password_label">Enter your password</string>
+    <string name="password_placeholder">Enter your Password</string>
+    <string name="password_label">Password</string>
     <string name="phone_login_feature_not_available">"Login with Phone No is not available for now. "</string>
 
 </resources>

@@ -48,7 +48,7 @@ fun RustyGramNavHost(
             composable<RustyRoutes.RequestOtp> {
                 EmailScreen(
                     snackBarHostState = snackBarHostState,
-                    navigateToVerifyOtp = { navHostController.navigate(it.route) },
+                    onNavigate = { navHostController.navigate(it.route) },
                     //navigateToLogin = { navHostController.navigate(RustyRoutes.Login)},
                     popBackStack = { navHostController.popBackStack() },
                 )

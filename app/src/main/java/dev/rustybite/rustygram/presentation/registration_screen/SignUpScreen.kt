@@ -11,15 +11,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import dev.rustybite.rustygram.presentation.ui.navigation.RustyRoutes
 import dev.rustybite.rustygram.util.RustyEvents
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun EmailScreen(
     snackBarHostState: SnackbarHostState,
-    navigateToVerifyOtp: (RustyEvents.Navigate) -> Unit,
-    //navigateToLogin: (RustyEvents) -> Unit,
+    onNavigate: (RustyEvents.Navigate) -> Unit,
     popBackStack: (RustyEvents) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RegistrationViewModel = hiltViewModel()
@@ -29,14 +27,7 @@ fun EmailScreen(
     LaunchedEffect(viewModel.event) {
         viewModel.event.collectLatest { event ->
             when(event) {
-                is RustyEvents.Navigate -> {
-                    navigateToVerifyOtp(event)
-//                    when(event.route) {
-//                        is RustyRoutes.VerifyOtp -> navigateToVerifyOtp(event)
-//                        else -> navigateToLogin(event)
-//                    }
-                    //navigateToLogin(event)
-                }
+                is RustyEvents.Navigate -> onNavigate(event)
                 is RustyEvents.PopBackStack -> popBackStack(event)
                 is RustyEvents.ShowSnackBar -> snackBarHostState.showSnackbar(event.message)
                 is  RustyEvents.ShowToast -> Unit
@@ -55,7 +46,8 @@ fun EmailScreen(
             EmailContent(
                 uiState = uiState,
                 onEmailChange = viewModel::onEmailChange,
-                onSubmitEmail = { viewModel.requestOtp(uiState.email) },
+                onPasswordChange = viewModel::onPasswordChange,
+                signUp = { viewModel.requestOtp(uiState.email) },
                 onHaveAccountClicked = viewModel::onHaveAccountClicked,
                 onSignUpWithPhone = viewModel::onSignUpWithPhone,
             )
