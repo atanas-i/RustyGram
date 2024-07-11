@@ -1,0 +1,6 @@
+package dev.rustybite.rustygram.domain.models
+
+data class Credentials(
+    val email: String,
+    val password: String
+)

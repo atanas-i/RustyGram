@@ -10,19 +10,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
 import dev.rustybite.rustygram.presentation.ui.navigation.BottomNavScreen
 import dev.rustybite.rustygram.presentation.ui.navigation.RustyGramNavHost
 import dev.rustybite.rustygram.presentation.ui.theme.RustyGramTheme
 
+@AndroidEntryPoint
 class RustyGramActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+       // enableEdgeToEdge()
         setContent {
             val bottomNavItems = listOf(
                 BottomNavScreen.Home,
@@ -32,10 +36,12 @@ class RustyGramActivity : ComponentActivity() {
                 BottomNavScreen.Profile
             )
             val navHostController = rememberNavController()
+            val snackBarHostState = remember { SnackbarHostState() }
             RustyGramTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     RustyGramNavHost(
                         navHostController = navHostController,
+                        snackBarHostState = snackBarHostState,
                         bottomNavItems = bottomNavItems,
                         modifier = Modifier.padding(innerPadding)
                     )

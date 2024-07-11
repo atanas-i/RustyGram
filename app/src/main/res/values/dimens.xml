@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="bottom_bar_icon_size">24dp</dimen>
+    <dimen name="tf_border_width_small">1dp</dimen>
+    <dimen name="border_radius_small">4dp</dimen>
+    <dimen name="tf_radius_medium">8dp</dimen>
+    <dimen name="tf_radius_large">12dp</dimen>
+    <dimen name="shape_radius_small">8dp</dimen>
+    <dimen name="shape_radius_medium">12dp</dimen>
+    <dimen name="shape_radius_large">16dp</dimen>
+    <dimen name="shape_radius_round">50dp</dimen>
+    <dimen name="button_height">45dp</dimen>
+    <dimen name="button_text_size">15sp</dimen>
+    <dimen name="sec_button_height">43dp</dimen>
+    <dimen name="logo_size_small">30sp</dimen>
+    <dimen name="logo_size_medium">70sp</dimen>
+    <dimen name="logo_border_medium">1.6dp</dimen>
+    <dimen name="padding_extra_small">4dp</dimen>
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_medium">12dp</dimen>
+    <dimen name="padding_large">16dp</dimen>
+    <dimen name="logo_width">55dp</dimen>
+    <dimen name="logo_height">55dp</dimen>
 </resources>
