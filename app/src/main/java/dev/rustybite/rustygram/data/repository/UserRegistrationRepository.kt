@@ -6,6 +6,7 @@ import dev.rustybite.rustygram.domain.models.User
 import dev.rustybite.rustygram.util.RustyResult
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
+import retrofit2.http.Body
 
 /**
  * Repository interface for handling user registration operations.
@@ -18,7 +19,7 @@ interface UserRegistrationRepository {
      * @param [password]: The password for the user
      * @return A [RustyResult] indicating success or failure of the registration operation.
      */
-    suspend fun registerUser(email: String, password: String): Flow<RustyResult<User>>
+    suspend fun registerUser(body: JsonObject): Flow<RustyResult<User>>
 
     /**
      * Request OTP for user registration.

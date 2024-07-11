@@ -10,7 +10,11 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface RustyGramService {
-    suspend fun registerUser(email: String, password: String): UserDto
+    @POST("/auth/v1/signup")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun registerUser(
+        @Body body: JsonObject
+    ): Response<UserDto>
 
     @POST("/auth/v1/otp")
     @Headers("apiKey: $API_KEY", "Content-Type: application/json")

@@ -30,16 +30,17 @@ class RegistrationViewModel @Inject constructor(
     private val _event = Channel<RustyEvents>()
     val event = _event.receiveAsFlow()
 
-    fun requestOtp(email: String) {
+    fun registerUser(email: String, password: String) {
 
         val body = JsonObject()
         body.addProperty("email", email)
+        body.addProperty("password", password)
 
         viewModelScope.launch {
-            registrationRepository.requestOtp(body).collectLatest { result ->
+            registrationRepository.registerUser(body).collectLatest { result ->
                 when (result) {
                     is RustyResult.Success -> {
-                        _event.send(RustyEvents.Navigate(RustyRoutes.VerifyOtp))
+                        _event.send(RustyEvents.Navigate(RustyRoutes.CreateProfile))
                     }
                     is RustyResult.Failure -> {
                         _uiState.value = _uiState.value.copy(

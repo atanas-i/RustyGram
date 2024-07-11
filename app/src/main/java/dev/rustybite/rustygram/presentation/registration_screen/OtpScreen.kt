@@ -8,7 +8,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import dev.rustybite.rustygram.presentation.ui.navigation.RustyRoutes
 import dev.rustybite.rustygram.util.RustyEvents
 import kotlinx.coroutines.flow.collectLatest
 
@@ -24,10 +23,10 @@ fun OtpScreen(
 
     LaunchedEffect(viewModel.event) {
         viewModel.event.collectLatest { event ->
-            when(event) {
+            when (event) {
                 is RustyEvents.Navigate -> navigateToCreatePassword(event)
                 is RustyEvents.PopBackStack -> popBackStack(event)
-                is RustyEvents.ShowSnackBar ->    snackBarHostState.showSnackbar(event.message)
+                is RustyEvents.ShowSnackBar -> snackBarHostState.showSnackbar(event.message)
                 is RustyEvents.ShowToast -> Unit
             }
         }
@@ -38,7 +37,9 @@ fun OtpScreen(
             uiState = uiState,
             onOtpChange = viewModel::onOtpChange,
             onSubmitOtp = { viewModel.verifyOtp(uiState.otp) },
-            onResendOtp = { viewModel.requestOtp(uiState.email) },
+            onResendOtp = {
+                viewModel.registerUser(uiState.email, uiState.password)
+            },
             onHaveAccountClicked = { viewModel.onHaveAccountClicked() },
             modifier = modifier
                 .padding(paddingValues)

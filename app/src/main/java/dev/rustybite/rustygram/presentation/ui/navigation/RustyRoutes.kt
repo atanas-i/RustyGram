@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed class RustyRoutes {
     @Serializable
+    data object CreateProfile: RustyRoutes()
+    @Serializable
     data object RequestOtp : RustyRoutes()
     @Serializable
     data object VerifyOtp : RustyRoutes()

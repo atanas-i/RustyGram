@@ -47,7 +47,7 @@ fun EmailScreen(
                 uiState = uiState,
                 onEmailChange = viewModel::onEmailChange,
                 onPasswordChange = viewModel::onPasswordChange,
-                signUp = { viewModel.requestOtp(uiState.email) },
+                signUp = { viewModel.registerUser(uiState.email, uiState.password) },
                 onHaveAccountClicked = viewModel::onHaveAccountClicked,
                 onSignUpWithPhone = viewModel::onSignUpWithPhone,
             )

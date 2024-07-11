@@ -22,20 +22,34 @@ class UserRegistrationRepositoryImpl @Inject constructor(
     private val service: RustyGramService,
     private val retrofit: Retrofit
 ) : UserRegistrationRepository {
+    private val converter = retrofit.responseBodyConverter<RustyApiError>(
+        RustyApiError::class.java,
+        arrayOfNulls<Annotation>(0)
+    )
     /**
      * Register a new user with the provided email and password.
-     * @param [email]: The email address of the new user.
-     * @param [password]: The password for the user
-     * @return A [RustyResult] indicating success or failure of the registration operation.
+     * @param [body]: A json body from the user.
+     * @return A [Flow<RustyResult>] indicating success or failure of the registration operation.
      */
-    override suspend fun registerUser(email: String, password: String): Flow<RustyResult<User>> = flow {
+    override suspend fun registerUser(body: JsonObject): Flow<RustyResult<User>> = flow {
         emit(RustyResult.Loading())
-        runCatching {
-            service.registerUser(email, password).toUser()
-        }.onSuccess { user ->
-            emit(RustyResult.Success(user))
-        }.onFailure { exception ->
-            emit(RustyResult.Failure(exception.localizedMessage ?: "Unknown error occurred"))
+        val response = service.registerUser(body)
+        if (response.isSuccessful) {
+            response.body()?.let { userDto ->
+                emit(RustyResult.Success(userDto.toUser()))
+            }
+        } else {
+            val errorBody = response.errorBody()
+            if (errorBody != null) {
+                val error = converter.convert(errorBody)
+                if (error != null) {
+                    emit(RustyResult.Failure(error.message))
+                } else {
+                    emit(RustyResult.Failure("An unknown error occurred"))
+                }
+            } else {
+                emit(RustyResult.Failure("An unknown error occurred"))
+            }
         }
     }
 
@@ -56,10 +70,7 @@ class UserRegistrationRepositoryImpl @Inject constructor(
             val errorBody = response.errorBody()
             Log.d(TAG, "requestOtp: Error code is ${errorBody?.bytes()?.decodeToString()}")
             if (errorBody != null) {
-                val error = retrofit.responseBodyConverter<RustyApiError>(
-                    RustyApiError::class.java,
-                    arrayOfNulls<Annotation>(0)
-                ).convert(errorBody)
+                val error = converter.convert(errorBody)
                 if (error != null) {
                     emit(RustyResult.Failure(error.message))
                 } else {
