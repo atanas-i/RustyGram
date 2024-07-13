@@ -27,7 +27,7 @@ import dev.rustybite.rustygram.presentation.ui.theme.baseline
 import dev.rustybite.rustygram.presentation.ui.theme.bodyFontFamily
 
 @Composable
-fun OtpContent(
+fun VerifyOtpContent(
     uiState: RegistrationUiState,
     onOtpChange: (String) -> Unit,
     onSubmitOtp: () -> Unit,
@@ -119,7 +119,7 @@ private fun OtpContentPreview() {
                 modifier = Modifier
                     .padding(16.dp)
             ) {
-                OtpContent(
+                VerifyOtpContent(
                     uiState = RegistrationUiState(),
                     onOtpChange = { /*TODO*/ },
                     onSubmitOtp = { /*TODO*/ },

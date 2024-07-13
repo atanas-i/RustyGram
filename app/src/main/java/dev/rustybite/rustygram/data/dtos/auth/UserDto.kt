@@ -29,8 +29,8 @@ data class UserDto(
     val role: String,
     @SerialName("updated_at")
     val updatedAt: String,
-    @SerialName("user_metadata")
-    val userMetadata: UserMetadata
+    @SerialName("raw_user_meta_data")
+    val userMetadata: UserMetadata?
 )
 
 fun UserDto.toUser(): User = User(
@@ -41,5 +41,6 @@ fun UserDto.toUser(): User = User(
     phone = phone,
     role = role,
     createdAt = createdAt,
-    updatedAt = updatedAt
+    updatedAt = updatedAt,
+    isEmailVerified = userMetadata?.emailVerified ?: false
 )

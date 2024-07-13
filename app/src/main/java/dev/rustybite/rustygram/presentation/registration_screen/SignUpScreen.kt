@@ -15,7 +15,7 @@ import dev.rustybite.rustygram.util.RustyEvents
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun EmailScreen(
+fun SignUpScreen(
     snackBarHostState: SnackbarHostState,
     onNavigate: (RustyEvents.Navigate) -> Unit,
     popBackStack: (RustyEvents) -> Unit,
@@ -43,7 +43,7 @@ fun EmailScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            EmailContent(
+            SignUpContent(
                 uiState = uiState,
                 onEmailChange = viewModel::onEmailChange,
                 onPasswordChange = viewModel::onPasswordChange,

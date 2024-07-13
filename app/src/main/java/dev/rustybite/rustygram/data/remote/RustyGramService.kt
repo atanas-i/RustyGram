@@ -26,6 +26,6 @@ interface RustyGramService {
     @Headers("apiKey: $API_KEY", "Content-Type: application/json")
     suspend fun verifyOtp(
         @Body body: JsonObject
-    ): RustyResponse
+    ): Response<UserDto>
 
 }

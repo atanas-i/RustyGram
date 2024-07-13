@@ -12,7 +12,7 @@ import dev.rustybite.rustygram.util.RustyEvents
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun OtpScreen(
+fun VerifyOtpScreen(
     snackBarHostState: SnackbarHostState,
     navigateToCreatePassword: (RustyEvents.Navigate) -> Unit,
     popBackStack: (RustyEvents) -> Unit,
@@ -33,10 +33,15 @@ fun OtpScreen(
     }
 
     Scaffold { paddingValues ->
-        OtpContent(
+        VerifyOtpContent(
             uiState = uiState,
             onOtpChange = viewModel::onOtpChange,
-            onSubmitOtp = { viewModel.verifyOtp(uiState.otp) },
+            onSubmitOtp = {
+                viewModel.verifyOtp(
+                    email = uiState.email,
+                    token = uiState.otp
+                )
+            },
             onResendOtp = {
                 viewModel.registerUser(uiState.email, uiState.password)
             },

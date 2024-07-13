@@ -3,6 +3,7 @@ package dev.rustybite.rustygram.presentation.ui.navigation
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -10,8 +11,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import dev.rustybite.rustygram.presentation.registration_screen.EmailScreen
-import dev.rustybite.rustygram.presentation.registration_screen.OtpScreen
+import dev.rustybite.rustygram.presentation.registration_screen.SignUpScreen
+import dev.rustybite.rustygram.presentation.registration_screen.VerifyOtpScreen
 import dev.rustybite.rustygram.presentation.ui.components.RustyBottomBar
 
 @Composable
@@ -42,25 +43,29 @@ fun RustyGramNavHost(
     ) { paddingValues ->
         NavHost(
             navController = navHostController,
-            startDestination = RustyRoutes.RequestOtp,
+            startDestination = RustyRoutes.Registration,
             modifier = modifier.padding(paddingValues)
         ) {
-            composable<RustyRoutes.RequestOtp> {
-                EmailScreen(
+            composable<RustyRoutes.Registration> {
+                SignUpScreen(
                     snackBarHostState = snackBarHostState,
                     onNavigate = { navHostController.navigate(it.route) },
-                    //navigateToLogin = { navHostController.navigate(RustyRoutes.Login)},
                     popBackStack = { navHostController.popBackStack() },
                 )
             }
             composable<RustyRoutes.VerifyOtp> {
-                OtpScreen(
+                VerifyOtpScreen(
                     snackBarHostState = snackBarHostState,
                     navigateToCreatePassword = { navHostController.navigate(it.route) },
                     popBackStack = { navHostController.popBackStack() }
                 )
             }
-            composable<RustyRoutes.Login> {  }
+            composable<RustyRoutes.CreateProfile> { 
+                Text(text = "Create Profile")
+            }
+            composable<RustyRoutes.Login> {
+                Text(text = "Please Login")
+            }
             composable(BottomNavScreen.Home.route) {  }
             composable(BottomNavScreen.Search.route) {  }
             composable(BottomNavScreen.AddPost.route) {  }

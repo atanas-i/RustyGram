@@ -23,5 +23,6 @@
     <string name="password_placeholder">Enter your Password</string>
     <string name="password_label">Password</string>
     <string name="phone_login_feature_not_available">"Login with Phone No is not available for now. "</string>
+    <string name="unknown_error">An unknown error occurred</string>
 
 </resources>
