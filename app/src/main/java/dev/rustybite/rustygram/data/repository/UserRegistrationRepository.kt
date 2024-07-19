@@ -31,5 +31,5 @@ interface UserRegistrationRepository {
      * @return [Flow<RustyResult<User>>] indicating success or failure of the OTP verification operation.
      */
 
-    suspend fun verifyOtp(body: JsonObject): Flow<RustyResult<User>>
+    suspend fun verifyOtp(body: JsonObject): Flow<RustyResult<RustyResponse>>
 }

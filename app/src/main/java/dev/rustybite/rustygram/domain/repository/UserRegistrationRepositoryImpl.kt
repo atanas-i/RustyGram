@@ -2,6 +2,7 @@ package dev.rustybite.rustygram.domain.repository
 
 import android.util.Log
 import com.google.gson.JsonObject
+import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.dtos.auth.toUser
 import dev.rustybite.rustygram.data.dtos.util.ApiErrorDto
 import dev.rustybite.rustygram.data.dtos.util.toApiError
@@ -10,6 +11,7 @@ import dev.rustybite.rustygram.data.repository.UserRegistrationRepository
 import dev.rustybite.rustygram.domain.models.RustyApiError
 import dev.rustybite.rustygram.domain.models.RustyResponse
 import dev.rustybite.rustygram.domain.models.User
+import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyResult
 import dev.rustybite.rustygram.util.TAG
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +24,8 @@ import javax.inject.Inject
  */
 class UserRegistrationRepositoryImpl @Inject constructor(
     private val service: RustyGramService,
-    private val retrofit: Retrofit
+    private val retrofit: Retrofit,
+    private val resources: ResourceProvider
 ) : UserRegistrationRepository {
     private val converter = retrofit.responseBodyConverter<ApiErrorDto>(
         ApiErrorDto::class.java,
@@ -88,12 +91,16 @@ class UserRegistrationRepositoryImpl @Inject constructor(
      * @param [body] Json body that carries the type (Email/Phone), email address and OTP code sent to the user.
      * @return [Flow<RustyResult<User>>] indicating success or failure of the OTP verification operation.
      */
-    override suspend fun verifyOtp(body: JsonObject): Flow<RustyResult<User>> = flow {
+    override suspend fun verifyOtp(body: JsonObject): Flow<RustyResult<RustyResponse>> = flow {
         emit(RustyResult.Loading())
         val response = service.verifyOtp(body)
         if (response.isSuccessful) {
-            response.body()?.let { userDto ->
-                emit(RustyResult.Success(userDto.toUser()))
+            response.body()?.let { _ ->
+                val result = RustyResponse(
+                    success = true,
+                    message = resources.getString(R.string.verify_otp_success)
+                )
+                emit(RustyResult.Success(result))
             }
         } else {
             val errorBody = response.errorBody()
@@ -102,7 +109,7 @@ class UserRegistrationRepositoryImpl @Inject constructor(
                 if (error != null) {
                     emit(RustyResult.Failure(error.message))
                 } else {
-                    emit(RustyResult.Failure("An unknown error occurred"))
+                    emit(RustyResult.Failure(resources.getString(R.string.unknown_error)))
                 }
             }
         }

@@ -27,11 +27,11 @@ import dev.rustybite.rustygram.presentation.ui.theme.baseline
 import dev.rustybite.rustygram.presentation.ui.theme.bodyFontFamily
 
 @Composable
-fun VerifyOtpContent(
+fun VerifyTokenContent(
     uiState: RegistrationUiState,
-    onOtpChange: (String) -> Unit,
-    onSubmitOtp: () -> Unit,
-    onResendOtp: () -> Unit,
+    onTokenChange: (String) -> Unit,
+    onSubmitToken: () -> Unit,
+    onResendToken: () -> Unit,
     onHaveAccountClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -55,10 +55,10 @@ fun VerifyOtpContent(
         )
         Spacer(modifier = modifier.height(dimensionResource(id = R.dimen.padding_medium)))
         RustyTextField(
-            value = uiState.email,
-            onValueChange = onOtpChange,
+            value = uiState.token,
+            onValueChange = onTokenChange,
             label = stringResource(id = R.string.confirmations_label),
-            placeholder = stringResource(id = R.string.otp_placeholder),
+            placeholder = stringResource(id = R.string.confirmation_placeholder),
             modifier = modifier
                 .padding(
                     vertical = dimensionResource(id = R.dimen.padding_small)
@@ -67,23 +67,22 @@ fun VerifyOtpContent(
         )
         Spacer(modifier = modifier.height(dimensionResource(id = R.dimen.padding_medium)))
         RustyPrimaryButton(
-            text = stringResource(id = R.string.sign_up_button),
+            text = stringResource(id = R.string.submit_button),
             loading = uiState.loading,
-            onClick = onSubmitOtp,
+            onClick = onSubmitToken,
             modifier = modifier
                 .padding(
                     vertical = dimensionResource(id = R.dimen.padding_extra_small)
                 )
         )
-        Spacer(modifier = modifier.height(dimensionResource(id = R.dimen.padding_extra_small)))
+        Spacer(modifier = modifier.height(dimensionResource(id = R.dimen.padding_medium)))
         RustySecondaryButton(
             text = stringResource(id = R.string.resend_otp_button),
-            onClick = onResendOtp,
+            onClick = onResendToken,
             modifier = modifier
                 .padding(
                     vertical = dimensionResource(id = R.dimen.padding_extra_small)
                 )
-
         )
         Spacer(modifier = modifier.weight(1f))
         Column(
@@ -101,32 +100,6 @@ fun VerifyOtpContent(
                     .padding(dimensionResource(id = R.dimen.padding_extra_small))
                     .clickable { onHaveAccountClicked() }
             )
-        }
-    }
-}
-
-
-@Preview(showBackground = true, showSystemUi = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL
-)
-@Composable
-private fun OtpContentPreview() {
-    RustyGramTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-            ) {
-                VerifyOtpContent(
-                    uiState = RegistrationUiState(),
-                    onOtpChange = { /*TODO*/ },
-                    onSubmitOtp = { /*TODO*/ },
-                    onResendOtp = { /*TODO*/ },
-                    onHaveAccountClicked = { /*TODO*/ }
-                )
-            }
         }
     }
 }

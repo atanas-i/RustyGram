@@ -26,7 +26,7 @@ import dev.rustybite.rustygram.presentation.ui.theme.RustyGramTheme
 class RustyGramActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       // enableEdgeToEdge()
+       enableEdgeToEdge()
         setContent {
             val bottomNavItems = listOf(
                 BottomNavScreen.Home,

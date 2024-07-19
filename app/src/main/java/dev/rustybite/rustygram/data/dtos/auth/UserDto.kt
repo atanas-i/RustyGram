@@ -4,17 +4,18 @@ package dev.rustybite.rustygram.data.dtos.auth
 import dev.rustybite.rustygram.domain.models.User
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
 
 @Serializable
 data class UserDto(
     @SerialName("app_metadata")
-    val appMetadata: AppMetadata,
+    val appMetadata: AppMetadata?,
     @SerialName("aud")
     val aud: String,
     @SerialName("confirmation_sent_at")
-    val confirmationSentAt: String,
+    val confirmationSentAt: String?,
     @SerialName("created_at")
-    val createdAt: String,
+    val createdAt: String?,
     @SerialName("email")
     val email: String,
     @SerialName("id")
@@ -28,19 +29,19 @@ data class UserDto(
     @SerialName("role")
     val role: String,
     @SerialName("updated_at")
-    val updatedAt: String,
-    @SerialName("raw_user_meta_data")
+    val updatedAt: String?,
+    @SerialName("user_metadata")
     val userMetadata: UserMetadata?
 )
 
 fun UserDto.toUser(): User = User(
     userId = id,
-    confirmationSentAt = confirmationSentAt,
+    confirmationSentAt = confirmationSentAt ?: "",
     email = email,
     isAnonymous = isAnonymous,
     phone = phone,
     role = role,
-    createdAt = createdAt,
-    updatedAt = updatedAt,
+    createdAt = createdAt ?: LocalDateTime.now().toString(),
+    updatedAt = updatedAt ?: LocalDateTime.now().toString(),
     isEmailVerified = userMetadata?.emailVerified ?: false
 )

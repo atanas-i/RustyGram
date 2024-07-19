@@ -5,7 +5,7 @@ data class RegistrationUiState(
     val email: String = "",
     val password: String = "",
     val confirmPassword: String = "",
-    val otp: String = "",
+    val token: String = "",
     val errorMessage: String? = null,
     val isPasswordVisible: Boolean = false,
     val isConfirmPasswordVisible: Boolean = false
