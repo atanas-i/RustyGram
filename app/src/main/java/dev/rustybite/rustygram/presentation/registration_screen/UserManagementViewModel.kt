@@ -136,6 +136,32 @@ class UserManagementViewModel @Inject constructor(
         }
     }
 
+    fun logout() {
+        viewModelScope.launch {
+            registrationRepository.logout().collectLatest { result ->
+                when(result) {
+                    is RustyResult.Success -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = false
+                        )
+                        _event.send(RustyEvents.Navigate(RustyRoutes.Login))
+                        _event.send(RustyEvents.ShowSnackBar(result.data.message))
+                    }
+                    is RustyResult.Failure -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = false,
+                            errorMessage = result.message
+                        )
+                        _event.send(RustyEvents.ShowSnackBar(result.message ?: resources.getString(R.string.unknown_error)))
+                    }
+                    is RustyResult.Loading -> {
+                        _uiState.value = _uiState.value.copy(loading = true)
+                    }
+                }
+            }
+        }
+    }
+
     fun onEmailChange(email: String) {
         _uiState.value = _uiState.value.copy(email = email)
     }
