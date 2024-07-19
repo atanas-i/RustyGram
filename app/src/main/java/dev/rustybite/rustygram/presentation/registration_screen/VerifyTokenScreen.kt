@@ -16,7 +16,7 @@ fun VerifyTokenScreen(
     snackBarHostState: SnackbarHostState,
     onNavigate: (RustyEvents.Navigate) -> Unit,
     onPopBack: (RustyEvents.PopBackStack) -> Unit,
-    viewModel: RegistrationViewModel,
+    viewModel: UserManagementViewModel,
     modifier: Modifier = Modifier
 ) {
     val uiState = viewModel.uiState.collectAsState().value

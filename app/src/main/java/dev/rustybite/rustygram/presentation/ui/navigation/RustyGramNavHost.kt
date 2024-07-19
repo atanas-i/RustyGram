@@ -13,7 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import dev.rustybite.rustygram.presentation.registration_screen.VerifyTokenScreen
-import dev.rustybite.rustygram.presentation.registration_screen.RegistrationViewModel
+import dev.rustybite.rustygram.presentation.registration_screen.UserManagementViewModel
 import dev.rustybite.rustygram.presentation.registration_screen.SignUpScreen
 
 @Composable
@@ -22,7 +22,7 @@ fun RustyGramNavHost(
     snackBarHostState: SnackbarHostState,
     bottomNavItems: List<BottomNavScreen>,
     modifier: Modifier = Modifier,
-    viewModel: RegistrationViewModel = hiltViewModel()
+    viewModel: UserManagementViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val currentRoute = navHostController.currentBackStackEntryAsState().value?.destination?.route

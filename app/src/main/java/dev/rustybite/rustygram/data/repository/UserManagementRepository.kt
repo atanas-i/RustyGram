@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Repository interface for handling user registration operations.
  */
-interface UserRegistrationRepository {
+interface UserManagementRepository {
 
     /**
      * Register a new user with the provided email and password.
@@ -32,4 +32,10 @@ interface UserRegistrationRepository {
      */
 
     suspend fun verifyOtp(body: JsonObject): Flow<RustyResult<RustyResponse>>
+
+    /**
+     * Logout user.
+     * @return [Flow<RustyResult<RustyResponse>>]
+     */
+    suspend fun logout(): Flow<RustyResult<RustyResponse>>
 }

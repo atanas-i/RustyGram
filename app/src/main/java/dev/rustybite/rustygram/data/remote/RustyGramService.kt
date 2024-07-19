@@ -28,4 +28,9 @@ interface RustyGramService {
         @Body body: JsonObject
     ): Response<RustyResponse>
 
+    @POST("/auth/v1/logout")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun logout(): Response<RustyResponse>
+
+
 }
