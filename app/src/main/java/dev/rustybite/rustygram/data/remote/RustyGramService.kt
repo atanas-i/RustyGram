@@ -35,5 +35,12 @@ interface RustyGramService {
         @Header("Authorization") token: String
     ): Response<RustyResponse>
 
+    @POST("token?grant_type=password")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun login(
+        @Body body: JsonObject
+    ): Response<UserDto>
+
+
 
 }
