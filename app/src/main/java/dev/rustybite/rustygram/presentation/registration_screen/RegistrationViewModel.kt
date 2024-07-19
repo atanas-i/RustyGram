@@ -31,7 +31,7 @@ class RegistrationViewModel @Inject constructor(
     val event = _event.receiveAsFlow()
 
     fun registerUser(email: String, password: String) {
-
+        Log.d(TAG, "registerUser: Received email is $email")
         val body = JsonObject()
         body.addProperty("email", email)
         body.addProperty("password", password)
@@ -40,15 +40,28 @@ class RegistrationViewModel @Inject constructor(
             registrationRepository.registerUser(body).collectLatest { result ->
                 when (result) {
                     is RustyResult.Success -> {
-                        _event.send(RustyEvents.Navigate(RustyRoutes.CreateProfile))
+                        val user = result.data
+                        Log.d(TAG, "registerUser: Returned user is $user")
+                        _uiState.value = _uiState.value.copy(
+                            loading = false,
+                            email = user.email
+                        )
+                        if (user.isEmailVerified) {
+                            _event.send(RustyEvents.Navigate(RustyRoutes.CreateProfile))
+                        } else {
+                            _uiState.value = _uiState.value.copy(
+                                loading = false,
+                                email = user.email
+                            )
+                            _event.send(RustyEvents.Navigate(RustyRoutes.VerifyOtp))
+                        }
                     }
                     is RustyResult.Failure -> {
                         _uiState.value = _uiState.value.copy(
                             errorMessage = result.message,
                             loading = false
                         )
-                        Log.d(TAG, "requestOtp: Message is ${result.message} ")
-                        _event.send(RustyEvents.ShowSnackBar(result.message ?: ""))
+                        _event.send(RustyEvents.ShowSnackBar(result.message ?: resources.getString(R.string.unknown_error)))
                     }
                     is RustyResult.Loading -> {
                         _uiState.value = _uiState.value.copy(loading = true)
@@ -58,51 +71,81 @@ class RegistrationViewModel @Inject constructor(
         }
     }
 
-    fun verifyOtp(otp: String) {
-        TODO("Not yet implemented")
+    fun requestOtp(email: String) {
+        viewModelScope.launch {
+            val body = JsonObject()
+            body.addProperty("email", email)
+            registrationRepository.requestOtp(body).collectLatest { result ->
+                when (result) {
+                    is RustyResult.Success -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = false
+                        )
+                    }
+                    is RustyResult.Failure -> {
+                        _uiState.value = _uiState.value.copy(
+                            errorMessage = result.message,
+                            loading = false
+                        )
+                        _event.send(RustyEvents.ShowSnackBar(result.message ?: resources.getString(R.string.unknown_error)))
+                    }
+                    is RustyResult.Loading -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = true
+                        )
+                    }
+                }
+            }
+        }
     }
 
-    fun createPassword(password: String) {
-        TODO("Not yet implemented")
-    }
+    fun verifyOtp(
+        type: String = "email",
+        email: String,
+        token: String
+    ) {
+        val body = JsonObject()
+        body.addProperty("type", type)
+        body.addProperty("email", email)
+        body.addProperty("token", token)
 
-    fun registerUser(
-        fullName: String,
-        birthday: String,
-        username: String,
-        profilePicture: String?
-    ) {}
-
-    fun navigateToLogin() {
-        TODO("Not yet implemented")
-    }
-
-    fun navigateToOtp() {
-        TODO("Not yet implemented")
-    }
-
-    fun navigateToPassword() {
-        TODO("Not yet implemented")
-    }
-
-    fun navigateToRegistration() {
-        TODO("Not yet implemented")
+        viewModelScope.launch {
+            registrationRepository.verifyOtp(body).collectLatest { result ->
+                when(result) {
+                    is RustyResult.Success -> {
+                        _event.send(RustyEvents.Navigate(RustyRoutes.CreateProfile))
+                        _event.send(RustyEvents.ShowSnackBar(result.data.message))
+                        _uiState.value = _uiState.value.copy(
+                            loading = false
+                        )
+                    }
+                    is RustyResult.Failure -> {
+                        _uiState.value = _uiState.value.copy(
+                            errorMessage = result.message,
+                            loading = false
+                        )
+                        _event.send(RustyEvents.ShowSnackBar(result.message ?: resources.getString(R.string.unknown_error)))
+                    }
+                    is RustyResult.Loading -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = true
+                        )
+                    }
+                }
+            }
+        }
     }
 
     fun onEmailChange(email: String) {
         _uiState.value = _uiState.value.copy(email = email)
     }
 
-    fun onOtpChange(otp: String) {
-        _uiState.value = _uiState.value.copy(otp = otp)
+    fun onTokenChange(token: String) {
+        _uiState.value = _uiState.value.copy(token = token)
     }
 
     fun onPasswordChange(password: String) {
         _uiState.value = _uiState.value.copy(password = password)
-    }
-
-    fun onConfirmPasswordChange(confirmPassword: String) {
-        _uiState.value = _uiState.value.copy(confirmPassword = confirmPassword)
     }
 
     fun onHaveAccountClicked() {

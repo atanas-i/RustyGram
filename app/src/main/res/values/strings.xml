@@ -16,12 +16,15 @@
     <string name="otp_screen_title">Enter the confirmation code</string>
     <string name="otp_screen_subtitle">To confirm your account , enter the 6-digit code we sent to</string>
     <string name="confirmations_label">Confirmation code</string>
-    <string name="otp_placeholder">Otp</string>
+    <string name="confirmation_placeholder">Confirmation code</string>
     <string name="resend_otp_button">I didn\'t get the code</string>
     <string name="password_screen_title">Create a password</string>
     <string name="password_screen_subtitle">Create a password with at least 6 letters or numbers. It should be something others can\'t guess.</string>
     <string name="password_placeholder">Enter your Password</string>
     <string name="password_label">Password</string>
     <string name="phone_login_feature_not_available">"Login with Phone No is not available for now. "</string>
+    <string name="unknown_error">An unknown error occurred</string>
+    <string name="submit_button">Submit</string>
+    <string name="verify_otp_success">Email verified.</string>
 
 </resources>

@@ -20,16 +20,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.presentation.ui.components.RustyPrimaryButton
+import dev.rustybite.rustygram.presentation.ui.components.RustySecondaryButton
 import dev.rustybite.rustygram.presentation.ui.components.RustyTextField
 import dev.rustybite.rustygram.presentation.ui.theme.RustyGramTheme
 import dev.rustybite.rustygram.presentation.ui.theme.baseline
 import dev.rustybite.rustygram.presentation.ui.theme.bodyFontFamily
 
 @Composable
-fun PasswordContent(
+fun VerifyTokenContent(
     uiState: RegistrationUiState,
-    onPasswordChange: (String) -> Unit,
-    onSubmitPassword: () -> Unit,
+    onTokenChange: (String) -> Unit,
+    onSubmitToken: () -> Unit,
+    onResendToken: () -> Unit,
     onHaveAccountClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -39,24 +41,24 @@ fun PasswordContent(
             .padding(dimensionResource(id = R.dimen.padding_medium))
     ) {
         Text(
-            text = stringResource(id = R.string.password_screen_title),
+            text = stringResource(id = R.string.otp_screen_title),
             style = baseline.headlineLarge.copy(
                 fontFamily = bodyFontFamily
             )
         )
         Spacer(modifier = modifier.height(dimensionResource(id = R.dimen.padding_large)))
         Text(
-            text = stringResource(id = R.string.password_screen_subtitle),
+            text = "${stringResource(id = R.string.otp_screen_subtitle)} ${uiState.email}.",
             style = baseline.bodyLarge.copy(
                 fontFamily = bodyFontFamily
             ),
         )
         Spacer(modifier = modifier.height(dimensionResource(id = R.dimen.padding_medium)))
         RustyTextField(
-            value = uiState.email,
-            onValueChange = onPasswordChange,
-            label = stringResource(id = R.string.password_label),
-            placeholder = stringResource(id = R.string.password_placeholder),
+            value = uiState.token,
+            onValueChange = onTokenChange,
+            label = stringResource(id = R.string.confirmations_label),
+            placeholder = stringResource(id = R.string.confirmation_placeholder),
             modifier = modifier
                 .padding(
                     vertical = dimensionResource(id = R.dimen.padding_small)
@@ -65,9 +67,18 @@ fun PasswordContent(
         )
         Spacer(modifier = modifier.height(dimensionResource(id = R.dimen.padding_medium)))
         RustyPrimaryButton(
-            text = stringResource(id = R.string.sign_up_button),
+            text = stringResource(id = R.string.submit_button),
             loading = uiState.loading,
-            onClick = onSubmitPassword,
+            onClick = onSubmitToken,
+            modifier = modifier
+                .padding(
+                    vertical = dimensionResource(id = R.dimen.padding_extra_small)
+                )
+        )
+        Spacer(modifier = modifier.height(dimensionResource(id = R.dimen.padding_medium)))
+        RustySecondaryButton(
+            text = stringResource(id = R.string.resend_otp_button),
+            onClick = onResendToken,
             modifier = modifier
                 .padding(
                     vertical = dimensionResource(id = R.dimen.padding_extra_small)
@@ -89,31 +100,6 @@ fun PasswordContent(
                     .padding(dimensionResource(id = R.dimen.padding_extra_small))
                     .clickable { onHaveAccountClicked() }
             )
-        }
-    }
-}
-
-
-@Preview(showBackground = true, showSystemUi = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL
-)
-@Composable
-private fun PasswordContentPreview() {
-    RustyGramTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-            ) {
-                PasswordContent(
-                    uiState = RegistrationUiState(),
-                    onPasswordChange = { /*TODO*/ },
-                    onSubmitPassword = { /*TODO*/ },
-                    onHaveAccountClicked = { /*TODO*/ }
-                )
-            }
         }
     }
 }

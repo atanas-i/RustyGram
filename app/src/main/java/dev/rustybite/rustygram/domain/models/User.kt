@@ -13,5 +13,6 @@ data class User(
     val phone: String,
     val role: String,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
+    val isEmailVerified: Boolean,
 )

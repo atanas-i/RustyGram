@@ -35,8 +35,8 @@ object RustyGramModule {
 
     @Provides
     @Singleton
-    fun provideRepository(service: RustyGramService, retrofit: Retrofit): UserRegistrationRepository =
-        UserRegistrationRepositoryImpl(service, retrofit)
+    fun provideRepository(service: RustyGramService, retrofit: Retrofit, resources: ResourceProvider): UserRegistrationRepository =
+        UserRegistrationRepositoryImpl(service, retrofit, resources)
 
     @Provides
     @Singleton

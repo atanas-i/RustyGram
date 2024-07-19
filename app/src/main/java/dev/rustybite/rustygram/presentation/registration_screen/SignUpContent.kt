@@ -22,7 +22,7 @@ import dev.rustybite.rustygram.presentation.ui.theme.baseline
 import dev.rustybite.rustygram.presentation.ui.theme.bodyFontFamily
 
 @Composable
-fun EmailContent(
+fun SignUpContent(
     uiState: RegistrationUiState,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,

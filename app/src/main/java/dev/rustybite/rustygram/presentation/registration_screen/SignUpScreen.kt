@@ -1,8 +1,12 @@
 package dev.rustybite.rustygram.presentation.registration_screen
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -15,12 +19,13 @@ import dev.rustybite.rustygram.util.RustyEvents
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun EmailScreen(
+fun SignUpScreen(
     snackBarHostState: SnackbarHostState,
     onNavigate: (RustyEvents.Navigate) -> Unit,
     popBackStack: (RustyEvents) -> Unit,
+    viewModel: RegistrationViewModel,
     modifier: Modifier = Modifier,
-    viewModel: RegistrationViewModel = hiltViewModel()
+    // = hiltViewModel(),
 ) {
     val uiState = viewModel.uiState.collectAsState().value
 
@@ -41,9 +46,9 @@ fun EmailScreen(
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .consumeWindowInsets(paddingValues)
         ) {
-            EmailContent(
+            SignUpContent(
                 uiState = uiState,
                 onEmailChange = viewModel::onEmailChange,
                 onPasswordChange = viewModel::onPasswordChange,

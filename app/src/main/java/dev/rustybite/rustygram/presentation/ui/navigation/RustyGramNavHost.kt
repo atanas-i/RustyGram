@@ -1,66 +1,83 @@
 package dev.rustybite.rustygram.presentation.ui.navigation
 
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import dev.rustybite.rustygram.presentation.registration_screen.EmailScreen
-import dev.rustybite.rustygram.presentation.registration_screen.OtpScreen
-import dev.rustybite.rustygram.presentation.ui.components.RustyBottomBar
+import dev.rustybite.rustygram.presentation.registration_screen.VerifyTokenScreen
+import dev.rustybite.rustygram.presentation.registration_screen.RegistrationViewModel
+import dev.rustybite.rustygram.presentation.registration_screen.SignUpScreen
 
 @Composable
 fun RustyGramNavHost(
     navHostController: NavHostController,
     snackBarHostState: SnackbarHostState,
     bottomNavItems: List<BottomNavScreen>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: RegistrationViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val currentRoute = navHostController.currentBackStackEntryAsState().value?.destination?.route
     Scaffold(
-        bottomBar = {
-            RustyBottomBar(
-                navItems = bottomNavItems,
-                currentRoute = currentRoute,
-                onItemClick = { item ->
-                    navHostController.navigate(item.route) {
-                        popUpTo(navHostController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-            )
-        }
+//        bottomBar = {
+//            RustyBottomBar(
+//                navItems = bottomNavItems,
+//                currentRoute = currentRoute,
+//                onItemClick = { item ->
+//                    navHostController.navigate(item.route) {
+//                        popUpTo(navHostController.graph.startDestinationId) {
+//                            saveState = true
+//                        }
+//                        launchSingleTop = true
+//                        restoreState = true
+//                    }
+//                }
+//            )
+//        },
     ) { paddingValues ->
         NavHost(
             navController = navHostController,
-            startDestination = RustyRoutes.RequestOtp,
-            modifier = modifier.padding(paddingValues)
+            startDestination = RustyRoutes.Registration,
+            modifier = modifier
+                .consumeWindowInsets(paddingValues)
         ) {
-            composable<RustyRoutes.RequestOtp> {
-                EmailScreen(
+            composable<RustyRoutes.Registration> {
+                SignUpScreen(
                     snackBarHostState = snackBarHostState,
-                    onNavigate = { navHostController.navigate(it.route) },
-                    //navigateToLogin = { navHostController.navigate(RustyRoutes.Login)},
+                    onNavigate = { event -> navHostController.navigate(event.route) },
                     popBackStack = { navHostController.popBackStack() },
+                    viewModel = viewModel,
                 )
             }
             composable<RustyRoutes.VerifyOtp> {
-                OtpScreen(
+//                VerifyOtpScreen(
+//                    snackBarHostState = snackBarHostState,
+//                    navigateToCreatePassword = { event -> navHostController.navigate(event.route) },
+//                    popBackStack = { navHostController.popBackStack() },
+//                    viewModel = viewModel
+//                )
+                VerifyTokenScreen(
                     snackBarHostState = snackBarHostState,
-                    navigateToCreatePassword = { navHostController.navigate(it.route) },
-                    popBackStack = { navHostController.popBackStack() }
+                    viewModel = viewModel,
+                    onNavigate = { navHostController.navigate(it.route) },
+                    onPopBack = { navHostController.popBackStack() },
+
                 )
             }
-            composable<RustyRoutes.Login> {  }
+            composable<RustyRoutes.CreateProfile> { 
+                Text(text = "Create Profile")
+            }
+            composable<RustyRoutes.Login> {
+                Text(text = "Please Login")
+            }
             composable(BottomNavScreen.Home.route) {  }
             composable(BottomNavScreen.Search.route) {  }
             composable(BottomNavScreen.AddPost.route) {  }
