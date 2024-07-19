@@ -37,5 +37,5 @@ interface UserManagementRepository {
      * Logout user.
      * @return [Flow<RustyResult<RustyResponse>>]
      */
-    suspend fun logout(): Flow<RustyResult<RustyResponse>>
+    suspend fun logout(token: String): Flow<RustyResult<RustyResponse>>
 }

@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -23,6 +24,7 @@ import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.presentation.registration_screen.VerifyTokenScreen
 import dev.rustybite.rustygram.presentation.registration_screen.UserManagementViewModel
 import dev.rustybite.rustygram.presentation.registration_screen.SignUpScreen
+import dev.rustybite.rustygram.presentation.ui.components.RustyBottomBar
 import dev.rustybite.rustygram.presentation.ui.components.RustyPrimaryButton
 
 @Composable
@@ -36,21 +38,21 @@ fun RustyGramNavHost(
     val context = LocalContext.current
     val currentRoute = navHostController.currentBackStackEntryAsState().value?.destination?.route
     Scaffold(
-//        bottomBar = {
-//            RustyBottomBar(
-//                navItems = bottomNavItems,
-//                currentRoute = currentRoute,
-//                onItemClick = { item ->
-//                    navHostController.navigate(item.route) {
-//                        popUpTo(navHostController.graph.startDestinationId) {
-//                            saveState = true
-//                        }
-//                        launchSingleTop = true
-//                        restoreState = true
-//                    }
-//                }
-//            )
-//        },
+        bottomBar = {
+            RustyBottomBar(
+                navItems = bottomNavItems,
+                currentRoute = currentRoute,
+                onItemClick = { item ->
+                    navHostController.navigate(item.route) {
+                        popUpTo(navHostController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        },
     ) { paddingValues ->
         NavHost(
             navController = navHostController,
@@ -95,7 +97,7 @@ fun RustyGramNavHost(
                 ) {
                     Text(text = "Profile Screen")
                     Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_large)))
-                    RustyPrimaryButton(text = "Logout", onClick = { viewModel.logout() }, loading = false)
+                    RustyPrimaryButton(text = "Logout", onClick = { viewModel.logout() }, loading = viewModel.uiState.collectAsState().value.loading)
                 }
             }
         }

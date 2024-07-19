@@ -112,9 +112,9 @@ class UserManagementRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun logout(): Flow<RustyResult<RustyResponse>>  = flow {
+    override suspend fun logout(token: String): Flow<RustyResult<RustyResponse>>  = flow {
         emit(RustyResult.Loading())
-        val response = service.logout()
+        val response = service.logout(token)
         if (response.isSuccessful) {
             response.body()?.let {
                 val data = RustyResponse(

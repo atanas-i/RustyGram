@@ -138,7 +138,7 @@ class UserManagementViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
-            registrationRepository.logout().collectLatest { result ->
+            registrationRepository.logout("Bearer {Preference.getToken()}").collectLatest { result ->
                 when(result) {
                     is RustyResult.Success -> {
                         _uiState.value = _uiState.value.copy(
