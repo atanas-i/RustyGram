@@ -1,4 +1,4 @@
-package dev.rustybite.rustygram.presentation.registration_screen
+package dev.rustybite.rustygram.presentation.user_management.registration_screen
 
 data class RegistrationUiState(
     val loading: Boolean = false,

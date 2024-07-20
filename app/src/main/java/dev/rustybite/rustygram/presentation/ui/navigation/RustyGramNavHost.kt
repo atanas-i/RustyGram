@@ -21,9 +21,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import dev.rustybite.rustygram.R
-import dev.rustybite.rustygram.presentation.registration_screen.VerifyTokenScreen
-import dev.rustybite.rustygram.presentation.registration_screen.UserManagementViewModel
-import dev.rustybite.rustygram.presentation.registration_screen.SignUpScreen
+import dev.rustybite.rustygram.presentation.user_management.registration_screen.VerifyTokenScreen
+import dev.rustybite.rustygram.presentation.user_management.registration_screen.UserManagementViewModel
+import dev.rustybite.rustygram.presentation.user_management.registration_screen.SignUpScreen
 import dev.rustybite.rustygram.presentation.ui.components.RustyBottomBar
 import dev.rustybite.rustygram.presentation.ui.components.RustyPrimaryButton
 

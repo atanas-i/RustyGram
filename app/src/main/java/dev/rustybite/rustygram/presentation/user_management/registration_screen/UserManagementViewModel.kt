@@ -1,4 +1,4 @@
-package dev.rustybite.rustygram.presentation.registration_screen
+package dev.rustybite.rustygram.presentation.user_management.registration_screen
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -123,6 +123,37 @@ class UserManagementViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(
                             errorMessage = result.message,
                             loading = false
+                        )
+                        _event.send(RustyEvents.ShowSnackBar(result.message ?: resources.getString(R.string.unknown_error)))
+                    }
+                    is RustyResult.Loading -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = true
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun login(email: String, password: String) {
+        viewModelScope.launch {
+            val body = JsonObject()
+            body.addProperty("email", email)
+            body.addProperty("password", password)
+
+            registrationRepository.login(body).collectLatest { result ->
+                when(result) {
+                    is RustyResult.Success -> {
+                        _event.send(RustyEvents.Navigate(RustyRoutes.CreateProfile))
+                        _uiState.value = _uiState.value.copy(
+                            loading = false
+                        )
+                    }
+                    is RustyResult.Failure -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = false,
+                            errorMessage = result.message
                         )
                         _event.send(RustyEvents.ShowSnackBar(result.message ?: resources.getString(R.string.unknown_error)))
                     }

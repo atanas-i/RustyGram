@@ -32,17 +32,4 @@ interface UserManagementRepository {
      */
 
     suspend fun verifyOtp(body: JsonObject): Flow<RustyResult<RustyResponse>>
-
-    /**
-     * Login user with email and password.
-     * @param [body] Json body that carries email and password of the user.
-     * @return [Flow<RustyResult<User>>] Indicating success or failure of the login operation.
-     */
-    suspend fun login(body: JsonObject): Flow<RustyResult<User>>
-
-    /**
-     * Logout user.
-     * @return [Flow<RustyResult<RustyResponse>>]
-     */
-    suspend fun logout(token: String): Flow<RustyResult<RustyResponse>>
 }
