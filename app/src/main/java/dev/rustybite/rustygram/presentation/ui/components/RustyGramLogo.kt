@@ -12,6 +12,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -43,14 +44,15 @@ fun RustyGramLogo(
 
 @Composable
 fun RustyBiteLogo(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    logoColor: Color = MaterialTheme.colorScheme.primary
 ) {
     Text(
         text = "RustyBite",
         modifier = modifier,
         textAlign = TextAlign.Center,
-        color = MaterialTheme.colorScheme.primary,
-        style = baseline.headlineLarge.copy(
+        color = logoColor,
+        style = baseline.bodyLarge.copy(
             fontFamily = FontFamily(Font(R.font.playwrite_us_trad)),
             fontWeight = FontWeight.W600,
         ),

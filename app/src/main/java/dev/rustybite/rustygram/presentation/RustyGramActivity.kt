@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -24,6 +26,7 @@ import dev.rustybite.rustygram.presentation.ui.theme.RustyGramTheme
 
 @AndroidEntryPoint
 class RustyGramActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
        enableEdgeToEdge()
@@ -37,11 +40,13 @@ class RustyGramActivity : ComponentActivity() {
             )
             val navHostController = rememberNavController()
             val snackBarHostState = remember { SnackbarHostState() }
+            val sheetState = rememberModalBottomSheetState()
             RustyGramTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     RustyGramNavHost(
                         navHostController = navHostController,
                         snackBarHostState = snackBarHostState,
+                        sheetState = sheetState,
                         bottomNavItems = bottomNavItems,
                         modifier = Modifier.padding(innerPadding)
                     )

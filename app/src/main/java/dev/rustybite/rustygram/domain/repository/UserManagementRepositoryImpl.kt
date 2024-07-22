@@ -1,19 +1,16 @@
 package dev.rustybite.rustygram.domain.repository
 
-import android.util.Log
 import com.google.gson.JsonObject
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.dtos.auth.toUser
 import dev.rustybite.rustygram.data.dtos.util.ApiErrorDto
 import dev.rustybite.rustygram.data.dtos.util.toApiError
 import dev.rustybite.rustygram.data.remote.RustyGramService
-import dev.rustybite.rustygram.data.repository.UserRegistrationRepository
-import dev.rustybite.rustygram.domain.models.RustyApiError
+import dev.rustybite.rustygram.data.repository.UserManagementRepository
 import dev.rustybite.rustygram.domain.models.RustyResponse
 import dev.rustybite.rustygram.domain.models.User
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyResult
-import dev.rustybite.rustygram.util.TAG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Retrofit
@@ -22,11 +19,11 @@ import javax.inject.Inject
 /**
  * Implementations of the UserRegistrationRepository interface for handling user registration operations.
  */
-class UserRegistrationRepositoryImpl @Inject constructor(
+class UserManagementRepositoryImpl @Inject constructor(
     private val service: RustyGramService,
     private val retrofit: Retrofit,
     private val resources: ResourceProvider
-) : UserRegistrationRepository {
+) : UserManagementRepository {
     private val converter = retrofit.responseBodyConverter<ApiErrorDto>(
         ApiErrorDto::class.java,
         arrayOfNulls<Annotation>(0)
@@ -59,7 +56,7 @@ class UserRegistrationRepositoryImpl @Inject constructor(
     }
 
     /**
-     * Implementation of [UserRegistrationRepository.requestOtp] for user registration.
+     * Implementation of [UserManagementRepository.requestOtp] for user registration.
      * @param [body]: Json body that carries email address of the user.
      * @return A [RustyResult] indicating success or failure of the OTP request.
      */

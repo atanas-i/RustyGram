@@ -1,4 +1,4 @@
-package dev.rustybite.rustygram.presentation.registration_screen
+package dev.rustybite.rustygram.presentation.user_management.registration_screen
 
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.material3.Scaffold
@@ -16,7 +16,7 @@ fun VerifyTokenScreen(
     snackBarHostState: SnackbarHostState,
     onNavigate: (RustyEvents.Navigate) -> Unit,
     onPopBack: (RustyEvents.PopBackStack) -> Unit,
-    viewModel: RegistrationViewModel,
+    viewModel: UserManagementViewModel,
     modifier: Modifier = Modifier
 ) {
     val uiState = viewModel.uiState.collectAsState().value

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Repository interface for handling user registration operations.
  */
-interface UserRegistrationRepository {
+interface UserManagementRepository {
 
     /**
      * Register a new user with the provided email and password.

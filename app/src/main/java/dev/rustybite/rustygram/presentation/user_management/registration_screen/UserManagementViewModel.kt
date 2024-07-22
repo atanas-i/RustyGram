@@ -1,4 +1,4 @@
-package dev.rustybite.rustygram.presentation.registration_screen
+package dev.rustybite.rustygram.presentation.user_management.registration_screen
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.rustybite.rustygram.R
-import dev.rustybite.rustygram.data.repository.UserRegistrationRepository
+import dev.rustybite.rustygram.data.repository.UserManagementRepository
 import dev.rustybite.rustygram.presentation.ui.navigation.RustyRoutes
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyEvents
@@ -21,8 +21,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RegistrationViewModel @Inject constructor(
-    private val registrationRepository: UserRegistrationRepository,
+class UserManagementViewModel @Inject constructor(
+    private val registrationRepository: UserManagementRepository,
     private val resources: ResourceProvider
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(RegistrationUiState())

@@ -75,6 +75,8 @@ fun RustySecondaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     backgroundColor: Color = Color.Transparent,
+    borderColor: Color = MaterialTheme.colorScheme.onBackground.copy(.6f),
+    textColor: Color = MaterialTheme.colorScheme.onBackground,
     contentColor: Color = MaterialTheme.colorScheme.onBackground
 ) {
     val colors = ButtonDefaults.buttonColors(
@@ -90,7 +92,7 @@ fun RustySecondaryButton(
             .clip(RoundedCornerShape(dimensionResource(id = R.dimen.shape_radius_round))),
         border = BorderStroke(
             width = dimensionResource(id = R.dimen.tf_border_width_small),
-            color = MaterialTheme.colorScheme.onBackground.copy(.6f),
+            color = borderColor,
         ),
         colors = colors,
         enabled = enabled,
@@ -101,7 +103,8 @@ fun RustySecondaryButton(
                 fontFamily = displayFontFamily,
                 fontWeight = FontWeight.W600,
                 fontSize = TextUnit(dimensionResource(id = R.dimen.button_text_size).value, TextUnitType.Sp)
-            )
+            ),
+            color = textColor
         )
     }
 }
