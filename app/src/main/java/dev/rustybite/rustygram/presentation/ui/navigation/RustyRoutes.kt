@@ -11,7 +11,7 @@ sealed class RustyRoutes {
     @Serializable
     data object VerifyOtp : RustyRoutes()
     @Serializable
-    data object CreatePassword : RustyRoutes()
+    data object ChangePassword : RustyRoutes()
     @Serializable
     data object Registration : RustyRoutes()
     @Serializable

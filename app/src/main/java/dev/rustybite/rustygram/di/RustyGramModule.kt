@@ -7,7 +7,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dev.rustybite.rustygram.data.remote.RustyGramService
+import dev.rustybite.rustygram.data.repository.LoginRepository
 import dev.rustybite.rustygram.data.repository.UserManagementRepository
+import dev.rustybite.rustygram.domain.repository.LoginRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.UserManagementRepositoryImpl
 import dev.rustybite.rustygram.util.BASE_URL
 import dev.rustybite.rustygram.util.ResourceProvider
@@ -33,11 +35,17 @@ object RustyGramModule {
 
     @Provides
     @Singleton
-    fun provideRepository(service: RustyGramService, retrofit: Retrofit, resources: ResourceProvider): UserManagementRepository =
+    fun provideRegistrationRepository(service: RustyGramService, retrofit: Retrofit, resources: ResourceProvider): UserManagementRepository =
         UserManagementRepositoryImpl(service, retrofit, resources)
 
     @Provides
     @Singleton
-    fun provideResourceProvider(@ApplicationContext context: Context): ResourceProvider = ResourceProvider(context.resources)
+    fun provideResourceProvider(@ApplicationContext context: Context): ResourceProvider =
+        ResourceProvider(context.resources)
+
+    @Provides
+    @Singleton
+    fun providesLoginRepository(service: RustyGramService, retrofit: Retrofit, resources: ResourceProvider): LoginRepository =
+        LoginRepositoryImpl(service, retrofit, resources)
 
 }

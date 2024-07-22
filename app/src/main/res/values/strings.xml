@@ -27,5 +27,8 @@
     <string name="submit_button">Submit</string>
     <string name="verify_otp_success">Email verified.</string>
     <string name="logout_success">Logout successfully</string>
+    <string name="login">Login</string>
+    <string name="forgot_password">Forgot password</string>
+    <string name="create_new_account">Create new account</string>
 
 </resources>
