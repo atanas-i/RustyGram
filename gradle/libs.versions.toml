@@ -16,6 +16,7 @@ navigation = "2.8.0-beta04"
 hiltNavigation = "1.2.0"
 uiTextGoogleFonts = "1.6.8"
 serialization = "1.6.3"
+datastore = "1.1.1"
 
 
 [libraries]
@@ -41,7 +42,7 @@ hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation-compose", v
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt"}
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization"}
-
+datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 
 [plugins]
