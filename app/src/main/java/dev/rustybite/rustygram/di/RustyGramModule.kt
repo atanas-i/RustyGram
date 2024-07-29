@@ -6,9 +6,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.remote.RustyGramService
 import dev.rustybite.rustygram.data.repository.LoginRepository
 import dev.rustybite.rustygram.data.repository.UserManagementRepository
+import dev.rustybite.rustygram.domain.local.SessionManagerImpl
 import dev.rustybite.rustygram.domain.repository.LoginRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.UserManagementRepositoryImpl
 import dev.rustybite.rustygram.util.BASE_URL
@@ -47,5 +49,10 @@ object RustyGramModule {
     @Singleton
     fun providesLoginRepository(service: RustyGramService, retrofit: Retrofit, resources: ResourceProvider): LoginRepository =
         LoginRepositoryImpl(service, retrofit, resources)
+
+    @Provides
+    @Singleton
+    fun provideSessionManager(@ApplicationContext context: Context): SessionManager =
+        SessionManagerImpl(context)
 
 }

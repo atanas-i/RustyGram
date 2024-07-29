@@ -1,19 +1,24 @@
 package dev.rustybite.rustygram.domain.repository
 
+import android.util.Log
 import com.google.gson.JsonObject
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.dtos.auth.toUser
+import dev.rustybite.rustygram.data.dtos.auth.toVerifiedUser
 import dev.rustybite.rustygram.data.dtos.util.ApiErrorDto
 import dev.rustybite.rustygram.data.dtos.util.toApiError
 import dev.rustybite.rustygram.data.remote.RustyGramService
 import dev.rustybite.rustygram.data.repository.UserManagementRepository
 import dev.rustybite.rustygram.domain.models.RustyResponse
 import dev.rustybite.rustygram.domain.models.User
+import dev.rustybite.rustygram.domain.models.VerifiedUser
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyResult
+import dev.rustybite.rustygram.util.TAG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Retrofit
+import java.io.IOException
 import javax.inject.Inject
 
 /**
@@ -88,27 +93,31 @@ class UserManagementRepositoryImpl @Inject constructor(
      * @param [body] Json body that carries the type (Email/Phone), email address and OTP code sent to the user.
      * @return [Flow<RustyResult<User>>] indicating success or failure of the OTP verification operation.
      */
-    override suspend fun verifyOtp(body: JsonObject): Flow<RustyResult<RustyResponse>> = flow {
-        emit(RustyResult.Loading())
-        val response = service.verifyOtp(body)
-        if (response.isSuccessful) {
-            response.body()?.let { _ ->
-                val result = RustyResponse(
-                    success = true,
-                    message = resources.getString(R.string.verify_otp_success)
-                )
-                emit(RustyResult.Success(result))
-            }
-        } else {
-            val errorBody = response.errorBody()
-            if (errorBody != null) {
-                val error = converter.convert(errorBody)?.toApiError()
-                if (error != null) {
-                    emit(RustyResult.Failure(error.message))
-                } else {
-                    emit(RustyResult.Failure(resources.getString(R.string.unknown_error)))
+    override suspend fun verifyOtp(body: JsonObject): Flow<RustyResult<VerifiedUser>> = flow {
+
+        try {
+            emit(RustyResult.Loading())
+            val response = service.verifyOtp(body)
+            if (response.isSuccessful) {
+                response.body()?.let { verifiedUserDto ->
+                    emit(RustyResult.Success(verifiedUserDto.toVerifiedUser()))
+                }
+            } else {
+                val errorBody = response.errorBody()
+                if (errorBody != null) {
+                    val error = converter.convert(errorBody)?.toApiError()
+                    if (error != null) {
+                        emit(RustyResult.Failure(error.message))
+                    } else {
+                        emit(RustyResult.Failure(resources.getString(R.string.unknown_error)))
+                    }
                 }
             }
+        } catch (e: IOException) {
+            emit(RustyResult.Failure(e.localizedMessage))
+        } catch (e: Exception) {
+            emit(RustyResult.Failure(e.localizedMessage))
         }
+        //Log.d(TAG, "REPO verifyOtp: Debug response ${data.body()}")
     }
 }

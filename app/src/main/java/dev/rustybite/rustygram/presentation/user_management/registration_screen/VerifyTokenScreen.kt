@@ -40,6 +40,7 @@ fun VerifyTokenScreen(
             onTokenChange = viewModel::onTokenChange,
             onSubmitToken = {
                 viewModel.verifyOtp(
+                    type = "email",
                     email = uiState.email,
                     token = uiState.token
                 )

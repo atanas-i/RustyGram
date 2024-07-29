@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.rustybite.rustygram.R
+import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.repository.UserManagementRepository
 import dev.rustybite.rustygram.presentation.ui.navigation.RustyRoutes
 import dev.rustybite.rustygram.util.ResourceProvider
@@ -23,7 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class UserManagementViewModel @Inject constructor(
     private val registrationRepository: UserManagementRepository,
-    private val resources: ResourceProvider
+    private val resources: ResourceProvider,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(RegistrationUiState())
     val uiState = _uiState.asStateFlow()
@@ -31,7 +33,6 @@ class UserManagementViewModel @Inject constructor(
     val event = _event.receiveAsFlow()
 
     fun registerUser(email: String, password: String) {
-        Log.d(TAG, "registerUser: Received email is $email")
         val body = JsonObject()
         body.addProperty("email", email)
         body.addProperty("password", password)
@@ -41,7 +42,6 @@ class UserManagementViewModel @Inject constructor(
                 when (result) {
                     is RustyResult.Success -> {
                         val user = result.data
-                        Log.d(TAG, "registerUser: Returned user is $user")
                         _uiState.value = _uiState.value.copy(
                             loading = false,
                             email = user.email
@@ -100,7 +100,7 @@ class UserManagementViewModel @Inject constructor(
     }
 
     fun verifyOtp(
-        type: String = "email",
+        type: String,
         email: String,
         token: String
     ) {
@@ -113,11 +113,22 @@ class UserManagementViewModel @Inject constructor(
             registrationRepository.verifyOtp(body).collectLatest { result ->
                 when(result) {
                     is RustyResult.Success -> {
-                        _event.send(RustyEvents.Navigate(RustyRoutes.CreateProfile))
-                        _event.send(RustyEvents.ShowSnackBar(result.data.message))
+                        val verifiedUser = result.data
+                        sessionManager.saveAccessToken(verifiedUser.accessToken)
+                        sessionManager.saveRefreshToken(verifiedUser.refreshToken)
+                        sessionManager.saveExpiresAt(verifiedUser.expiresAt)
+                        Log.d(TAG, "verifyOtp: Access token ${verifiedUser.accessToken}")
+                        Log.d(TAG, "verifyOtp: Refresh token ${verifiedUser.refreshToken}")
+                        if (sessionManager.isAccessTokenExpired(verifiedUser.accessToken, verifiedUser.expiresAt)) {
+                            Log.d(TAG, "verifyOtp: The token has expired")
+                        } else {
+                            Log.d(TAG, "verifyOtp: The token is Active")
+                        }
+                        Log.d(TAG, "verifyOtp: Verified user is $verifiedUser")
                         _uiState.value = _uiState.value.copy(
                             loading = false
                         )
+                        _event.send(RustyEvents.Navigate(RustyRoutes.CreateProfile))
                     }
                     is RustyResult.Failure -> {
                         _uiState.value = _uiState.value.copy(

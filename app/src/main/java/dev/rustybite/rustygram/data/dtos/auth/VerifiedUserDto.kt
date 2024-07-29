@@ -1,21 +1,32 @@
 package dev.rustybite.rustygram.data.dtos.auth
 
 
+import com.google.gson.annotations.SerializedName
+import dev.rustybite.rustygram.domain.models.VerifiedUser
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Serializable
+//@Serializable
 data class VerifiedUserDto(
-    @SerialName("access_token")
+    @SerializedName("access_token")
     val accessToken: String,
-    @SerialName("expires_at")
-    val expiresAt: Int,
-    @SerialName("expires_in")
-    val expiresIn: Int,
-    @SerialName("refresh_token")
+    @SerializedName("expires_at")
+    val expiresAt: Long,
+    @SerializedName("expires_in")
+    val expiresIn: Long,
+    @SerializedName("refresh_token")
     val refreshToken: String,
-    @SerialName("token_type")
+    @SerializedName("token_type")
     val tokenType: String,
-    @SerialName("user")
+    @SerializedName("user")
     val user: UserDto
+)
+
+fun VerifiedUserDto.toVerifiedUser(): VerifiedUser = VerifiedUser(
+    accessToken = accessToken,
+    expiresAt = expiresAt,
+    expiresIn = expiresIn,
+    refreshToken = refreshToken,
+    tokenType = tokenType,
+    user = user.toUser()
 )

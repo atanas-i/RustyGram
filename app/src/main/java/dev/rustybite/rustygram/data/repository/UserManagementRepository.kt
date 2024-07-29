@@ -1,8 +1,10 @@
 package dev.rustybite.rustygram.data.repository
 
 import com.google.gson.JsonObject
+import dev.rustybite.rustygram.data.dtos.auth.VerifiedUserDto
 import dev.rustybite.rustygram.domain.models.RustyResponse
 import dev.rustybite.rustygram.domain.models.User
+import dev.rustybite.rustygram.domain.models.VerifiedUser
 import dev.rustybite.rustygram.util.RustyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -31,5 +33,5 @@ interface UserManagementRepository {
      * @return [Flow<RustyResult<User>>] indicating success or failure of the OTP verification operation.
      */
 
-    suspend fun verifyOtp(body: JsonObject): Flow<RustyResult<RustyResponse>>
+    suspend fun verifyOtp(body: JsonObject): Flow<RustyResult<VerifiedUser>>
 }

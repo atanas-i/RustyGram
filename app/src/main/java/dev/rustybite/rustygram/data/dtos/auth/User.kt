@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class User(
     @SerialName("app_metadata")
-    val appMetadata: AppMetadataX,
+    val appMetadata: AppMetadata,
     @SerialName("aud")
     val aud: String,
     @SerialName("confirmation_sent_at")
@@ -23,7 +23,7 @@ data class User(
     @SerialName("id")
     val id: String,
     @SerialName("identities")
-    val identities: List<IdentityX>,
+    val identities: List<Identity>,
     @SerialName("is_anonymous")
     val isAnonymous: Boolean,
     @SerialName("last_sign_in_at")
@@ -35,5 +35,5 @@ data class User(
     @SerialName("updated_at")
     val updatedAt: String,
     @SerialName("user_metadata")
-    val userMetadata: UserMetadataX
+    val userMetadata: UserMetadata
 )
