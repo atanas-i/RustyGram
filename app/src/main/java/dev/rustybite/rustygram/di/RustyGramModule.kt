@@ -9,9 +9,11 @@ import dagger.hilt.components.SingletonComponent
 import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.remote.RustyGramService
 import dev.rustybite.rustygram.data.repository.LoginRepository
+import dev.rustybite.rustygram.data.repository.TokenManagementRepository
 import dev.rustybite.rustygram.data.repository.UserManagementRepository
 import dev.rustybite.rustygram.domain.local.SessionManagerImpl
 import dev.rustybite.rustygram.domain.repository.LoginRepositoryImpl
+import dev.rustybite.rustygram.domain.repository.TokenManagementRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.UserManagementRepositoryImpl
 import dev.rustybite.rustygram.util.BASE_URL
 import dev.rustybite.rustygram.util.ResourceProvider
@@ -54,5 +56,10 @@ object RustyGramModule {
     @Singleton
     fun provideSessionManager(@ApplicationContext context: Context): SessionManager =
         SessionManagerImpl(context)
+
+    @Provides
+    @Singleton
+    fun providesTokenManagementRepository(service: RustyGramService, retrofit: Retrofit, resources: ResourceProvider): TokenManagementRepository =
+        TokenManagementRepositoryImpl(service, retrofit, resources)
 
 }

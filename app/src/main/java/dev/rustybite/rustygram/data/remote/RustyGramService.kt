@@ -32,7 +32,7 @@ interface RustyGramService {
     ): Response<VerifiedUserDto>
 
     @POST("/auth/v1/logout")
-    @Headers("apiKey: $API_KEY", "Content-Type: application/json", "Authorization: Bearer {access_token}")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
     suspend fun logout(
         @Header("Authorization") token: String
     ): Response<RustyResponse>
@@ -42,5 +42,11 @@ interface RustyGramService {
     suspend fun login(
         @Body body: JsonObject
     ): Response<UserDto>
+
+    @POST("/auth/v1/token?grant_type=refresh_token")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun refreshToken(
+        @Body body: JsonObject
+    ): Response<VerifiedUserDto>
 
 }

@@ -57,11 +57,11 @@ class SessionManagerImpl @Inject constructor(
             preferences[expiresAtKey]
         }
 
-    override fun isAccessTokenExpired(accessToken: String, expiresAt: Long): Boolean {
-        if (accessToken.isBlank()) {
+    override fun isAccessTokenExpired(accessToken: String?, expiresAt: Long?): Boolean {
+        if (accessToken.isNullOrEmpty()) {
             return true
         }
         val currentTime = System.currentTimeMillis()
-        return currentTime < expiresAt
+        return currentTime < expiresAt!!
     }
 }

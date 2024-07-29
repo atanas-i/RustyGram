@@ -9,5 +9,5 @@ interface SessionManager {
     val refreshToken: Flow<String?>
     suspend fun saveExpiresAt(expiresAt: Long)
     val expiresAt: Flow<Long?>
-    fun isAccessTokenExpired(accessToken: String, expiresAt: Long): Boolean
+    fun isAccessTokenExpired(accessToken: String?, expiresAt: Long?): Boolean
 }
