@@ -1,6 +1,7 @@
 package dev.rustybite.rustygram.data.dtos.auth
 
 
+import com.google.gson.annotations.SerializedName
 import dev.rustybite.rustygram.domain.models.User
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -8,40 +9,40 @@ import java.time.LocalDateTime
 
 @Serializable
 data class UserDto(
-    @SerialName("app_metadata")
-    val appMetadata: AppMetadata?,
-    @SerialName("aud")
+    @SerializedName("app_metadata")
+    val appMetadata: AppMetadata,
+    @SerializedName("aud")
     val aud: String,
-    @SerialName("confirmation_sent_at")
-    val confirmationSentAt: String?,
-    @SerialName("created_at")
-    val createdAt: String?,
-    @SerialName("email")
+    @SerializedName("confirmation_sent_at")
+    val confirmationSentAt: String,
+    @SerializedName("created_at")
+    val createdAt: String,
+    @SerializedName("email")
     val email: String,
-    @SerialName("id")
+    @SerializedName("id")
     val id: String,
-    @SerialName("identities")
+    @SerializedName("identities")
     val identities: List<Identity>,
-    @SerialName("is_anonymous")
+    @SerializedName("is_anonymous")
     val isAnonymous: Boolean,
-    @SerialName("phone")
+    @SerializedName("phone")
     val phone: String,
-    @SerialName("role")
+    @SerializedName("role")
     val role: String,
-    @SerialName("updated_at")
-    val updatedAt: String?,
-    @SerialName("user_metadata")
-    val userMetadata: UserMetadata?
+    @SerializedName("updated_at")
+    val updatedAt: String,
+    @SerializedName("user_metadata")
+    val userMetadata: UserMetadata
 )
 
 fun UserDto.toUser(): User = User(
     userId = id,
-    confirmationSentAt = confirmationSentAt ?: "",
+    confirmationSentAt = confirmationSentAt,
     email = email,
     isAnonymous = isAnonymous,
     phone = phone,
     role = role,
-    createdAt = createdAt ?: LocalDateTime.now().toString(),
-    updatedAt = updatedAt ?: LocalDateTime.now().toString(),
-    isEmailVerified = userMetadata?.emailVerified ?: false
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    isEmailVerified = userMetadata.emailVerified
 )
