@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,8 +34,10 @@ fun RustyTextField(
     enabled: Boolean = true,
     isError: Boolean = false,
     trailingIcon: @Composable (() -> Unit)? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     backgroundColor: Color = Color.Transparent,
-    contentColor: Color = MaterialTheme.colorScheme.onBackground
+    contentColor: Color = MaterialTheme.colorScheme.onBackground,
 ) {
     val colors = TextFieldDefaults.colors(
         focusedContainerColor = backgroundColor,
@@ -59,6 +63,8 @@ fun RustyTextField(
         label = { Text(text = label) },
         placeholder = { Text(text = placeholder) },
         trailingIcon = trailingIcon,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
         singleLine = true,
         enabled = enabled,
         isError = isError
