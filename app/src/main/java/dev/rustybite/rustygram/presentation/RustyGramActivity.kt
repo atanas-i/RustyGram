@@ -17,6 +17,8 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,6 +43,7 @@ class RustyGramActivity : ComponentActivity() {
             val navHostController = rememberNavController()
             val snackBarHostState = remember { SnackbarHostState() }
             val sheetState = rememberModalBottomSheetState()
+            val focusManager = LocalFocusManager.current
             RustyGramTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     RustyGramNavHost(
@@ -48,6 +51,7 @@ class RustyGramActivity : ComponentActivity() {
                         snackBarHostState = snackBarHostState,
                         sheetState = sheetState,
                         bottomNavItems = bottomNavItems,
+                        focusManager = focusManager,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }

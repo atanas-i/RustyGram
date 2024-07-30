@@ -171,5 +171,11 @@ class UserManagementViewModel @Inject constructor(
         }
     }
 
+    fun onShowPasswordClicked() {
+        _uiState.value = _uiState.value.copy(
+            isPasswordVisible = !_uiState.value.isPasswordVisible
+        )
+    }
+
 
 }
