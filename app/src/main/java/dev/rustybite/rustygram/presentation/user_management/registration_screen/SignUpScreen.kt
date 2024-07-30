@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import dev.rustybite.rustygram.util.RustyEvents
 import kotlinx.coroutines.flow.collectLatest
 
@@ -19,6 +20,7 @@ fun SignUpScreen(
     onNavigate: (RustyEvents.Navigate) -> Unit,
     popBackStack: (RustyEvents) -> Unit,
     viewModel: UserManagementViewModel,
+    focusManager: FocusManager,
     modifier: Modifier = Modifier,
     // = hiltViewModel(),
 ) {
@@ -50,6 +52,8 @@ fun SignUpScreen(
                 signUp = { viewModel.registerUser(uiState.email, uiState.password) },
                 onHaveAccountClicked = viewModel::onHaveAccountClicked,
                 onSignUpWithPhone = viewModel::onSignUpWithPhone,
+                onShowPasswordClicked = { viewModel.onShowPasswordClicked() },
+                focusManager = focusManager
             )
         }
     }

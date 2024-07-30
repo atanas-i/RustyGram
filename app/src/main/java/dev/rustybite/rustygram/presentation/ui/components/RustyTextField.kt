@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -17,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.rustybite.rustygram.R
@@ -32,8 +35,11 @@ fun RustyTextField(
     enabled: Boolean = true,
     isError: Boolean = false,
     trailingIcon: @Composable (() -> Unit)? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     backgroundColor: Color = Color.Transparent,
-    contentColor: Color = MaterialTheme.colorScheme.onBackground
+    contentColor: Color = MaterialTheme.colorScheme.onBackground,
 ) {
     val colors = TextFieldDefaults.colors(
         focusedContainerColor = backgroundColor,
@@ -59,6 +65,9 @@ fun RustyTextField(
         label = { Text(text = label) },
         placeholder = { Text(text = placeholder) },
         trailingIcon = trailingIcon,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        visualTransformation = visualTransformation,
         singleLine = true,
         enabled = enabled,
         isError = isError

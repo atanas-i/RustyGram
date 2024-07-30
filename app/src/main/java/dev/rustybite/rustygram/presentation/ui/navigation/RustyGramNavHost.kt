@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,6 +38,7 @@ fun RustyGramNavHost(
     snackBarHostState: SnackbarHostState,
     sheetState: SheetState,
     bottomNavItems: List<BottomNavScreen>,
+    focusManager: FocusManager,
     modifier: Modifier = Modifier,
     viewModel: UserManagementViewModel = hiltViewModel()
 ) {
@@ -70,6 +72,7 @@ fun RustyGramNavHost(
                     snackBarHostState = snackBarHostState,
                     onNavigate = { event -> navHostController.navigate(event.route) },
                     popBackStack = { navHostController.popBackStack() },
+                    focusManager = focusManager,
                     viewModel = viewModel,
                 )
             }
@@ -79,7 +82,7 @@ fun RustyGramNavHost(
                     viewModel = viewModel,
                     onNavigate = { navHostController.navigate(it.route) },
                     onPopBack = { navHostController.popBackStack() },
-
+                    focusManager = focusManager
                 )
             }
             composable<RustyRoutes.CreateProfile> { 

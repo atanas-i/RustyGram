@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import dev.rustybite.rustygram.util.RustyEvents
 import kotlinx.coroutines.flow.collectLatest
 
@@ -17,6 +18,7 @@ fun VerifyTokenScreen(
     onNavigate: (RustyEvents.Navigate) -> Unit,
     onPopBack: (RustyEvents.PopBackStack) -> Unit,
     viewModel: UserManagementViewModel,
+    focusManager: FocusManager,
     modifier: Modifier = Modifier
 ) {
     val uiState = viewModel.uiState.collectAsState().value
@@ -51,6 +53,7 @@ fun VerifyTokenScreen(
             onResendToken = {
                 viewModel.requestOtp(email = uiState.email)
             },
+            focusManager = focusManager,
             modifier = modifier
                 .consumeWindowInsets(paddingValues)
         )
