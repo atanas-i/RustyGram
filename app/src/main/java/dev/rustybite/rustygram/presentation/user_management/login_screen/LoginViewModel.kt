@@ -8,7 +8,7 @@ import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.repository.LoginRepository
 import dev.rustybite.rustygram.data.repository.TokenManagementRepository
-import dev.rustybite.rustygram.presentation.ui.navigation.RustyRoutes
+import dev.rustybite.rustygram.presentation.ui.navigation.OnBoardingRoutes
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyEvents
 import dev.rustybite.rustygram.util.RustyResult
@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -55,7 +54,8 @@ class LoginViewModel @Inject constructor(
             loginRepository.login(body).collectLatest { result ->
                 when (result) {
                     is RustyResult.Success -> {
-                        _event.send(RustyEvents.Navigate(RustyRoutes.CreateProfile))
+                        sessionManager.saveIsUserSignedIn(true)
+                        _event.send(RustyEvents.Navigate(OnBoardingRoutes.CreateProfile))
                         _uiState.value = _uiState.value.copy(
                             loading = false
                         )
@@ -96,7 +96,8 @@ class LoginViewModel @Inject constructor(
                         sessionManager.saveAccessToken("")
                         sessionManager.saveRefreshToken("")
                         sessionManager.saveExpiresAt(0L)
-                        _event.send(RustyEvents.Navigate(RustyRoutes.Login))
+                        sessionManager.saveIsUserSignedIn(false)
+                        _event.send(RustyEvents.Navigate(OnBoardingRoutes.Login))
                         _event.send(RustyEvents.ShowSnackBar(result.data.message))
                     }
 
@@ -172,7 +173,7 @@ class LoginViewModel @Inject constructor(
 
     fun onSignUpClicked() {
         viewModelScope.launch {
-            _event.send(RustyEvents.Navigate(RustyRoutes.Registration))
+            _event.send(RustyEvents.Navigate(OnBoardingRoutes.Registration))
         }
     }
 
@@ -188,7 +189,7 @@ class LoginViewModel @Inject constructor(
 
     fun forgotPassword() {
         viewModelScope.launch {
-            _event.send(RustyEvents.Navigate(RustyRoutes.ChangePassword))
+            _event.send(RustyEvents.Navigate(OnBoardingRoutes.ChangePassword))
 
         }
     }

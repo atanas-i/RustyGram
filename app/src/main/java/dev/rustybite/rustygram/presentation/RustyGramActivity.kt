@@ -16,41 +16,40 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.presentation.ui.navigation.BottomNavScreen
 import dev.rustybite.rustygram.presentation.ui.navigation.RustyGramNavHost
 import dev.rustybite.rustygram.presentation.ui.theme.RustyGramTheme
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RustyGramActivity : ComponentActivity() {
+    @Inject
+    lateinit var sessionManager: SessionManager
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
        enableEdgeToEdge()
         setContent {
-            val bottomNavItems = listOf(
-                BottomNavScreen.Home,
-                BottomNavScreen.Search,
-                BottomNavScreen.AddPost,
-                BottomNavScreen.Reels,
-                BottomNavScreen.Profile
-            )
             val navHostController = rememberNavController()
             val snackBarHostState = remember { SnackbarHostState() }
             val sheetState = rememberModalBottomSheetState()
             val focusManager = LocalFocusManager.current
+
             RustyGramTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     RustyGramNavHost(
                         navHostController = navHostController,
                         snackBarHostState = snackBarHostState,
                         sheetState = sheetState,
-                        bottomNavItems = bottomNavItems,
+                        sessionManager = sessionManager,
                         focusManager = focusManager,
                         modifier = Modifier.padding(innerPadding)
                     )

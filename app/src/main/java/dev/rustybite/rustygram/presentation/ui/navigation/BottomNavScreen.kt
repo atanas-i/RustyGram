@@ -3,15 +3,28 @@ package dev.rustybite.rustygram.presentation.ui.navigation
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import dev.rustybite.rustygram.R
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonClassDiscriminator
 
-sealed class BottomNavScreen(val route: String, @StringRes val resourceId: Int, @DrawableRes val iconId: Int) {
-    data object Home : BottomNavScreen(route = "home", resourceId = R.string.home_screen, iconId = R.drawable.home_outlined_icon)
-    data object Search : BottomNavScreen(route = "search", resourceId = R.string.search_screen, iconId = R.drawable.search_icon)
-    data object AddPost : BottomNavScreen(route = "add_post", resourceId = R.string.add_screen, iconId = R.drawable.add_outline_icon)
-    data object Reels : BottomNavScreen(route = "reels", resourceId = R.string.reels_screen, iconId = R.drawable.reel_outline_icon)
-    data object Profile : BottomNavScreen(route = "profile", resourceId = R.string.profile_screen, iconId = R.drawable.profile_outlined_icon)
+sealed class BottomNavScreen {
+    @Serializable
+    data object HomeGraph : BottomNavScreen()
+    @Serializable
+    data object Home : BottomNavScreen()
+    @Serializable
+    data object Search : BottomNavScreen()
+    @Serializable
+    data object AddPost : BottomNavScreen()
+    @Serializable
+    data object Reels : BottomNavScreen()
+    @Serializable
+    data object Profile : BottomNavScreen()
+}
+
+
+enum class BottomNav(@StringRes val title: Int, @DrawableRes val icon: Int, val route: BottomNavScreen) {
+    Home(R.string.home_screen, R.drawable.home_outlined_icon, BottomNavScreen.Home),
+    Search(R.string.search_screen, R.drawable.search_icon, BottomNavScreen.Search),
+    AddPost(R.string.add_screen, R.drawable.add_outline_icon, BottomNavScreen.AddPost),
+    Reels(R.string.reels_screen, R.drawable.reel_outline_icon, BottomNavScreen.Reels),
+    Profile(R.string.profile_screen, R.drawable.profile_outlined_icon, BottomNavScreen.Profile)
 }
