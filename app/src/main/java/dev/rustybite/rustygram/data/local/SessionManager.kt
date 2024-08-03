@@ -9,5 +9,9 @@ interface SessionManager {
     val refreshToken: Flow<String?>
     suspend fun saveExpiresAt(expiresAt: Long)
     val expiresAt: Flow<Long?>
+    suspend fun saveIsUserSignedIn(isUsersSignedIn: Boolean)
+    val isUserSignedIn: Flow<Boolean?>
+    suspend fun saveIsUserOnboarded(isUserOnboarded: Boolean)
+    val isUserOnboarded: Flow<Boolean?>
     fun isAccessTokenExpired(accessToken: String?, expiresAt: Long?): Boolean
 }

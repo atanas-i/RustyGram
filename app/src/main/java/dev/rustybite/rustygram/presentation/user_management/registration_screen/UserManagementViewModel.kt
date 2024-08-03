@@ -8,7 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.repository.UserManagementRepository
-import dev.rustybite.rustygram.presentation.ui.navigation.RustyRoutes
+import dev.rustybite.rustygram.presentation.ui.navigation.OnBoardingRoutes
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyEvents
 import dev.rustybite.rustygram.util.RustyResult
@@ -47,13 +47,15 @@ class UserManagementViewModel @Inject constructor(
                             email = user.email
                         )
                         if (user.isEmailVerified) {
-                            _event.send(RustyEvents.Navigate(RustyRoutes.CreateProfile))
+                            sessionManager.saveIsUserSignedIn(true)
+                            _event.send(RustyEvents.Navigate(OnBoardingRoutes.CreateProfile))
                         } else {
                             _uiState.value = _uiState.value.copy(
                                 loading = false,
                                 email = user.email
                             )
-                            _event.send(RustyEvents.Navigate(RustyRoutes.VerifyOtp))
+                            sessionManager.saveIsUserSignedIn(true)
+                            _event.send(RustyEvents.Navigate(OnBoardingRoutes.VerifyOtp))
                         }
                     }
                     is RustyResult.Failure -> {
@@ -128,7 +130,7 @@ class UserManagementViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(
                             loading = false
                         )
-                        _event.send(RustyEvents.Navigate(RustyRoutes.CreateProfile))
+                        _event.send(RustyEvents.Navigate(OnBoardingRoutes.CreateProfile))
                     }
                     is RustyResult.Failure -> {
                         _uiState.value = _uiState.value.copy(
@@ -161,7 +163,7 @@ class UserManagementViewModel @Inject constructor(
 
     fun onHaveAccountClicked() {
         viewModelScope.launch {
-            _event.send(RustyEvents.Navigate(RustyRoutes.Login))
+            _event.send(RustyEvents.Navigate(OnBoardingRoutes.Login))
         }
     }
 
