@@ -17,6 +17,7 @@ hiltNavigation = "1.2.0"
 uiTextGoogleFonts = "1.6.8"
 serialization = "1.6.3"
 datastore = "1.1.1"
+splashScreen = "1.0.0"
 
 
 [libraries]
@@ -44,6 +45,7 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization"}
 datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
+splash-screen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
