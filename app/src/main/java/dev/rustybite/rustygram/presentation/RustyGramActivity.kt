@@ -1,6 +1,8 @@
 package dev.rustybite.rustygram.presentation
 
 import android.os.Bundle
+import android.view.View
+import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,9 +13,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.rustybite.rustygram.data.local.SessionManager
@@ -26,10 +30,18 @@ class RustyGramActivity : ComponentActivity() {
     @Inject
     lateinit var sessionManager: SessionManager
     private val mainViewModel: RustyGramViewModel by viewModels()
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
        enableEdgeToEdge()
+        splashScreen.apply {
+            setKeepOnScreenCondition {
+                mainViewModel.isSplashScreenReleased.value
+                //!mainViewModel.uiState.value.isUserSignedIn && !mainViewModel.uiState.value.isUserOnboarded
+            }
+        }
         setContent {
             val navHostController = rememberNavController()
             val snackBarHostState = remember { SnackbarHostState() }
@@ -49,5 +61,16 @@ class RustyGramActivity : ComponentActivity() {
                 }
             }
         }
+//        val content: View = findViewById(android.R.id.content)
+//        content.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+//            override fun onPreDraw(): Boolean {
+//                if (!mainViewModel.uiState.value.isUserSignedIn && !mainViewModel.uiState.value.isUserOnboarded) {
+//                    content.viewTreeObserver.removeOnPreDrawListener(this)
+//                    return true
+//                } else {
+//                    return false
+//                }
+//            }
+//        })
     }
 }

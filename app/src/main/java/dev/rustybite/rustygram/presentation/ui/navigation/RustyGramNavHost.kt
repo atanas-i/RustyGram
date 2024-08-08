@@ -32,22 +32,26 @@ fun RustyGramNavHost(
     viewModel: UserManagementViewModel = hiltViewModel()
 ) {
     val uiState = mainViewModel.uiState.collectAsState().value
-    val startDestination by remember(uiState) {
+    val startDestination by remember(uiState.isUserSignedIn, uiState.isUserOnboarded) {
         derivedStateOf {
-            if (uiState.isUserSignedIn && uiState.isUserOnboarded) {
-                BottomNavScreen.HomeGraph
-            } else {
-                OnBoardingRoutes.OnBoardingGraph
+            when {
+                uiState.isUserSignedIn && uiState.isUserOnboarded -> BottomNavScreen.HomeGraph
+                else -> OnBoardingRoutes.OnBoardingGraph
+            }
+        }
+    }
+    val shouldShowBottomNav by remember(startDestination) {
+        derivedStateOf {
+            when {
+                startDestination is BottomNavScreen.HomeGraph -> true
+                else -> false
             }
         }
     }
 
-    LaunchedEffect(mainViewModel) {
-        mainViewModel.initialize()
-    }
     Scaffold(
         bottomBar = {
-            if (uiState.isUserSignedIn && uiState.isUserOnboarded) {
+            if (shouldShowBottomNav) {
                 RustyBottomBar(
                     navHostController = navHostController
                 )
