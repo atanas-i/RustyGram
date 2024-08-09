@@ -29,7 +29,7 @@ interface RustyGramService {
     @Headers("apiKey: $API_KEY", "Content-Type: application/json")
     suspend fun login(
         @Body body: JsonObject
-    ): Response<UserDto>
+    ): Response<VerifiedUserDto>
 
     @POST("/auth/v1/token?grant_type=refresh_token")
     @Headers("apiKey: $API_KEY", "Content-Type: application/json")

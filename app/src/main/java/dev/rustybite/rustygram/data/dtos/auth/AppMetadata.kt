@@ -1,13 +1,11 @@
 package dev.rustybite.rustygram.data.dtos.auth
 
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class AppMetadata(
-    @SerialName("provider")
+    @SerializedName("provider")
     val provider: String,
-    @SerialName("providers")
+    @SerializedName("providers")
     val providers: List<String>
 )

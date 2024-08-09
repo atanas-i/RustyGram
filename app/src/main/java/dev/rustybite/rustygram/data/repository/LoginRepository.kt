@@ -1,8 +1,10 @@
 package dev.rustybite.rustygram.data.repository
 
 import com.google.gson.JsonObject
+import dev.rustybite.rustygram.data.dtos.auth.VerifiedUserDto
 import dev.rustybite.rustygram.domain.models.RustyResponse
 import dev.rustybite.rustygram.domain.models.User
+import dev.rustybite.rustygram.domain.models.VerifiedUser
 import dev.rustybite.rustygram.util.RustyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -12,7 +14,7 @@ interface LoginRepository {
      * @param [body] Json body that carries email and password of the user.
      * @return [Flow<RustyResult<User>>] Indicating success or failure of the login operation.
      */
-    suspend fun login(body: JsonObject): Flow<RustyResult<User>>
+    suspend fun login(body: JsonObject): Flow<RustyResult<VerifiedUser>>
 
     /**
      * Logout user.

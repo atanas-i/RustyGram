@@ -1,27 +1,25 @@
 package dev.rustybite.rustygram.data.dtos.auth
 
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class Identity(
-    @SerialName("created_at")
+    @SerializedName("created_at")
     val createdAt: String,
-    @SerialName("email")
+    @SerializedName("email")
     val email: String,
-    @SerialName("id")
+    @SerializedName("id")
     val id: String,
-    @SerialName("identity_data")
+    @SerializedName("identity_data")
     val identityData: IdentityData,
-    @SerialName("identity_id")
+    @SerializedName("identity_id")
     val identityId: String,
-    @SerialName("last_sign_in_at")
+    @SerializedName("last_sign_in_at")
     val lastSignInAt: String,
-    @SerialName("provider")
+    @SerializedName("provider")
     val provider: String,
-    @SerialName("updated_at")
+    @SerializedName("updated_at")
     val updatedAt: String,
-    @SerialName("user_id")
+    @SerializedName("user_id")
     val userId: String
 )
