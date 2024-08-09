@@ -3,10 +3,7 @@ package dev.rustybite.rustygram.data.dtos.auth
 
 import com.google.gson.annotations.SerializedName
 import dev.rustybite.rustygram.domain.models.VerifiedUser
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 
-//@Serializable
 data class VerifiedUserDto(
     @SerializedName("access_token")
     val accessToken: String,

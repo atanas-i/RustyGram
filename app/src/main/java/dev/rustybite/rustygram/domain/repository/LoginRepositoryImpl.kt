@@ -3,13 +3,15 @@ package dev.rustybite.rustygram.domain.repository
 import com.google.gson.JsonObject
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.dtos.auth.toUser
+import dev.rustybite.rustygram.data.dtos.auth.toVerifiedUser
 import dev.rustybite.rustygram.data.dtos.util.ApiErrorDto
 import dev.rustybite.rustygram.data.dtos.util.toApiError
 import dev.rustybite.rustygram.data.remote.RustyGramService
 import dev.rustybite.rustygram.data.repository.LoginRepository
-import dev.rustybite.rustygram.data.repository.UserManagementRepository
+import dev.rustybite.rustygram.data.repository.UserRegistrationRepository
 import dev.rustybite.rustygram.domain.models.RustyResponse
 import dev.rustybite.rustygram.domain.models.User
+import dev.rustybite.rustygram.domain.models.VerifiedUser
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyResult
 import kotlinx.coroutines.flow.Flow
@@ -29,16 +31,16 @@ class LoginRepositoryImpl @Inject constructor(
     )
 
     /**
-     * Implementation of [UserManagementRepository.login].
+     * Implementation of [UserRegistrationRepository.login].
      * @param [body] Json body that carries email and password of the user.
      * @return [Flow<RustyResult<User>>] Indicating success or failure of the login operation.
      */
-    override suspend fun login(body: JsonObject): Flow<RustyResult<User>> = flow {
+    override suspend fun login(body: JsonObject): Flow<RustyResult<VerifiedUser>> = flow {
         emit(RustyResult.Loading())
         val response = service.registerUser(body)
         if (response.isSuccessful) {
             response.body()?.let { userDto ->
-                emit(RustyResult.Success(userDto.toUser()))
+                emit(RustyResult.Success(userDto.toVerifiedUser()))
             }
         } else {
             val errorBody = response.errorBody()
@@ -56,7 +58,7 @@ class LoginRepositoryImpl @Inject constructor(
     }
 
     /**
-     * Implementation of [UserManagementRepository.logout].
+     * Implementation of [UserRegistrationRepository.logout].
      * @return [Flow<RustyResult<RustyResponse>>]
      */
     override suspend fun logout(token: String): Flow<RustyResult<RustyResponse>>  = flow {

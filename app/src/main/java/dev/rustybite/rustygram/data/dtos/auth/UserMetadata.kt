@@ -1,17 +1,15 @@
 package dev.rustybite.rustygram.data.dtos.auth
 
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class UserMetadata(
-    @SerialName("email")
+    @SerializedName("email")
     val email: String,
-    @SerialName("email_verified")
+    @SerializedName("email_verified")
     val emailVerified: Boolean,
-    @SerialName("phone_verified")
+    @SerializedName("phone_verified")
     val phoneVerified: Boolean,
-    @SerialName("sub")
+    @SerializedName("sub")
     val sub: String
 )

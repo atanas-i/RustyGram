@@ -55,6 +55,9 @@ class LoginViewModel @Inject constructor(
                 when (result) {
                     is RustyResult.Success -> {
                         sessionManager.saveIsUserSignedIn(true)
+                        sessionManager.saveAccessToken(result.data.accessToken)
+                        sessionManager.saveRefreshToken(result.data.refreshToken)
+                        sessionManager.saveExpiresAt(result.data.expiresAt)
                         _event.send(RustyEvents.Navigate(OnBoardingRoutes.CreateProfile))
                         _uiState.value = _uiState.value.copy(
                             loading = false

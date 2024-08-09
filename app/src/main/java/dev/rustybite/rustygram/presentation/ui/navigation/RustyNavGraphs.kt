@@ -11,8 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import dev.rustybite.rustygram.presentation.user_management.login_screen.LoginScreen
 import dev.rustybite.rustygram.presentation.user_management.registration_screen.SignUpScreen
-import dev.rustybite.rustygram.presentation.user_management.registration_screen.UserManagementViewModel
-import dev.rustybite.rustygram.presentation.user_management.registration_screen.VerifyTokenScreen
+import dev.rustybite.rustygram.presentation.user_management.registration_screen.UserRegistrationViewModel
 
 fun NavGraphBuilder.homeNavGraph(navHostController: NavHostController) {
     navigation<BottomNavScreen.HomeGraph>(startDestination = BottomNavScreen.Home) {
@@ -31,7 +30,7 @@ fun NavGraphBuilder.onBoardingGraph(
     snackBarHostState: SnackbarHostState,
     sheetState: SheetState,
     focusManager: FocusManager,
-    viewModel: UserManagementViewModel
+    viewModel: UserRegistrationViewModel
 ) {
     navigation<OnBoardingRoutes.OnBoardingGraph>(OnBoardingRoutes.Login) {
         composable<OnBoardingRoutes.Registration> {
@@ -41,15 +40,6 @@ fun NavGraphBuilder.onBoardingGraph(
                 popBackStack = { navHostController.popBackStack() },
                 focusManager = focusManager,
                 viewModel = viewModel,
-            )
-        }
-        composable<OnBoardingRoutes.VerifyOtp> {
-            VerifyTokenScreen(
-                snackBarHostState = snackBarHostState,
-                viewModel = viewModel,
-                onNavigate = { navHostController.navigate(it.route) },
-                onPopBack = { navHostController.popBackStack() },
-                focusManager = focusManager
             )
         }
         composable<OnBoardingRoutes.CreateProfile> {
