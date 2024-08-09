@@ -17,7 +17,7 @@ fun VerifyTokenScreen(
     snackBarHostState: SnackbarHostState,
     onNavigate: (RustyEvents.Navigate) -> Unit,
     onPopBack: (RustyEvents.PopBackStack) -> Unit,
-    viewModel: UserManagementViewModel,
+    viewModel: UserRegistrationViewModel,
     focusManager: FocusManager,
     modifier: Modifier = Modifier
 ) {

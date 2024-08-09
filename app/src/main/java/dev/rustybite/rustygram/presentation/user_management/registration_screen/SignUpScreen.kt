@@ -19,7 +19,7 @@ fun SignUpScreen(
     snackBarHostState: SnackbarHostState,
     onNavigate: (RustyEvents.Navigate) -> Unit,
     popBackStack: (RustyEvents) -> Unit,
-    viewModel: UserManagementViewModel,
+    viewModel: UserRegistrationViewModel,
     focusManager: FocusManager,
     modifier: Modifier = Modifier,
     // = hiltViewModel(),

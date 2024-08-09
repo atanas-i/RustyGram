@@ -6,7 +6,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -17,7 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import dev.rustybite.rustygram.presentation.RustyGramViewModel
-import dev.rustybite.rustygram.presentation.user_management.registration_screen.UserManagementViewModel
+import dev.rustybite.rustygram.presentation.user_management.registration_screen.UserRegistrationViewModel
 import dev.rustybite.rustygram.presentation.ui.components.RustyBottomBar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,7 +28,7 @@ fun RustyGramNavHost(
     focusManager: FocusManager,
     mainViewModel: RustyGramViewModel,
     modifier: Modifier = Modifier,
-    viewModel: UserManagementViewModel = hiltViewModel()
+    viewModel: UserRegistrationViewModel = hiltViewModel()
 ) {
     val uiState = mainViewModel.uiState.collectAsState().value
     val startDestination by remember(uiState.isUserSignedIn, uiState.isUserOnboarded) {

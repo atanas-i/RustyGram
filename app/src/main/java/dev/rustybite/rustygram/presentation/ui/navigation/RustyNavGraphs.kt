@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import dev.rustybite.rustygram.presentation.user_management.login_screen.LoginScreen
 import dev.rustybite.rustygram.presentation.user_management.registration_screen.SignUpScreen
-import dev.rustybite.rustygram.presentation.user_management.registration_screen.UserManagementViewModel
+import dev.rustybite.rustygram.presentation.user_management.registration_screen.UserRegistrationViewModel
 import dev.rustybite.rustygram.presentation.user_management.registration_screen.VerifyTokenScreen
 
 fun NavGraphBuilder.homeNavGraph(navHostController: NavHostController) {
@@ -31,7 +31,7 @@ fun NavGraphBuilder.onBoardingGraph(
     snackBarHostState: SnackbarHostState,
     sheetState: SheetState,
     focusManager: FocusManager,
-    viewModel: UserManagementViewModel
+    viewModel: UserRegistrationViewModel
 ) {
     navigation<OnBoardingRoutes.OnBoardingGraph>(OnBoardingRoutes.Login) {
         composable<OnBoardingRoutes.Registration> {

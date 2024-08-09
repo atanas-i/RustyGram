@@ -7,7 +7,7 @@ import dev.rustybite.rustygram.data.dtos.util.ApiErrorDto
 import dev.rustybite.rustygram.data.dtos.util.toApiError
 import dev.rustybite.rustygram.data.remote.RustyGramService
 import dev.rustybite.rustygram.data.repository.LoginRepository
-import dev.rustybite.rustygram.data.repository.UserManagementRepository
+import dev.rustybite.rustygram.data.repository.UserRegistrationRepository
 import dev.rustybite.rustygram.domain.models.RustyResponse
 import dev.rustybite.rustygram.domain.models.User
 import dev.rustybite.rustygram.util.ResourceProvider
@@ -29,7 +29,7 @@ class LoginRepositoryImpl @Inject constructor(
     )
 
     /**
-     * Implementation of [UserManagementRepository.login].
+     * Implementation of [UserRegistrationRepository.login].
      * @param [body] Json body that carries email and password of the user.
      * @return [Flow<RustyResult<User>>] Indicating success or failure of the login operation.
      */
@@ -56,7 +56,7 @@ class LoginRepositoryImpl @Inject constructor(
     }
 
     /**
-     * Implementation of [UserManagementRepository.logout].
+     * Implementation of [UserRegistrationRepository.logout].
      * @return [Flow<RustyResult<RustyResponse>>]
      */
     override suspend fun logout(token: String): Flow<RustyResult<RustyResponse>>  = flow {
