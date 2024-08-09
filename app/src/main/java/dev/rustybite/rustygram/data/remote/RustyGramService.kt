@@ -17,18 +17,6 @@ interface RustyGramService {
     @Headers("apiKey: $API_KEY", "Content-Type: application/json")
     suspend fun registerUser(
         @Body body: JsonObject
-    ): Response<UserDto>
-
-    @POST("/auth/v1/otp")
-    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
-    suspend fun requestOtp(
-        @Body body: JsonObject
-    ): Response<RustyResponse>
-
-    @POST("/auth/v1/verify")
-    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
-    suspend fun verifyOtp(
-        @Body body: JsonObject
     ): Response<VerifiedUserDto>
 
     @POST("/auth/v1/logout")
