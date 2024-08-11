@@ -1,0 +1,52 @@
+package dev.rustybite.rustygram.domain.repository
+
+import com.google.gson.JsonObject
+import dev.rustybite.rustygram.R
+import dev.rustybite.rustygram.data.dtos.util.ApiErrorDto
+import dev.rustybite.rustygram.data.dtos.util.toApiError
+import dev.rustybite.rustygram.data.remote.RustyGramService
+import dev.rustybite.rustygram.data.repository.ProfileRepository
+import dev.rustybite.rustygram.domain.models.RustyApiError
+import dev.rustybite.rustygram.domain.models.RustyResponse
+import dev.rustybite.rustygram.util.ResourceProvider
+import dev.rustybite.rustygram.util.RustyResult
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import retrofit2.Retrofit
+import javax.inject.Inject
+
+class ProfileRepositoryImpl @Inject constructor(
+    private val service: RustyGramService,
+    private val retrofit: Retrofit,
+    private val resProvider: ResourceProvider
+) : ProfileRepository {
+    private val converter = retrofit.responseBodyConverter<ApiErrorDto>(ApiErrorDto::class.java, arrayOfNulls<Annotation>(0))
+    override suspend fun createProfile(
+        token: String,
+        body: JsonObject
+    ): Flow<RustyResult<RustyResponse>> = flow {
+        emit(RustyResult.Loading())
+        val response = service.createProfile(token, body)
+        if (response.isSuccessful) {
+            response.body()?.let {
+                val data = RustyResponse(
+                    success = true,
+                    message = resProvider.getString(R.string.profile_created_successfully)
+                )
+                emit(RustyResult.Success(data))
+            }
+        } else {
+            val errorBody = response.errorBody()
+            if (errorBody != null) {
+                val error = converter.convert(errorBody)?.toApiError()
+                if (error != null) {
+                    emit(RustyResult.Failure(error.message))
+                } else {
+                    emit(RustyResult.Failure(resProvider.getString(R.string.unknown_error)))
+                }
+            } else {
+                emit(RustyResult.Failure(resProvider.getString(R.string.unknown_error)))
+            }
+        }
+    }
+}
