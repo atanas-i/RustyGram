@@ -108,6 +108,10 @@ dependencies {
     //Splash Screen
     implementation(libs.splash.screen)
 
+    //Supabase
+    implementation(platform(libs.supabase.bom))
+    implementation(libs.supabase.storage)
+
     //Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

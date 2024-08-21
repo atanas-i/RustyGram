@@ -37,7 +37,7 @@ interface RustyGramService {
         @Body body: JsonObject
     ): Response<VerifiedUserDto>
 
-    @POST("rest/vi/profiles")
+    @POST("rest/v1/profiles")
     @Headers("apiKey: $API_KEY", "Content-Type: application/json")
     suspend fun createProfile(
         @Header("Authorization") token: String,
