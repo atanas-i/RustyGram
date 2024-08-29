@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import dev.rustybite.rustygram.presentation.user_management.login_screen.LoginScreen
+import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.BirthdayScreen
 import dev.rustybite.rustygram.presentation.user_management.registration_screen.SignUpScreen
 import dev.rustybite.rustygram.presentation.user_management.registration_screen.UserRegistrationViewModel
 
@@ -32,7 +33,7 @@ fun NavGraphBuilder.onBoardingGraph(
     focusManager: FocusManager,
     viewModel: UserRegistrationViewModel
 ) {
-    navigation<OnBoardingRoutes.OnBoardingGraph>(OnBoardingRoutes.Login) {
+    navigation<OnBoardingRoutes.OnBoardingGraph>(OnBoardingRoutes.CreateBirthDate) {
         composable<OnBoardingRoutes.Registration> {
             SignUpScreen(
                 snackBarHostState = snackBarHostState,
@@ -42,8 +43,14 @@ fun NavGraphBuilder.onBoardingGraph(
                 viewModel = viewModel,
             )
         }
-        composable<OnBoardingRoutes.CreateProfile> {
-            Text(text = "Create Profile")
+        composable<OnBoardingRoutes.CreateBirthDate> {
+            BirthdayScreen(
+                onNavigate = { event -> navHostController.navigate(event.route) },
+                onPopBackStack = {navHostController.popBackStack() }
+            )
+        }
+        composable<OnBoardingRoutes.CreateFullName> { 
+            Text(text = "Create Full Name")
         }
         composable<OnBoardingRoutes.Login> {
             LoginScreen(

@@ -19,6 +19,7 @@ serialization = "1.6.3"
 datastore = "1.1.1"
 splashScreen = "1.0.0"
 supabaseVersion = "2.6.0"
+ktorVersion = "2.3.12"
 
 
 [libraries]
@@ -49,6 +50,9 @@ androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text
 splash-screen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen"}
 supabase-bom = { group = "io.github.jan-tennert.supabase", name = "bom", version.ref = "supabaseVersion" }
 supabase-storage = { group = "io.github.jan-tennert.supabase", name = "storage-kt" }
+ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktorVersion" }
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktorVersion" }
+ktor-utils = { group = "io.ktor", name = "ktor-utils", version.ref = "ktorVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

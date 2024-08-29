@@ -32,5 +32,11 @@
     <string name="create_new_account">Create new account</string>
     <string name="show_password_content_description">Show or hide password button</string>
     <string name="profile_created_successfully">Profile created successfully</string>
+    <string name="birth_date_screen_title">What\'s your birthday?</string>
+    <string name="birth_date_screen_subtitle">Use your own birthday, even if this is account is for a business , a pet or anything else. No one will see this unless you choose to share it</string>
+    <string name="birth_date_label">Birthday</string>
+    <string name="date_picker_confirm_button">Ok</string>
+    <string name="date_picker_dismiss_button">Cancel</string>
+    <string name="next">Next</string>
 
 </resources>

@@ -23,6 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.presentation.ui.navigation.RustyGramNavHost
 import dev.rustybite.rustygram.presentation.ui.theme.RustyGramTheme
+import io.github.jan.supabase.SupabaseClient
 import javax.inject.Inject
 
 @AndroidEntryPoint

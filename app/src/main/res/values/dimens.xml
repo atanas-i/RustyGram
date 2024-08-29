@@ -24,4 +24,5 @@
     <dimen name="button_circular_indicator_size">30dp</dimen>
     <dimen name="radio_button_height">40dp</dimen>
     <dimen name="visibility_icon_size">24dp</dimen>
+    <dimen name="top_bar_height">45.dp</dimen>
 </resources>

@@ -112,6 +112,11 @@ dependencies {
     implementation(platform(libs.supabase.bom))
     implementation(libs.supabase.storage)
 
+    //Ktor Client
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.utils)
+
     //Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
