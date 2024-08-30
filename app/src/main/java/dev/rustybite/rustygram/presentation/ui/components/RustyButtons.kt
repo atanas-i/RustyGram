@@ -29,6 +29,7 @@ fun RustyPrimaryButton(
     text: String,
     onClick: () -> Unit,
     loading: Boolean,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = Color.White
@@ -44,6 +45,7 @@ fun RustyPrimaryButton(
         modifier = modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = dimensionResource(id = R.dimen.button_height)),
+        enabled = enabled,
         colors = colors,
     ) {
         if (loading) {

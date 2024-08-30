@@ -3,10 +3,12 @@ package dev.rustybite.rustygram.data.remote
 import com.google.gson.JsonObject
 import dev.rustybite.rustygram.data.dtos.auth.UserDto
 import dev.rustybite.rustygram.data.dtos.auth.VerifiedUserDto
+import dev.rustybite.rustygram.data.dtos.profile.ProfileDto
 import dev.rustybite.rustygram.domain.models.RustyResponse
 import dev.rustybite.rustygram.util.API_KEY
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
@@ -43,5 +45,11 @@ interface RustyGramService {
         @Header("Authorization") token: String,
         @Body body: JsonObject
     ): Response<RustyResponse>
+
+    @GET("rest/v1/profiles")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun getProfiles(
+        @Header("Authorization") token: String
+    ): Response<List<ProfileDto>>
 
 }

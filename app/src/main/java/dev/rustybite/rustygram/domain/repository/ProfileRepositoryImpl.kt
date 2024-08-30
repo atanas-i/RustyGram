@@ -6,8 +6,10 @@ import dev.rustybite.rustygram.data.dtos.util.ApiErrorDto
 import dev.rustybite.rustygram.data.dtos.util.toApiError
 import dev.rustybite.rustygram.data.remote.RustyGramService
 import dev.rustybite.rustygram.data.repository.ProfileRepository
+import dev.rustybite.rustygram.domain.models.Profile
 import dev.rustybite.rustygram.domain.models.RustyApiError
 import dev.rustybite.rustygram.domain.models.RustyResponse
+import dev.rustybite.rustygram.domain.models.toProfile
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyResult
 import kotlinx.coroutines.flow.Flow
@@ -33,6 +35,29 @@ class ProfileRepositoryImpl @Inject constructor(
                     success = true,
                     message = resProvider.getString(R.string.profile_created_successfully)
                 )
+                emit(RustyResult.Success(data))
+            }
+        } else {
+            val errorBody = response.errorBody()
+            if (errorBody != null) {
+                val error = converter.convert(errorBody)?.toApiError()
+                if (error != null) {
+                    emit(RustyResult.Failure(error.message))
+                } else {
+                    emit(RustyResult.Failure(resProvider.getString(R.string.unknown_error)))
+                }
+            } else {
+                emit(RustyResult.Failure(resProvider.getString(R.string.unknown_error)))
+            }
+        }
+    }
+
+    override suspend fun getProfiles(token: String): Flow<RustyResult<List<Profile>>> = flow {
+        emit(RustyResult.Loading())
+        val response = service.getProfiles(token)
+        if (response.isSuccessful) {
+            response.body()?.let { profileDtos ->
+                val data = profileDtos.map { profile -> profile.toProfile() }
                 emit(RustyResult.Success(data))
             }
         } else {

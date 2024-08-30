@@ -3,7 +3,6 @@ package dev.rustybite.rustygram.presentation.user_management.profile.create_prof
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,7 +14,7 @@ import dev.rustybite.rustygram.util.RustyEvents
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun CreateFullNameScreen(
+fun CreateUsernameScreen(
     onNavigate: (RustyEvents.Navigate) -> Unit,
     onPopBackStack: (RustyEvents.PopBackStack) -> Unit,
     focusManager: FocusManager,
@@ -36,16 +35,16 @@ fun CreateFullNameScreen(
         }
     }
 
-    Scaffold() { paddingValues ->
+    Scaffold { paddingValues ->
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .consumeWindowInsets(paddingValues)
         ) {
-            CreateFullNameContent(
+            CreateUsernameContent(
                 uiState = uiState,
-                onFullNameChange = viewModel::onFullNameChange,
-                onNextClicked = viewModel::navigateToUsernameScreen,
+                onUsernameChange = viewModel::onUsernameChange,
+                onNextClicked = { viewModel.navigateToProfilePictureScreen(uiState.username) },
                 onHaveAccountClicked = viewModel::onHaveAccountClicked,
                 focusManager = focusManager
             )

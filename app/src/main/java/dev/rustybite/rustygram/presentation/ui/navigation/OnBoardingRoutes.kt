@@ -13,6 +13,8 @@ sealed class OnBoardingRoutes {
     @Serializable
     data object CreateFullName : OnBoardingRoutes()
     @Serializable
+    data object CreateUsername : OnBoardingRoutes()
+    @Serializable
     data object CreateProfilePicture : OnBoardingRoutes()
     @Serializable
     data object ChangePassword : OnBoardingRoutes()

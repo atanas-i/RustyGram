@@ -41,5 +41,10 @@
     <string name="full_name_title">What\'s your full name?</string>
     <string name="full_name_label">Full name</string>
     <string name="full_name_placeholder">Enter your full name</string>
+    <string name="user_name_title">Create a username</string>
+    <string name="user_name_subtitle">Add a username or use our suggestion. You can change this at any time</string>
+    <string name="user_name_label">Username</string>
+    <string name="user_name_placeholder">Create username</string>
+    <string name="username_available">The username provided is already taken</string>
 
 </resources>
