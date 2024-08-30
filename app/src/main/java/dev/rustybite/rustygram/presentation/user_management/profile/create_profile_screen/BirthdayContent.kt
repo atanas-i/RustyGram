@@ -67,7 +67,7 @@ fun BirthDayContent(
         Spacer(modifier = modifier.height(dimensionResource(id = R.dimen.top_bar_height)))
         Text(
             text = stringResource(id = R.string.birth_date_screen_title),
-            style = baseline.headlineLarge.copy(
+            style = baseline.headlineMedium.copy(
                 fontFamily = bodyFontFamily
             )
         )

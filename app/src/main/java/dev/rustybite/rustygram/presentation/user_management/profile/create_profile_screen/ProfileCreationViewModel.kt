@@ -141,4 +141,10 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun navigateToProfilePictureScreen() {
+        viewModelScope.launch {
+            _event.send(RustyEvents.Navigate(OnBoardingRoutes.CreateProfilePicture))
+        }
+    }
+
 }

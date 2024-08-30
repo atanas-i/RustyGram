@@ -38,5 +38,8 @@
     <string name="date_picker_confirm_button">Ok</string>
     <string name="date_picker_dismiss_button">Cancel</string>
     <string name="next">Next</string>
+    <string name="full_name_title">What\'s your full name?</string>
+    <string name="full_name_label">Full name</string>
+    <string name="full_name_placeholder">Enter your full name</string>
 
 </resources>
