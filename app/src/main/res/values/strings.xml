@@ -46,5 +46,13 @@
     <string name="user_name_label">Username</string>
     <string name="user_name_placeholder">Create username</string>
     <string name="username_available">The username provided is already taken</string>
-
+    <string name="create_profile_picture_title">Add a profile picture</string>
+    <string name="create_profile_picture_subtitle">Add a profile picture so your friends know it\'s you. Every one will be able to see you</string>
+    <string name="selected_photo_description">Selected image to upload</string>
+    <string name="modal_add_picture_title">Add picture</string>
+    <string name="choose_from_gallery">Choose from Gallery</string>
+    <string name="take_picture">Take picture</string>
+    <string name="cancel_or_dismiss_button">Cancel or dismiss button</string>
+    <string name="add_picture_btn_text">Add picture</string>
+    <string name="skip_btn_text">Skip</string>
 </resources>

@@ -242,4 +242,16 @@ class ProfileViewModel @Inject constructor(
                 _event.send(RustyEvents.Navigate(OnBoardingRoutes.CreateUsername))
             }
         }
+
+    fun onAddPictureClicked() {
+        viewModelScope.launch {
+
+        }
+    }
+
+    fun onSkipClicked() {
+        viewModelScope.launch {
+
+        }
+    }
 }

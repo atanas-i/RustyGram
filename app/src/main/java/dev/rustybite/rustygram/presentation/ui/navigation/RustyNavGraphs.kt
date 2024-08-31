@@ -12,6 +12,7 @@ import androidx.navigation.navigation
 import dev.rustybite.rustygram.presentation.user_management.login_screen.LoginScreen
 import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.BirthdayScreen
 import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.CreateFullNameScreen
+import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.CreateProfilePictureScreen
 import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.CreateUsernameScreen
 import dev.rustybite.rustygram.presentation.user_management.registration_screen.SignUpScreen
 import dev.rustybite.rustygram.presentation.user_management.registration_screen.UserRegistrationViewModel
@@ -66,7 +67,11 @@ fun NavGraphBuilder.onBoardingGraph(
             )
         }
         composable<OnBoardingRoutes.CreateProfilePicture> {
-            Text(text = "Create Profile Picture")
+            CreateProfilePictureScreen(
+                onNavigate = { event -> navHostController.navigate(event.route) },
+                onPopBackStack = { navHostController.popBackStack() },
+                sheetState = sheetState
+            )
         }
         composable<OnBoardingRoutes.Login> {
             LoginScreen(

@@ -19,10 +19,16 @@
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_medium">12dp</dimen>
     <dimen name="padding_large">16dp</dimen>
+    <dimen name="padding_x_large">24dp</dimen>
+    <dimen name="padding_xx_large">32dp</dimen>
     <dimen name="logo_width">55dp</dimen>
     <dimen name="logo_height">55dp</dimen>
     <dimen name="button_circular_indicator_size">30dp</dimen>
     <dimen name="radio_button_height">40dp</dimen>
     <dimen name="visibility_icon_size">24dp</dimen>
     <dimen name="top_bar_height">45.dp</dimen>
+    <dimen name="profile_image_box_size">220dp</dimen>
+    <dimen name="profile_image_view_size">160dp</dimen>
+    <dimen name="border_width_medium">3dp</dimen>
+    <dimen name="action_btn_size_small">14dp</dimen>
 </resources>
