@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import dev.rustybite.rustygram.data.dtos.profile.ProfileDto
 
 data class Profile(
-    val birthDate: Any?,
+    val birthDate: String,
     val createdAt: String,
     val email: String,
     val fullName: String,
@@ -12,7 +12,8 @@ data class Profile(
     val updatedAt: String,
     val userId: String,
     val userName: String,
-    val userProfilePicture: String
+    val userProfilePicture: String,
+    val bio: String
 )
 
 fun ProfileDto.toProfile(): Profile = Profile(
@@ -24,5 +25,6 @@ fun ProfileDto.toProfile(): Profile = Profile(
     updatedAt = updatedAt,
     userId = userId,
     userName = userName,
-    userProfilePicture = userProfilePicture
+    userProfilePicture = userProfilePicture,
+    bio = bio
 )

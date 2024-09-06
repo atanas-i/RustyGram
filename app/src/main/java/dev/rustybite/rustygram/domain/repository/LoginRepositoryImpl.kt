@@ -1,10 +1,12 @@
 package dev.rustybite.rustygram.domain.repository
 
+import android.util.Log
 import com.google.gson.JsonObject
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.dtos.auth.toUser
 import dev.rustybite.rustygram.data.dtos.auth.toVerifiedUser
 import dev.rustybite.rustygram.data.dtos.util.ApiErrorDto
+import dev.rustybite.rustygram.data.dtos.util.LoginErrorDto
 import dev.rustybite.rustygram.data.dtos.util.toApiError
 import dev.rustybite.rustygram.data.remote.RustyGramService
 import dev.rustybite.rustygram.data.repository.LoginRepository
@@ -12,12 +14,15 @@ import dev.rustybite.rustygram.data.repository.UserRegistrationRepository
 import dev.rustybite.rustygram.domain.models.RustyResponse
 import dev.rustybite.rustygram.domain.models.User
 import dev.rustybite.rustygram.domain.models.VerifiedUser
+import dev.rustybite.rustygram.domain.models.toLoginError
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyResult
+import dev.rustybite.rustygram.util.TAG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Retrofit
 import javax.inject.Inject
+import kotlin.math.log
 
 class LoginRepositoryImpl @Inject constructor(
     private val service: RustyGramService,
@@ -25,8 +30,8 @@ class LoginRepositoryImpl @Inject constructor(
     private val resources: ResourceProvider
 ) : LoginRepository {
 
-    private val converter = retrofit.responseBodyConverter<ApiErrorDto>(
-        ApiErrorDto::class.java,
+    private val converter = retrofit.responseBodyConverter<LoginErrorDto>(
+        LoginErrorDto::class.java,
         arrayOfNulls<Annotation>(0)
     )
 
@@ -37,7 +42,7 @@ class LoginRepositoryImpl @Inject constructor(
      */
     override suspend fun login(body: JsonObject): Flow<RustyResult<VerifiedUser>> = flow {
         emit(RustyResult.Loading())
-        val response = service.registerUser(body)
+        val response = service.login(body)
         if (response.isSuccessful) {
             response.body()?.let { userDto ->
                 emit(RustyResult.Success(userDto.toVerifiedUser()))
@@ -45,9 +50,9 @@ class LoginRepositoryImpl @Inject constructor(
         } else {
             val errorBody = response.errorBody()
             if (errorBody != null) {
-                val error = converter.convert(errorBody)?.toApiError()
+                val error = converter.convert(errorBody)?.toLoginError()
                 if (error != null) {
-                    emit(RustyResult.Failure(error.message))
+                    emit(RustyResult.Failure(error.errorDescription))
                 } else {
                     emit(RustyResult.Failure(resources.getString(R.string.unknown_error)))
                 }
@@ -75,9 +80,9 @@ class LoginRepositoryImpl @Inject constructor(
         } else {
             val errorBody = response.errorBody()
             if (errorBody != null) {
-                val error = converter.convert(errorBody)?.toApiError()
+                val error = converter.convert(errorBody)?.toLoginError()
                 if (error != null) {
-                    emit(RustyResult.Failure(error.message))
+                    emit(RustyResult.Failure(error.errorDescription))
                 }
             } else {
                 emit(RustyResult.Failure(resources.getString(R.string.unknown_error)))

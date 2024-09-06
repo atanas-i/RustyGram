@@ -8,6 +8,7 @@ import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.repository.LoginRepository
 import dev.rustybite.rustygram.data.repository.TokenManagementRepository
+import dev.rustybite.rustygram.presentation.ui.navigation.BottomNavScreen
 import dev.rustybite.rustygram.presentation.ui.navigation.OnBoardingRoutes
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyEvents
@@ -54,11 +55,16 @@ class LoginViewModel @Inject constructor(
             loginRepository.login(body).collectLatest { result ->
                 when (result) {
                     is RustyResult.Success -> {
+                        val isUserOnboarded = sessionManager.isUserOnboarded.first()
                         sessionManager.saveIsUserSignedIn(true)
                         sessionManager.saveAccessToken(result.data.accessToken)
                         sessionManager.saveRefreshToken(result.data.refreshToken)
                         sessionManager.saveExpiresAt(result.data.expiresAt)
-                        _event.send(RustyEvents.Navigate(OnBoardingRoutes.CreateProfile))
+                        if (isUserOnboarded != null && isUserOnboarded) {
+                            _event.send(RustyEvents.BottomScreenNavigate(BottomNavScreen.Home))
+                        } else {
+                            _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.CreateBirthDate))
+                        }
                         _uiState.value = _uiState.value.copy(
                             loading = false
                         )
@@ -89,7 +95,6 @@ class LoginViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch {
             val accessToken = sessionManager.accessToken.first()
-
             loginRepository.logout("Bearer $accessToken").collectLatest { result ->
                 when (result) {
                     is RustyResult.Success -> {
@@ -100,7 +105,7 @@ class LoginViewModel @Inject constructor(
                         sessionManager.saveRefreshToken("")
                         sessionManager.saveExpiresAt(0L)
                         sessionManager.saveIsUserSignedIn(false)
-                        _event.send(RustyEvents.Navigate(OnBoardingRoutes.Login))
+                        _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.Login))
                         _event.send(RustyEvents.ShowSnackBar(result.data.message))
                     }
 
@@ -176,7 +181,7 @@ class LoginViewModel @Inject constructor(
 
     fun onSignUpClicked() {
         viewModelScope.launch {
-            _event.send(RustyEvents.Navigate(OnBoardingRoutes.Registration))
+            _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.Registration))
         }
     }
 
@@ -192,9 +197,14 @@ class LoginViewModel @Inject constructor(
 
     fun forgotPassword() {
         viewModelScope.launch {
-            _event.send(RustyEvents.Navigate(OnBoardingRoutes.ChangePassword))
+            _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.ChangePassword))
 
         }
     }
 
+    fun onShowPasswordClicked() {
+        _uiState.value = _uiState.value.copy(
+            isPasswordVisible = !_uiState.value.isPasswordVisible
+        )
+    }
 }

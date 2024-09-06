@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.rustybite.rustygram.presentation.ui.components.LanguageOptions
 import dev.rustybite.rustygram.util.RustyEvents
@@ -23,8 +24,9 @@ import kotlinx.coroutines.flow.collectLatest
 fun LoginScreen(
     snackBarHostState: SnackbarHostState,
     sheetState: SheetState,
-    onNavigate: (RustyEvents.Navigate) -> Unit,
+    onNavigate: (RustyEvents.OnBoardingNavigate) -> Unit,
     onPopBackStack: (RustyEvents.PopBackStack) -> Unit,
+    focusManager: FocusManager,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
@@ -33,10 +35,12 @@ fun LoginScreen(
     LaunchedEffect(viewModel.events) {
         viewModel.events.collectLatest { event ->
             when(event) {
-                is RustyEvents.Navigate -> onNavigate(event)
+                is RustyEvents.OnBoardingNavigate -> onNavigate(event)
                 is RustyEvents.PopBackStack -> onPopBackStack(event)
                 is RustyEvents.ShowSnackBar -> snackBarHostState.showSnackbar(event.message)
                 is RustyEvents.ShowToast -> Unit
+                is RustyEvents.BottomScreenNavigate -> Unit
+                is RustyEvents.Navigate -> Unit
             }
         }
     }
@@ -79,7 +83,9 @@ fun LoginScreen(
                     viewModel.forgotPassword()
                 },
                 onSignUpClicked = { viewModel.onSignUpClicked() },
-                onOpenLanguageSelection = { viewModel.onOpenLanguageSelection() }
+                onOpenLanguageSelection = { viewModel.onOpenLanguageSelection() },
+                focusManager = focusManager,
+                onShowPasswordClicked = { viewModel.onShowPasswordClicked() }
             )
         }
     }

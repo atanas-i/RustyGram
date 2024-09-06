@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class ProfileDto(
     @SerializedName("birth_date")
-    val birthDate: Any?,
+    val birthDate: String,
     @SerializedName("created_at")
     val createdAt: String,
     @SerializedName("email")
@@ -21,5 +21,7 @@ data class ProfileDto(
     @SerializedName("user_name")
     val userName: String,
     @SerializedName("user_profile_picture")
-    val userProfilePicture: String
+    val userProfilePicture: String,
+    @SerializedName("bio")
+    val bio: String
 )

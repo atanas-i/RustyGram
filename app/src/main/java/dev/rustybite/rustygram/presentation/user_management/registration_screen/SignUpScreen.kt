@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun SignUpScreen(
     snackBarHostState: SnackbarHostState,
-    onNavigate: (RustyEvents.Navigate) -> Unit,
+    onNavigate: (RustyEvents.OnBoardingNavigate) -> Unit,
     popBackStack: (RustyEvents) -> Unit,
     viewModel: UserRegistrationViewModel,
     focusManager: FocusManager,
@@ -29,10 +29,12 @@ fun SignUpScreen(
     LaunchedEffect(viewModel.event) {
         viewModel.event.collectLatest { event ->
             when(event) {
-                is RustyEvents.Navigate -> onNavigate(event)
+                is RustyEvents.OnBoardingNavigate -> onNavigate(event)
                 is RustyEvents.PopBackStack -> popBackStack(event)
                 is RustyEvents.ShowSnackBar -> snackBarHostState.showSnackbar(event.message)
                 is  RustyEvents.ShowToast -> Unit
+                is RustyEvents.BottomScreenNavigate -> Unit
+                is RustyEvents.Navigate -> Unit
             }
         }
     }

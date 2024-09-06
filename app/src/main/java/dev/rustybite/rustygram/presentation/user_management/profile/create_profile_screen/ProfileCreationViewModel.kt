@@ -1,9 +1,6 @@
 package dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen
 
-import android.content.ContentResolver.MimeTypeInfo
 import android.net.Uri
-import android.webkit.MimeTypeMap
-import androidx.core.net.toFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
@@ -13,6 +10,7 @@ import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.repository.ProfileRepository
 import dev.rustybite.rustygram.data.repository.StorageRepository
 import dev.rustybite.rustygram.data.repository.TokenManagementRepository
+import dev.rustybite.rustygram.presentation.ui.navigation.BottomNavScreen
 import dev.rustybite.rustygram.presentation.ui.navigation.OnBoardingRoutes
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyEvents
@@ -25,9 +23,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.io.BufferedInputStream
-import java.io.File
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,19 +39,45 @@ class ProfileViewModel @Inject constructor(
     val event = _event.receiveAsFlow()
     private val profilePicturePath = MutableStateFlow("")
 
-    fun createProfile(fullName: String, username: String, birthDate: String, profilePicture: Uri) {
+    init {
         viewModelScope.launch {
             val accessToken = sessionManager.accessToken.first()
+            val refreshToken = sessionManager.refreshToken.first()
+            val expiresAt = sessionManager.expiresAt.first()
+
+            if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
+                refreshAccessToken(refreshToken)
+            }
+        }
+    }
+
+    fun createProfile(
+        fullName: String,
+        username: String,
+        birthDate: String,
+        profilePictureUrl: String
+    ) {
+        viewModelScope.launch {
+            val accessToken = sessionManager.accessToken.first()
+            val refreshToken = sessionManager.refreshToken.first()
+            val expiresAt = sessionManager.expiresAt.first()
             val body = JsonObject()
             body.addProperty("fullName", fullName)
             body.addProperty("username", username)
             body.addProperty("birthDate", birthDate)
-            body.addProperty("profilePicture", profilePicture.toString())
+            body.addProperty("profilePicture", profilePictureUrl)
 
+            if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
+                refreshAccessToken(refreshToken)
+            }
+            uploadProfilePicture()
             repository.createProfile("Bearer $accessToken", body).collect { result ->
                 when (result) {
                     is RustyResult.Success -> {
-                        uploadProfilePicture()
+                        _uiState.value = _uiState.value.copy(
+                            loading = false
+                        )
+                        _event.send(RustyEvents.BottomScreenNavigate(BottomNavScreen.Home))
                     }
 
                     is RustyResult.Failure -> {
@@ -65,6 +86,7 @@ class ProfileViewModel @Inject constructor(
                             errorMessage = result.message
                                 ?: resProvider.getString(R.string.unknown_error)
                         )
+                        _event.send(RustyEvents.ShowSnackBar(result.message ?: resProvider.getString(R.string.unknown_error)))
                     }
 
                     is RustyResult.Loading -> {
@@ -159,7 +181,7 @@ class ProfileViewModel @Inject constructor(
             }
         }
     }
-        
+
     fun navigateToProfilePictureScreen(username: String) {
         viewModelScope.launch {
             val accessToken = sessionManager.accessToken.first()
@@ -170,9 +192,9 @@ class ProfileViewModel @Inject constructor(
             }
             if (accessToken != null) {
                 repository.getProfiles(accessToken).collectLatest { result ->
-                    when(result) {
+                    when (result) {
                         is RustyResult.Success -> {
-                            if(result.data.map { it.userName }.contains(username)) {
+                            if (result.data.map { it.userName }.contains(username)) {
                                 _uiState.value = _uiState.value.copy(
                                     errorMessage = resProvider.getString(R.string.username_available),
                                     loading = false
@@ -181,9 +203,10 @@ class ProfileViewModel @Inject constructor(
                                 _uiState.value = _uiState.value.copy(
                                     loading = false
                                 )
-                                _event.send(RustyEvents.Navigate(OnBoardingRoutes.CreateProfilePicture))
+                                _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.CreateProfilePicture))
                             }
                         }
+
                         is RustyResult.Failure -> {
                             _uiState.value = _uiState.value.copy(
                                 loading = false,
@@ -191,6 +214,7 @@ class ProfileViewModel @Inject constructor(
                                     ?: resProvider.getString(R.string.unknown_error)
                             )
                         }
+
                         is RustyResult.Loading -> {
                             _uiState.value = _uiState.value.copy(
                                 loading = true
@@ -203,33 +227,33 @@ class ProfileViewModel @Inject constructor(
     }
 
 
-        fun onFullNameChange(fullName: String) {
-            _uiState.value = _uiState.value.copy(fullName = fullName)
-        }
+    fun onFullNameChange(fullName: String) {
+        _uiState.value = _uiState.value.copy(fullName = fullName)
+    }
 
-        fun onUsernameChange(username: String) {
-            _uiState.value = _uiState.value.copy(username = username)
-        }
+    fun onUsernameChange(username: String) {
+        _uiState.value = _uiState.value.copy(username = username)
+    }
 
-        fun onBirthDateChange(birthDate: Long?) {
-            _uiState.value = _uiState.value.copy(birthDate = birthDate)
-        }
+    fun onBirthDateChange(birthDate: Long?) {
+        _uiState.value = _uiState.value.copy(birthDate = birthDate)
+    }
 
-        fun onProfileUriChange(profilePicture: Uri) {
-            _uiState.value = _uiState.value.copy(userProfileUri = profilePicture)
-        }
+    fun onProfileUriChange(profilePicture: Uri) {
+        _uiState.value = _uiState.value.copy(userProfileUri = profilePicture)
+    }
 
-        fun navigateToFullNameScreen() {
-            viewModelScope.launch {
-                _event.send(RustyEvents.Navigate(OnBoardingRoutes.CreateFullName))
-            }
+    fun navigateToFullNameScreen() {
+        viewModelScope.launch {
+            _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.CreateFullName))
         }
+    }
 
-        fun onHaveAccountClicked() {
-            viewModelScope.launch {
-                _event.send(RustyEvents.Navigate(OnBoardingRoutes.Login))
-            }
+    fun onHaveAccountClicked() {
+        viewModelScope.launch {
+            _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.Login))
         }
+    }
 
 //        fun navigateToProfilePictureScreen() {
 //            viewModelScope.launch {
@@ -237,17 +261,17 @@ class ProfileViewModel @Inject constructor(
 //            }
 //        }
 
-        fun navigateToUsernameScreen() {
-            viewModelScope.launch {
-                _event.send(RustyEvents.Navigate(OnBoardingRoutes.CreateUsername))
-            }
-        }
-
-    fun onAddPictureClicked() {
+    fun navigateToUsernameScreen() {
         viewModelScope.launch {
-
+            _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.CreateUsername))
         }
     }
+
+//    fun onAddPictureClicked() {
+//        viewModelScope.launch {
+//
+//        }
+//    }
 
     fun onSkipClicked() {
         viewModelScope.launch {

@@ -1,7 +1,9 @@
 package dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen
 
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,16 +12,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,26 +30,30 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.presentation.ui.theme.baseline
 import dev.rustybite.rustygram.presentation.ui.theme.bodyFontFamily
 import dev.rustybite.rustygram.util.RustyEvents
+import dev.rustybite.rustygram.util.convertMillisToDate
 import kotlinx.coroutines.flow.collectLatest
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateProfilePictureScreen(
-    onNavigate: (RustyEvents.Navigate) -> Unit,
+    onNavigate: (RustyEvents.OnBoardingNavigate) -> Unit,
     onPopBackStack: (RustyEvents.PopBackStack) -> Unit,
     sheetState: SheetState,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel = hiltViewModel()
+    viewModel: ProfileViewModel
 ) {
     val uiState = viewModel.uiState.collectAsState().value
     val appEvents = viewModel.event
@@ -62,15 +67,21 @@ fun CreateProfilePictureScreen(
     LaunchedEffect(appEvents) {
         appEvents.collectLatest { event ->
             when(event) {
-                is RustyEvents.Navigate -> onNavigate(event)
+                is RustyEvents.OnBoardingNavigate -> onNavigate(event)
                 is RustyEvents.PopBackStack -> onPopBackStack(event)
-                is RustyEvents.ShowSnackBar -> Unit
+                is RustyEvents.ShowSnackBar -> {
+                    snackbarHostState.showSnackbar(event.message)
+                }
                 is RustyEvents.ShowToast -> Unit
+                is RustyEvents.BottomScreenNavigate -> Unit
+                is RustyEvents.Navigate -> Unit
             }
         }
     }
 
-    Scaffold { paddingValues ->
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState)}
+    ) { paddingValues ->
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -93,7 +104,14 @@ fun CreateProfilePictureScreen(
             }
             CreateProfilePictureContent(
                 uiState = uiState,
-                onAddPictureClicked = viewModel::onAddPictureClicked,
+                onAddPictureClicked = {
+                    viewModel.createProfile(
+                        uiState.fullName,
+                        uiState.username,
+                        LocalDate.ofInstant(Instant.ofEpochMilli(uiState.birthDate!!), ZoneId.systemDefault()).toString(),//convertMillisToDate(uiState.birthDate!!),
+                        uiState.userProfileUrl
+                    )
+                                      },
                 onSkipClicked = viewModel::onSkipClicked,
                 onViewClicked = { isImageViewClicked = true },
             )

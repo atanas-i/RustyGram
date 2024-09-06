@@ -1,17 +1,21 @@
 package dev.rustybite.rustygram.domain.repository
 
+import android.util.Log
 import com.google.gson.JsonObject
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.dtos.util.ApiErrorDto
+import dev.rustybite.rustygram.data.dtos.util.DatabaseResponseErrorDto
 import dev.rustybite.rustygram.data.dtos.util.toApiError
 import dev.rustybite.rustygram.data.remote.RustyGramService
 import dev.rustybite.rustygram.data.repository.ProfileRepository
 import dev.rustybite.rustygram.domain.models.Profile
 import dev.rustybite.rustygram.domain.models.RustyApiError
 import dev.rustybite.rustygram.domain.models.RustyResponse
+import dev.rustybite.rustygram.domain.models.toDatabaseResponseError
 import dev.rustybite.rustygram.domain.models.toProfile
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyResult
+import dev.rustybite.rustygram.util.TAG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Retrofit
@@ -22,7 +26,7 @@ class ProfileRepositoryImpl @Inject constructor(
     private val retrofit: Retrofit,
     private val resProvider: ResourceProvider
 ) : ProfileRepository {
-    private val converter = retrofit.responseBodyConverter<ApiErrorDto>(ApiErrorDto::class.java, arrayOfNulls<Annotation>(0))
+    private val converter = retrofit.responseBodyConverter<DatabaseResponseErrorDto>(DatabaseResponseErrorDto::class.java, arrayOfNulls<Annotation>(0))
     override suspend fun createProfile(
         token: String,
         body: JsonObject
@@ -40,7 +44,7 @@ class ProfileRepositoryImpl @Inject constructor(
         } else {
             val errorBody = response.errorBody()
             if (errorBody != null) {
-                val error = converter.convert(errorBody)?.toApiError()
+                val error = converter.convert(errorBody)?.toDatabaseResponseError()
                 if (error != null) {
                     emit(RustyResult.Failure(error.message))
                 } else {
@@ -63,7 +67,7 @@ class ProfileRepositoryImpl @Inject constructor(
         } else {
             val errorBody = response.errorBody()
             if (errorBody != null) {
-                val error = converter.convert(errorBody)?.toApiError()
+                val error = converter.convert(errorBody)?.toDatabaseResponseError()
                 if (error != null) {
                     emit(RustyResult.Failure(error.message))
                 } else {

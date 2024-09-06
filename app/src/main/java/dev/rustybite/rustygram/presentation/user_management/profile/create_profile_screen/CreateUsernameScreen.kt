@@ -15,11 +15,11 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun CreateUsernameScreen(
-    onNavigate: (RustyEvents.Navigate) -> Unit,
+    onNavigate: (RustyEvents.OnBoardingNavigate) -> Unit,
     onPopBackStack: (RustyEvents.PopBackStack) -> Unit,
     focusManager: FocusManager,
     modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel = hiltViewModel()
+    viewModel: ProfileViewModel
 ) {
     val uiState = viewModel.uiState.collectAsState().value
     val appEvent = viewModel.event
@@ -27,10 +27,12 @@ fun CreateUsernameScreen(
     LaunchedEffect(appEvent) {
         appEvent.collectLatest { event ->
             when(event) {
-                is RustyEvents.Navigate -> onNavigate(event)
+                is RustyEvents.OnBoardingNavigate -> onNavigate(event)
                 is RustyEvents.PopBackStack -> onPopBackStack(event)
                 is RustyEvents.ShowSnackBar -> Unit
                 is RustyEvents.ShowToast -> Unit
+                is RustyEvents.BottomScreenNavigate -> Unit
+                is RustyEvents.Navigate -> Unit
             }
         }
     }
