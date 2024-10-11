@@ -48,7 +48,7 @@ import java.time.ZoneId
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateProfilePictureScreen(
-    onNavigate: (RustyEvents.OnBoardingNavigate) -> Unit,
+    onNavigate: (RustyEvents.BottomScreenNavigate) -> Unit,
     onPopBackStack: (RustyEvents.PopBackStack) -> Unit,
     sheetState: SheetState,
     snackbarHostState: SnackbarHostState,
@@ -67,13 +67,15 @@ fun CreateProfilePictureScreen(
     LaunchedEffect(appEvents) {
         appEvents.collectLatest { event ->
             when(event) {
-                is RustyEvents.OnBoardingNavigate -> onNavigate(event)
+                is RustyEvents.OnBoardingNavigate -> Unit
                 is RustyEvents.PopBackStack -> onPopBackStack(event)
                 is RustyEvents.ShowSnackBar -> {
                     snackbarHostState.showSnackbar(event.message)
                 }
                 is RustyEvents.ShowToast -> Unit
-                is RustyEvents.BottomScreenNavigate -> Unit
+                is RustyEvents.BottomScreenNavigate -> {
+                    onNavigate(event)
+                }
                 is RustyEvents.Navigate -> Unit
             }
         }
@@ -108,8 +110,8 @@ fun CreateProfilePictureScreen(
                     viewModel.createProfile(
                         uiState.fullName,
                         uiState.username,
-                        LocalDate.ofInstant(Instant.ofEpochMilli(uiState.birthDate!!), ZoneId.systemDefault()).toString(),//convertMillisToDate(uiState.birthDate!!),
-                        uiState.userProfileUrl
+                        convertMillisToDate(uiState.birthDate!!),
+                        //uiState.userProfileUrl
                     )
                                       },
                 onSkipClicked = viewModel::onSkipClicked,

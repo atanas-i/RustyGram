@@ -44,7 +44,7 @@ interface RustyGramService {
     suspend fun createProfile(
         @Header("Authorization") token: String,
         @Body body: JsonObject
-    ): Response<RustyResponse>
+    ): Response<Unit>
 
     @GET("rest/v1/profiles")
     @Headers("apiKey: $API_KEY", "Content-Type: application/json")

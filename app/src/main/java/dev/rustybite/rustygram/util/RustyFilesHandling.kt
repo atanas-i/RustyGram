@@ -1,6 +1,7 @@
 package dev.rustybite.rustygram.util
 
 import android.net.Uri
+import android.util.Log
 import android.webkit.MimeTypeMap
 import dev.rustybite.rustygram.R
 import kotlinx.coroutines.Dispatchers
@@ -23,13 +24,13 @@ fun getFileFromUri(uri: Uri, resProvider: ResourceProvider, fileName: String): F
     val inputStream = resProvider.contentResolver.openInputStream(uri)
     val outputStream = FileOutputStream(tempFile)
     try {
-        inputStream?.let { copyFile(inputStream, outputStream) }
+        inputStream?.use { copyFile(inputStream, outputStream) }
         outputStream.flush()
+        Log.d(TAG, "getFileFromUri: Retrieving file from URI")
         emit(RustyResult.Success(tempFile))
     } catch (exception: IOException) {
+        Log.d(TAG, "getFileFromUri: ${exception.localizedMessage}")
         emit(RustyResult.Failure(exception.message ?: resProvider.getString(R.string.unknown_error)))
-    } finally {
-        inputStream?.close()
     }
 }.flowOn(Dispatchers.IO)
 
@@ -37,7 +38,7 @@ private fun copyFile(source: InputStream, target: OutputStream) {
     val buffer = ByteArray(8192)
     var length: Int
 
-    while (source.read().also { length = it } != -1) {
+    while (source.read(buffer).also { length = it } != -1) {
         target.write(buffer, 0, length)
     }
 }

@@ -1,10 +1,8 @@
 package dev.rustybite.rustygram.domain.repository
 
-import android.net.Uri
 import dev.rustybite.rustygram.data.repository.StorageRepository
 import dev.rustybite.rustygram.util.RustyResult
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.storage.Bucket
 import io.github.jan.supabase.storage.storage
 import io.github.jan.supabase.storage.upload
 import kotlinx.coroutines.flow.Flow
@@ -26,7 +24,8 @@ class StorageRepositoryImpl @Inject constructor(
                 runCatching {
                     supabase.storage.from("media").upload("profiles/${userId}/${fileName}", file)
                 } .onSuccess { uploadResponse ->
-                    emit(RustyResult.Success(uploadResponse.path))
+                    val imageUrl = supabase.storage.from("media").authenticatedUrl(uploadResponse.path)
+                    emit(RustyResult.Success(imageUrl))
                 }.onFailure { throwable ->
                     emit(RustyResult.Failure(throwable.localizedMessage))
                 }
@@ -34,7 +33,8 @@ class StorageRepositoryImpl @Inject constructor(
                 runCatching {
                     supabase.storage.from("media").upload("profiles/${userId}/${fileName}", file)
                 } .onSuccess { uploadResponse ->
-                    emit(RustyResult.Success(uploadResponse.path))
+                    val imageUrl =  supabase.storage.from("media").authenticatedUrl(uploadResponse.path)
+                    emit(RustyResult.Success(imageUrl))
                 }.onFailure { throwable ->
                     emit(RustyResult.Failure(throwable.localizedMessage))
                 }

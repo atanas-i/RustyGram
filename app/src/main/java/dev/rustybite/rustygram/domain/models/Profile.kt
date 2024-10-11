@@ -1,6 +1,5 @@
 package dev.rustybite.rustygram.domain.models
 
-import com.google.gson.annotations.SerializedName
 import dev.rustybite.rustygram.data.dtos.profile.ProfileDto
 
 data class Profile(

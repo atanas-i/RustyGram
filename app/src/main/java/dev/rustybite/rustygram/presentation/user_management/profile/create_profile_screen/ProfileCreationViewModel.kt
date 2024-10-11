@@ -1,6 +1,7 @@
 package dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
@@ -15,6 +16,7 @@ import dev.rustybite.rustygram.presentation.ui.navigation.OnBoardingRoutes
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyEvents
 import dev.rustybite.rustygram.util.RustyResult
+import dev.rustybite.rustygram.util.TAG
 import dev.rustybite.rustygram.util.getFileFromUri
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +25,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,7 +42,6 @@ class ProfileViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
     private val _event = Channel<RustyEvents>()
     val event = _event.receiveAsFlow()
-    private val profilePicturePath = MutableStateFlow("")
 
     init {
         viewModelScope.launch {
@@ -51,62 +55,70 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+//    fun createProfile(
+//
+//    ) {
+//        viewModelScope.launch {
+//
+//            //uploadProfilePicture()
+//
+//            body.addProperty("user_profile_picture", _uiState.value.userProfileUrl)
+//
+//            Log.d(TAG, "createProfile: $body")
+//
+//            repository.createProfile().collect { result ->
+//                when (result) {
+//                    is RustyResult.Success -> {
+//                        Log.d(TAG, "createProfile: Profile creation succeeded")
+//                        _uiState.value = _uiState.value.copy(
+//                            loading = false
+//                        )
+//                        _event.send(RustyEvents.ShowSnackBar(result.data.message))
+//                        sessionManager.saveIsUserOnboarded(true)
+//                        _event.send(RustyEvents.BottomScreenNavigate(BottomNavScreen.Home))
+//                    }
+//
+//                    is RustyResult.Failure -> {
+//                        _uiState.value = _uiState.value.copy(
+//                            loading = false,
+//                            errorMessage = result.message
+//                                ?: resProvider.getString(R.string.unknown_error)
+//                        )
+//                        _event.send(RustyEvents.ShowSnackBar(result.message ?: resProvider.getString(R.string.unknown_error)))
+//                    }
+//
+//                    is RustyResult.Loading -> {
+//                        _uiState.value = _uiState.value.copy(
+//                            loading = true
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    }
+
     fun createProfile(
         fullName: String,
         username: String,
         birthDate: String,
-        profilePictureUrl: String
     ) {
+        //Log.d(TAG, "uploadProfilePicture: Uploading...")
         viewModelScope.launch {
             val accessToken = sessionManager.accessToken.first()
             val refreshToken = sessionManager.refreshToken.first()
             val expiresAt = sessionManager.expiresAt.first()
-            val body = JsonObject()
-            body.addProperty("fullName", fullName)
-            body.addProperty("username", username)
-            body.addProperty("birthDate", birthDate)
-            body.addProperty("profilePicture", profilePictureUrl)
 
             if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
                 refreshAccessToken(refreshToken)
             }
-            uploadProfilePicture()
-            repository.createProfile("Bearer $accessToken", body).collect { result ->
-                when (result) {
-                    is RustyResult.Success -> {
-                        _uiState.value = _uiState.value.copy(
-                            loading = false
-                        )
-                        _event.send(RustyEvents.BottomScreenNavigate(BottomNavScreen.Home))
-                    }
-
-                    is RustyResult.Failure -> {
-                        _uiState.value = _uiState.value.copy(
-                            loading = false,
-                            errorMessage = result.message
-                                ?: resProvider.getString(R.string.unknown_error)
-                        )
-                        _event.send(RustyEvents.ShowSnackBar(result.message ?: resProvider.getString(R.string.unknown_error)))
-                    }
-
-                    is RustyResult.Loading -> {
-                        _uiState.value = _uiState.value.copy(
-                            loading = true
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    private fun uploadProfilePicture() {
-        viewModelScope.launch {
             val uri = _uiState.value.userProfileUri
             if (uri != null) {
-                getFileFromUri(uri, resProvider, "").collectLatest { result ->
-                    when (result) {
+                val fileName = "user_id:profile_id:${LocalDateTime.now()}"
+                getFileFromUri(uri, resProvider, fileName).collectLatest { fileResult ->
+                    when (fileResult) {
                         is RustyResult.Success -> {
-                            val file = result.data
+                            val file = fileResult.data
+                            Log.d(TAG, "uploadProfilePicture: File retrieved.. ${file.name}")
                             storageRepository.uploadProfilePicture(file, "user_id_one", file.name)
                                 .collectLatest { uploadResult ->
                                     when (uploadResult) {
@@ -115,6 +127,36 @@ class ProfileViewModel @Inject constructor(
                                                 userProfileUrl = uploadResult.data,
                                                 loading = false
                                             )
+                                            val body = JsonObject()
+                                            body.addProperty("full_name", fullName)
+                                            body.addProperty("user_name", username)
+                                            body.addProperty("birth_date", birthDate)
+                                            body.addProperty("created_at", LocalDateTime.now().toString())
+                                            body.addProperty("profile_id", UUID.randomUUID().toString())
+                                            body.addProperty("user_profile_picture", uploadResult.data)
+                                            Log.d(TAG, "createProfile: $body")
+                                            repository.createProfile("Bearer $accessToken", body).collectLatest { result ->
+                                                when(result) {
+                                                    is RustyResult.Success -> {
+                                                        _uiState.value = _uiState.value.copy(
+                                                            loading = false
+                                                        )
+                                                        sessionManager.saveIsUserOnboarded(true)
+                                                        _event.send(RustyEvents.BottomScreenNavigate(BottomNavScreen.Home))
+                                                    }
+                                                    is RustyResult.Failure -> {
+                                                        _uiState.value = _uiState.value.copy(
+                                                            loading = false
+                                                        )
+                                                        _event.send(RustyEvents.ShowSnackBar(result.message ?: resProvider.getString(R.string.unknown_error)))
+                                                    }
+                                                    is RustyResult.Loading -> {
+                                                        _uiState.value = _uiState.value.copy(
+                                                            loading = true
+                                                        )
+                                                    }
+                                                }
+                                            }
                                         }
 
                                         is RustyResult.Failure -> {
@@ -133,15 +175,19 @@ class ProfileViewModel @Inject constructor(
                                     }
                                 }
                         }
-
                         is RustyResult.Failure -> {
                             _uiState.value = _uiState.value.copy(
-                                errorMessage = result.message
-                                    ?: resProvider.getString(R.string.unknown_error)
+                                errorMessage = fileResult.message
+                                    ?: resProvider.getString(R.string.unknown_error),
+                                loading = false
                             )
                         }
 
-                        is RustyResult.Loading -> Unit
+                        is RustyResult.Loading -> {
+                            _uiState.value = _uiState.value.copy(
+                                loading = true
+                            )
+                        }
                     }
                 }
             }
