@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "895986754409",
+    "project_id": "rustygram",
+    "storage_bucket": "rustygram.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:895986754409:android:a7c520f9c6d1bcb578d3f8",
+        "android_client_info": {
+          "package_name": "dev.rustybite.rustygram"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6mQIRQiJXyWRVxOeTRG0o8nE_C3TvFLQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

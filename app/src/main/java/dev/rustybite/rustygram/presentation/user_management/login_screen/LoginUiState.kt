@@ -9,4 +9,5 @@ data class LoginUiState(
     val selectedOption: String = "English (US)",
     val selected: Boolean = false,
     val errorMessage: String? = null,
+    val isPasswordVisible: Boolean = false
 )

@@ -18,7 +18,7 @@ import androidx.compose.ui.semantics.Role
 import dev.rustybite.rustygram.R
 
 @Composable
-fun LabguageOptions(
+fun LanguageOptions(
     languageOptions: List<String>,
     selectedOption: String,
     onOptionSelected: (String) -> Unit,

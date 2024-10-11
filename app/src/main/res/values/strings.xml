@@ -31,5 +31,28 @@
     <string name="forgot_password">Forgot password</string>
     <string name="create_new_account">Create new account</string>
     <string name="show_password_content_description">Show or hide password button</string>
-
+    <string name="profile_created_successfully">Profile created successfully</string>
+    <string name="birth_date_screen_title">What\'s your birthday?</string>
+    <string name="birth_date_screen_subtitle">Use your own birthday, even if this is account is for a business , a pet or anything else. No one will see this unless you choose to share it</string>
+    <string name="birth_date_label">Birthday</string>
+    <string name="date_picker_confirm_button">Ok</string>
+    <string name="date_picker_dismiss_button">Cancel</string>
+    <string name="next">Next</string>
+    <string name="full_name_title">What\'s your full name?</string>
+    <string name="full_name_label">Full name</string>
+    <string name="full_name_placeholder">Enter your full name</string>
+    <string name="user_name_title">Create a username</string>
+    <string name="user_name_subtitle">Add a username or use our suggestion. You can change this at any time</string>
+    <string name="user_name_label">Username</string>
+    <string name="user_name_placeholder">Create username</string>
+    <string name="username_available">The username provided is already taken</string>
+    <string name="create_profile_picture_title">Add a profile picture</string>
+    <string name="create_profile_picture_subtitle">Add a profile picture so your friends know it\'s you. Every one will be able to see you</string>
+    <string name="selected_photo_description">Selected image to upload</string>
+    <string name="modal_add_picture_title">Add picture</string>
+    <string name="choose_from_gallery">Choose from Gallery</string>
+    <string name="take_picture">Take picture</string>
+    <string name="cancel_or_dismiss_button">Cancel or dismiss button</string>
+    <string name="add_picture_btn_text">Add picture</string>
+    <string name="skip_btn_text">Skip</string>
 </resources>

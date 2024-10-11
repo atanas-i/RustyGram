@@ -10,6 +10,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import dev.rustybite.rustygram.presentation.user_management.login_screen.LoginScreen
+import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.BirthdayScreen
+import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.CreateFullNameScreen
+import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.CreateProfilePictureScreen
+import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.CreateUsernameScreen
+import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.ProfileViewModel
 import dev.rustybite.rustygram.presentation.user_management.registration_screen.SignUpScreen
 import dev.rustybite.rustygram.presentation.user_management.registration_screen.UserRegistrationViewModel
 
@@ -30,7 +35,8 @@ fun NavGraphBuilder.onBoardingGraph(
     snackBarHostState: SnackbarHostState,
     sheetState: SheetState,
     focusManager: FocusManager,
-    viewModel: UserRegistrationViewModel
+    viewModel: UserRegistrationViewModel,
+    profileViewModel: ProfileViewModel
 ) {
     navigation<OnBoardingRoutes.OnBoardingGraph>(OnBoardingRoutes.Login) {
         composable<OnBoardingRoutes.Registration> {
@@ -42,15 +48,45 @@ fun NavGraphBuilder.onBoardingGraph(
                 viewModel = viewModel,
             )
         }
-        composable<OnBoardingRoutes.CreateProfile> {
-            Text(text = "Create Profile")
+        composable<OnBoardingRoutes.CreateBirthDate> {
+            BirthdayScreen(
+                onNavigate = { event -> navHostController.navigate(event.route) },
+                onPopBackStack = {navHostController.popBackStack() },
+                viewModel = profileViewModel
+            )
+        }
+        composable<OnBoardingRoutes.CreateFullName> { 
+            CreateFullNameScreen(
+                onNavigate = { event -> navHostController.navigate(event.route) },
+                onPopBackStack = { navHostController.popBackStack() },
+                focusManager = focusManager,
+                viewModel = profileViewModel
+            )
+        }
+        composable<OnBoardingRoutes.CreateUsername> {
+            CreateUsernameScreen(
+                onNavigate = { event -> navHostController.navigate(event.route) },
+                onPopBackStack = { navHostController.popBackStack() },
+                focusManager = focusManager,
+                viewModel = profileViewModel
+            )
+        }
+        composable<OnBoardingRoutes.CreateProfilePicture> {
+            CreateProfilePictureScreen(
+                onNavigate = { event -> navHostController.navigate(event.route) },
+                onPopBackStack = { navHostController.popBackStack() },
+                sheetState = sheetState,
+                snackbarHostState = snackBarHostState,
+                viewModel = profileViewModel
+            )
         }
         composable<OnBoardingRoutes.Login> {
             LoginScreen(
                 snackBarHostState = snackBarHostState,
                 sheetState = sheetState,
                 onNavigate = { event -> navHostController.navigate(event.route) },
-                onPopBackStack = { navHostController.popBackStack() }
+                onPopBackStack = { navHostController.popBackStack() },
+                focusManager = focusManager
             )
         }
         composable<OnBoardingRoutes.ChangePassword> {

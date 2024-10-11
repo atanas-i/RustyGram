@@ -3,7 +3,6 @@ package dev.rustybite.rustygram.presentation.user_management.login_screen
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -13,12 +12,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.focus.FocusManager
 import androidx.hilt.navigation.compose.hiltViewModel
-import dev.rustybite.rustygram.R
-import dev.rustybite.rustygram.presentation.ui.components.LabguageOptions
+import dev.rustybite.rustygram.presentation.ui.components.LanguageOptions
 import dev.rustybite.rustygram.util.RustyEvents
 import kotlinx.coroutines.flow.collectLatest
 
@@ -27,8 +24,9 @@ import kotlinx.coroutines.flow.collectLatest
 fun LoginScreen(
     snackBarHostState: SnackbarHostState,
     sheetState: SheetState,
-    onNavigate: (RustyEvents.Navigate) -> Unit,
+    onNavigate: (RustyEvents.OnBoardingNavigate) -> Unit,
     onPopBackStack: (RustyEvents.PopBackStack) -> Unit,
+    focusManager: FocusManager,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
@@ -37,10 +35,12 @@ fun LoginScreen(
     LaunchedEffect(viewModel.events) {
         viewModel.events.collectLatest { event ->
             when(event) {
-                is RustyEvents.Navigate -> onNavigate(event)
+                is RustyEvents.OnBoardingNavigate -> onNavigate(event)
                 is RustyEvents.PopBackStack -> onPopBackStack(event)
                 is RustyEvents.ShowSnackBar -> snackBarHostState.showSnackbar(event.message)
                 is RustyEvents.ShowToast -> Unit
+                is RustyEvents.BottomScreenNavigate -> Unit
+                is RustyEvents.Navigate -> Unit
             }
         }
     }
@@ -63,7 +63,7 @@ fun LoginScreen(
                     Column(
                         modifier = modifier
                     ) {
-                        LabguageOptions(
+                        LanguageOptions(
                            languageOptions = uiState.languageOptions,
                             selectedOption = uiState.selectedOption,
                             onOptionSelected = {
@@ -83,7 +83,9 @@ fun LoginScreen(
                     viewModel.forgotPassword()
                 },
                 onSignUpClicked = { viewModel.onSignUpClicked() },
-                onOpenLanguageSelection = { viewModel.onOpenLanguageSelection() }
+                onOpenLanguageSelection = { viewModel.onOpenLanguageSelection() },
+                focusManager = focusManager,
+                onShowPasswordClicked = { viewModel.onShowPasswordClicked() }
             )
         }
     }

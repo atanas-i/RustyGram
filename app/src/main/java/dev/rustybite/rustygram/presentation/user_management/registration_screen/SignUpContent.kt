@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import dev.rustybite.rustygram.R
+import dev.rustybite.rustygram.presentation.ui.components.AlreadyHaveAccount
 import dev.rustybite.rustygram.presentation.ui.components.RustyPrimaryButton
 import dev.rustybite.rustygram.presentation.ui.components.RustySecondaryButton
 import dev.rustybite.rustygram.presentation.ui.components.RustyTextField
@@ -79,22 +80,7 @@ fun SignUpContent(
 
         )
         Spacer(modifier = modifier.weight(1f))
-        Column(
-            modifier = modifier
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(id = R.string.already_have_account),
-                style = baseline.bodyLarge.copy(
-                    fontFamily = bodyFontFamily
-                ),
-                color = MaterialTheme.colorScheme.primary,
-                modifier = modifier
-                    .padding(dimensionResource(id = R.dimen.padding_extra_small))
-                    .clickable { onHaveAccountClicked() }
-            )
-        }
+        AlreadyHaveAccount(modifier, onHaveAccountClicked)
     }
 }
 
