@@ -33,7 +33,6 @@ class ProfileRepositoryImpl @Inject constructor(
     ): Flow<RustyResult<RustyResponse>> = flow {
         emit(RustyResult.Loading())
         val response = service.createProfile(token, body)
-        Log.d(TAG, "createProfileRepo: ${response.body().toString()}")
         if (response.isSuccessful) {
             response.body()?.let {
                 val data = RustyResponse(
@@ -47,7 +46,6 @@ class ProfileRepositoryImpl @Inject constructor(
             if (errorBody != null) {
                 val error = converter.convert(errorBody)?.toDatabaseResponseError()
                 if (error != null) {
-                    Log.d(TAG, "createProfileRepo: $error")
                     emit(RustyResult.Failure(error.message))
                 } else {
                     emit(RustyResult.Failure(resProvider.getString(R.string.unknown_error)))
@@ -58,12 +56,12 @@ class ProfileRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getProfiles(token: String): Flow<RustyResult<List<Profile>>> = flow {
+    override suspend fun getProfile(token: String, body: JsonObject): Flow<RustyResult<Profile>> = flow {
         emit(RustyResult.Loading())
-        val response = service.getProfiles(token)
+        val response = service.getProfile(token, body)
         if (response.isSuccessful) {
-            response.body()?.let { profileDtos ->
-                val data = profileDtos.map { profile -> profile.toProfile() }
+            response.body()?.let { profileDto ->
+                val data = profileDto.toProfile()
                 emit(RustyResult.Success(data))
             }
         } else {
