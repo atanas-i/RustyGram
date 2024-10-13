@@ -3,7 +3,6 @@ package dev.rustybite.rustygram.presentation.user_management.profile.create_prof
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,7 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.presentation.ui.components.AlreadyHaveAccount
 import dev.rustybite.rustygram.presentation.ui.components.RustyDatePicker
@@ -34,13 +32,11 @@ import dev.rustybite.rustygram.presentation.ui.components.RustyPrimaryButton
 import dev.rustybite.rustygram.presentation.ui.theme.baseline
 import dev.rustybite.rustygram.presentation.ui.theme.bodyFontFamily
 import dev.rustybite.rustygram.util.convertMillisToDate
-import java.time.LocalDateTime
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BirthDayContent(
-    uiState: ProfileUiState,
+    uiState: CreateProfileUiState,
     onBirthDateChange: (Long?) -> Unit,
     onNextClicked: () -> Unit,
     onHaveAccountClicked: () -> Unit,

@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.inject.Inject
@@ -38,7 +37,7 @@ class ProfileViewModel @Inject constructor(
     private val storageRepository: StorageRepository,
     private val tokenRepository: TokenManagementRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(ProfileUiState())
+    private val _uiState = MutableStateFlow(CreateProfileUiState())
     val uiState = _uiState.asStateFlow()
     private val _event = Channel<RustyEvents>()
     val event = _event.receiveAsFlow()

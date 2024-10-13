@@ -35,7 +35,7 @@ import dev.rustybite.rustygram.presentation.ui.theme.bodyFontFamily
 
 @Composable
 fun CreateProfilePictureContent(
-    uiState: ProfileUiState,
+    uiState: CreateProfileUiState,
     onAddPictureClicked: () -> Unit,
     onSkipClicked: () -> Unit,
     onViewClicked: () -> Unit,
