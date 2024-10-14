@@ -8,8 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
-import dev.rustybite.rustygram.presentation.ui.navigation.RustyAppRoutes
 import dev.rustybite.rustygram.util.RustyEvents
 import kotlinx.coroutines.flow.collectLatest
 
@@ -18,7 +16,7 @@ fun BirthdayScreen(
     onNavigate: (RustyEvents.OnBoardingNavigate) -> Unit,
     onPopBackStack: (RustyEvents.PopBackStack) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel
+    viewModel: CreateProfileViewModel
 ) {
     val uiState = viewModel.uiState.collectAsState().value
     val appEvent = viewModel.event

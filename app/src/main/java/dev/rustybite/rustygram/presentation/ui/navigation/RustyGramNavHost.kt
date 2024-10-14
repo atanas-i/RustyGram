@@ -18,7 +18,7 @@ import androidx.navigation.compose.NavHost
 import dev.rustybite.rustygram.presentation.RustyGramViewModel
 import dev.rustybite.rustygram.presentation.user_management.registration_screen.UserRegistrationViewModel
 import dev.rustybite.rustygram.presentation.ui.components.RustyBottomBar
-import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.ProfileViewModel
+import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.CreateProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,7 +30,7 @@ fun RustyGramNavHost(
     mainViewModel: RustyGramViewModel,
     modifier: Modifier = Modifier,
     viewModel: UserRegistrationViewModel = hiltViewModel(),
-    profileViewModel: ProfileViewModel = hiltViewModel()
+    profileViewModel: CreateProfileViewModel = hiltViewModel()
 ) {
     val uiState = mainViewModel.uiState.collectAsState().value
     val startDestination by remember(uiState.isUserSignedIn, uiState.isUserOnboarded) {
@@ -54,7 +54,8 @@ fun RustyGramNavHost(
         bottomBar = {
             if (shouldShowBottomNav) {
                 RustyBottomBar(
-                    navHostController = navHostController
+                    navHostController = navHostController,
+                    userProfilePicture = uiState.userProfilePicture
                 )
             }
         },

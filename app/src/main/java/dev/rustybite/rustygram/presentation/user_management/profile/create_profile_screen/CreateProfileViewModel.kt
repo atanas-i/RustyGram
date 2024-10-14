@@ -30,7 +30,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(
+class CreateProfileViewModel @Inject constructor(
     private val repository: ProfileRepository,
     private val sessionManager: SessionManager,
     private val resProvider: ResourceProvider,

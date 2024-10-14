@@ -33,16 +33,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.presentation.ui.theme.baseline
 import dev.rustybite.rustygram.presentation.ui.theme.bodyFontFamily
 import dev.rustybite.rustygram.util.RustyEvents
 import dev.rustybite.rustygram.util.convertMillisToDate
 import kotlinx.coroutines.flow.collectLatest
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,7 +49,7 @@ fun CreateProfilePictureScreen(
     sheetState: SheetState,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel
+    viewModel: CreateProfileViewModel
 ) {
     val uiState = viewModel.uiState.collectAsState().value
     val appEvents = viewModel.event

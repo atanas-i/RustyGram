@@ -60,4 +60,10 @@ interface RustyGramService {
         @Header("Authorization") token: String
     ): Response<List<ProfileDto>>
 
+    @GET("auth/v1/user")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun getLoggedInUser(
+        @Header("Authorization") token: String
+    ): Response<UserDto>
+
 }

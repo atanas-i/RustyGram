@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -21,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.presentation.ui.navigation.BottomNav
 import dev.rustybite.rustygram.presentation.ui.navigation.BottomNavScreen
@@ -28,6 +31,7 @@ import dev.rustybite.rustygram.presentation.ui.navigation.BottomNavScreen
 @Composable
 fun RustyBottomBar(
     navHostController: NavHostController,
+    userProfilePicture: String,
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = MaterialTheme.colorScheme.onBackground
@@ -59,12 +63,23 @@ fun RustyBottomBar(
                     }
                 },
                 icon = {
-                    Icon(
-                        painter = painterResource(id = item.icon),
-                        contentDescription = stringResource(id = item.title),
-                        modifier = modifier
-                            .size(dimensionResource(id = R.dimen.bottom_bar_icon_size))
-                    )
+                    if (userProfilePicture.isEmpty()) {
+                        Icon(
+                            painter = painterResource(id = item.icon),
+                            contentDescription = stringResource(id = item.title),
+                            modifier = modifier
+                                .size(dimensionResource(id = R.dimen.bottom_bar_icon_size))
+                        )
+                    } else {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(userProfilePicture)
+                                .build(),
+                            contentDescription = userProfilePicture,
+                            modifier = modifier
+                                .size(dimensionResource(id = R.dimen.bottom_bar_icon_size))
+                        )
+                    }
                 },
                 modifier = modifier,
             )

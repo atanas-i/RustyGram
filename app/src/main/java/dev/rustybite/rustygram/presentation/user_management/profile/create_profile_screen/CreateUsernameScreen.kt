@@ -9,7 +9,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
-import androidx.hilt.navigation.compose.hiltViewModel
 import dev.rustybite.rustygram.util.RustyEvents
 import kotlinx.coroutines.flow.collectLatest
 
@@ -19,7 +18,7 @@ fun CreateUsernameScreen(
     onPopBackStack: (RustyEvents.PopBackStack) -> Unit,
     focusManager: FocusManager,
     modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel
+    viewModel: CreateProfileViewModel
 ) {
     val uiState = viewModel.uiState.collectAsState().value
     val appEvent = viewModel.event
