@@ -98,6 +98,6 @@ class SessionManagerImpl @Inject constructor(
             return true
         }
         val currentTime = System.currentTimeMillis()
-        return currentTime < expiresAt!!
+        return currentTime >= expiresAt!!
     }
 }

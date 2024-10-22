@@ -13,6 +13,7 @@ import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface RustyGramService {
 
@@ -51,8 +52,8 @@ interface RustyGramService {
     @Headers("apiKey: $API_KEY", "Content-Type: application/json")
     suspend fun getProfile(
         @Header("Authorization") token: String,
-        @Body body: JsonObject
-    ): Response<ProfileDto>
+        @Query("user_id") userId: String
+    ): Response<List<ProfileDto>>
 
     @GET("rest/v1/profiles")
     @Headers("apiKey: $API_KEY", "Content-Type: application/json")

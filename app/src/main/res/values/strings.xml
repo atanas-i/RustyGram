@@ -55,4 +55,10 @@
     <string name="cancel_or_dismiss_button">Cancel or dismiss button</string>
     <string name="add_picture_btn_text">Add picture</string>
     <string name="skip_btn_text">Skip</string>
+    <string name="dropdown_icon">Dropdown Icon</string>
+    <string name="thread_icon">Thread icon</string>
+    <string name="add_icon_description">Add icon</string>
+    <string name="menu_icon_description">Menu icon</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="share_profile">Share Profile</string>
 </resources>
