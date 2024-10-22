@@ -24,7 +24,7 @@ import dev.rustybite.rustygram.presentation.ui.theme.bodyFontFamily
 
 @Composable
 fun CreateFullNameContent(
-    uiState: ProfileUiState,
+    uiState: CreateProfileUiState,
     onFullNameChange: (String) -> Unit,
     onNextClicked: () -> Unit,
     onHaveAccountClicked: () -> Unit,

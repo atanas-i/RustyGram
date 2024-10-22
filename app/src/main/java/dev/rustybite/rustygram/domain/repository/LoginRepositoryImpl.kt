@@ -1,28 +1,21 @@
 package dev.rustybite.rustygram.domain.repository
 
-import android.util.Log
 import com.google.gson.JsonObject
 import dev.rustybite.rustygram.R
-import dev.rustybite.rustygram.data.dtos.auth.toUser
 import dev.rustybite.rustygram.data.dtos.auth.toVerifiedUser
-import dev.rustybite.rustygram.data.dtos.util.ApiErrorDto
 import dev.rustybite.rustygram.data.dtos.util.LoginErrorDto
-import dev.rustybite.rustygram.data.dtos.util.toApiError
 import dev.rustybite.rustygram.data.remote.RustyGramService
 import dev.rustybite.rustygram.data.repository.LoginRepository
 import dev.rustybite.rustygram.data.repository.UserRegistrationRepository
 import dev.rustybite.rustygram.domain.models.RustyResponse
-import dev.rustybite.rustygram.domain.models.User
 import dev.rustybite.rustygram.domain.models.VerifiedUser
 import dev.rustybite.rustygram.domain.models.toLoginError
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyResult
-import dev.rustybite.rustygram.util.TAG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Retrofit
 import javax.inject.Inject
-import kotlin.math.log
 
 class LoginRepositoryImpl @Inject constructor(
     private val service: RustyGramService,
@@ -89,4 +82,5 @@ class LoginRepositoryImpl @Inject constructor(
             }
         }
     }
+
 }

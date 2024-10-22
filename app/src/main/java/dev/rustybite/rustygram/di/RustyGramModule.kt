@@ -13,12 +13,14 @@ import dev.rustybite.rustygram.data.repository.ProfileRepository
 import dev.rustybite.rustygram.data.repository.StorageRepository
 import dev.rustybite.rustygram.data.repository.TokenManagementRepository
 import dev.rustybite.rustygram.data.repository.UserRegistrationRepository
+import dev.rustybite.rustygram.data.repository.UserRepository
 import dev.rustybite.rustygram.domain.local.SessionManagerImpl
 import dev.rustybite.rustygram.domain.repository.LoginRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.ProfileRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.StorageRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.TokenManagementRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.UserRegistrationRepositoryImpl
+import dev.rustybite.rustygram.domain.repository.UserRepositoryImpl
 import dev.rustybite.rustygram.util.API_KEY
 import dev.rustybite.rustygram.util.BASE_URL
 import dev.rustybite.rustygram.util.ResourceProvider
@@ -90,5 +92,8 @@ object RustyGramModule {
         ProfileRepositoryImpl(service, retrofit, resources)
 
 
-
+    @Provides
+    @Singleton
+    fun providesUserRepository(service: RustyGramService, retrofit: Retrofit, resProvider: ResourceProvider): UserRepository =
+        UserRepositoryImpl(service, resProvider, retrofit)
 }

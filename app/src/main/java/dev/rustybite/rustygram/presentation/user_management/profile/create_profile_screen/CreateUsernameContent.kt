@@ -15,7 +15,6 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType.Companion.Text
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.presentation.ui.components.AlreadyHaveAccount
 import dev.rustybite.rustygram.presentation.ui.components.RustyPrimaryButton
@@ -25,7 +24,7 @@ import dev.rustybite.rustygram.presentation.ui.theme.bodyFontFamily
 
 @Composable
 fun CreateUsernameContent(
-    uiState: ProfileUiState,
+    uiState: CreateProfileUiState,
     onUsernameChange: (String) -> Unit,
     onNextClicked: () -> Unit,
     onHaveAccountClicked: () -> Unit,

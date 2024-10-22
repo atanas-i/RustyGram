@@ -1,6 +1,7 @@
 package dev.rustybite.rustygram.domain.local
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -8,20 +9,27 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.viewModelScope
+import com.google.gson.JsonObject
+import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.util.ACCESS_TOKEN
 import dev.rustybite.rustygram.util.EXPIRES_AT
 import dev.rustybite.rustygram.util.IS_USER_ONBOARDED
 import dev.rustybite.rustygram.util.IS_USER_SIGNED_IN
 import dev.rustybite.rustygram.util.REFRESH_TOKEN
+import dev.rustybite.rustygram.util.RustyResult
 import dev.rustybite.rustygram.util.SESSION_MANAGER
+import dev.rustybite.rustygram.util.TAG
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = SESSION_MANAGER)
 class SessionManagerImpl @Inject constructor(
-    private val context: Context
+    private val context: Context,
 ) : SessionManager {
     private val accessTokenKey = stringPreferencesKey(ACCESS_TOKEN)
     private val refreshTokenKey = stringPreferencesKey(REFRESH_TOKEN)
@@ -90,6 +98,6 @@ class SessionManagerImpl @Inject constructor(
             return true
         }
         val currentTime = System.currentTimeMillis()
-        return currentTime < expiresAt!!
+        return currentTime >= expiresAt!!
     }
 }

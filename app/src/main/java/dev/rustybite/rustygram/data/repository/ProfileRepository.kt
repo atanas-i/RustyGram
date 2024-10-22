@@ -19,4 +19,6 @@ interface ProfileRepository {
     suspend fun createProfile(token: String, body: JsonObject): Flow<RustyResult<RustyResponse>>
 
     suspend fun getProfiles(token: String): Flow<RustyResult<List<Profile>>>
+
+    suspend fun getProfile(token: String, userId: String): Flow<RustyResult<List<Profile>>>
 }

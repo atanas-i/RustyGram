@@ -31,4 +31,6 @@
     <dimen name="profile_image_view_size">160dp</dimen>
     <dimen name="border_width_medium">3dp</dimen>
     <dimen name="action_btn_size_small">14dp</dimen>
+    <dimen name="profile_picture_size">90dp</dimen>
+    <dimen name="icon_size_small">24dp</dimen>
 </resources>

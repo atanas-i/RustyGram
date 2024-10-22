@@ -14,7 +14,8 @@ import dev.rustybite.rustygram.presentation.user_management.profile.create_profi
 import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.CreateFullNameScreen
 import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.CreateProfilePictureScreen
 import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.CreateUsernameScreen
-import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.ProfileViewModel
+import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.CreateProfileViewModel
+import dev.rustybite.rustygram.presentation.user_management.profile.view_profile_screen.ProfileScreen
 import dev.rustybite.rustygram.presentation.user_management.registration_screen.SignUpScreen
 import dev.rustybite.rustygram.presentation.user_management.registration_screen.UserRegistrationViewModel
 
@@ -24,7 +25,9 @@ fun NavGraphBuilder.homeNavGraph(navHostController: NavHostController) {
         composable<BottomNavScreen.Search> {  }
         composable<BottomNavScreen.AddPost> {  }
         composable<BottomNavScreen.Reels> {  }
-        composable<BottomNavScreen.Profile> {  }
+        composable<BottomNavScreen.Profile> {
+            ProfileScreen()
+        }
     }
 }
 
@@ -36,7 +39,7 @@ fun NavGraphBuilder.onBoardingGraph(
     sheetState: SheetState,
     focusManager: FocusManager,
     viewModel: UserRegistrationViewModel,
-    profileViewModel: ProfileViewModel
+    profileViewModel: CreateProfileViewModel,
 ) {
     navigation<OnBoardingRoutes.OnBoardingGraph>(OnBoardingRoutes.Login) {
         composable<OnBoardingRoutes.Registration> {
