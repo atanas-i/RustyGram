@@ -9,6 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import dev.rustybite.rustygram.data.local.MediaDataSource
 import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.remote.RustyGramService
+import dev.rustybite.rustygram.data.repository.GalleryRepository
 import dev.rustybite.rustygram.data.repository.LoginRepository
 import dev.rustybite.rustygram.data.repository.ProfileRepository
 import dev.rustybite.rustygram.data.repository.StorageRepository
@@ -17,6 +18,7 @@ import dev.rustybite.rustygram.data.repository.UserRegistrationRepository
 import dev.rustybite.rustygram.data.repository.UserRepository
 import dev.rustybite.rustygram.domain.local.MediaDataSourceImpl
 import dev.rustybite.rustygram.domain.local.SessionManagerImpl
+import dev.rustybite.rustygram.domain.repository.GalleryRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.LoginRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.ProfileRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.StorageRepositoryImpl
@@ -102,4 +104,8 @@ object RustyGramModule {
     @Provides
     @Singleton
     fun providesMediaDataSource(@ApplicationContext context: Context): MediaDataSource = MediaDataSourceImpl(context.contentResolver)
+
+    @Provides
+    @Singleton
+    fun providesGalleryRepository(mediaDataSource: MediaDataSource): GalleryRepository = GalleryRepositoryImpl(mediaDataSource)
 }
