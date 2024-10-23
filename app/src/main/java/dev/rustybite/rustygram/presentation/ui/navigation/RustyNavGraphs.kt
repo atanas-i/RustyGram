@@ -9,6 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import dev.rustybite.rustygram.presentation.posts.create_post.ImageScreen
 import dev.rustybite.rustygram.presentation.user_management.login_screen.LoginScreen
 import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.BirthdayScreen
 import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.CreateFullNameScreen
@@ -23,7 +24,9 @@ fun NavGraphBuilder.homeNavGraph(navHostController: NavHostController) {
     navigation<BottomNavScreen.HomeGraph>(startDestination = BottomNavScreen.Home) {
         composable<BottomNavScreen.Home> {  }
         composable<BottomNavScreen.Search> {  }
-        composable<BottomNavScreen.AddPost> {  }
+        composable<BottomNavScreen.AddPost> {
+            ImageScreen()
+        }
         composable<BottomNavScreen.Reels> {  }
         composable<BottomNavScreen.Profile> {
             ProfileScreen()

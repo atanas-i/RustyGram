@@ -61,4 +61,6 @@
     <string name="menu_icon_description">Menu icon</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="share_profile">Share Profile</string>
+    <string name="image_screen_top_bar_title">New post</string>
+    <string name="cancel_btn">Cancel button</string>
 </resources>
