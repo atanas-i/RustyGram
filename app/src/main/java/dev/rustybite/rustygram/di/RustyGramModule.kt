@@ -6,6 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dev.rustybite.rustygram.data.local.MediaDataSource
 import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.remote.RustyGramService
 import dev.rustybite.rustygram.data.repository.LoginRepository
@@ -14,6 +15,7 @@ import dev.rustybite.rustygram.data.repository.StorageRepository
 import dev.rustybite.rustygram.data.repository.TokenManagementRepository
 import dev.rustybite.rustygram.data.repository.UserRegistrationRepository
 import dev.rustybite.rustygram.data.repository.UserRepository
+import dev.rustybite.rustygram.domain.local.MediaDataSourceImpl
 import dev.rustybite.rustygram.domain.local.SessionManagerImpl
 import dev.rustybite.rustygram.domain.repository.LoginRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.ProfileRepositoryImpl
@@ -96,4 +98,8 @@ object RustyGramModule {
     @Singleton
     fun providesUserRepository(service: RustyGramService, retrofit: Retrofit, resProvider: ResourceProvider): UserRepository =
         UserRepositoryImpl(service, resProvider, retrofit)
+
+    @Provides
+    @Singleton
+    fun providesMediaDataSource(@ApplicationContext context: Context): MediaDataSource = MediaDataSourceImpl(context.contentResolver)
 }
