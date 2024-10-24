@@ -1,5 +1,7 @@
 package dev.rustybite.rustygram.presentation.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -18,11 +20,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import dev.rustybite.rustygram.presentation.RustyGramViewModel
+import dev.rustybite.rustygram.presentation.posts.create_post.CreatePostViewModel
 import dev.rustybite.rustygram.presentation.user_management.registration_screen.UserRegistrationViewModel
 import dev.rustybite.rustygram.presentation.ui.components.RustyBottomBar
 import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.CreateProfileViewModel
 import dev.rustybite.rustygram.util.RustyEvents
 
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RustyGramNavHost(
@@ -33,7 +37,8 @@ fun RustyGramNavHost(
     mainViewModel: RustyGramViewModel,
     modifier: Modifier = Modifier,
     viewModel: UserRegistrationViewModel = hiltViewModel(),
-    profileViewModel: CreateProfileViewModel = hiltViewModel()
+    profileViewModel: CreateProfileViewModel = hiltViewModel(),
+    createPostViewModel: CreatePostViewModel = hiltViewModel()
 ) {
     val uiState = mainViewModel.uiState.collectAsState().value
     val startDestination by remember(uiState.isUserSignedIn, uiState.isUserOnboarded) {
@@ -91,7 +96,11 @@ fun RustyGramNavHost(
                 viewModel = viewModel,
                 profileViewModel = profileViewModel
             )
-            homeNavGraph(navHostController = navHostController)
+            homeNavGraph(
+                navHostController = navHostController,
+                snackBarHostState = snackBarHostState,
+                viewModel = createPostViewModel
+            )
         }
     }
 }

@@ -1,5 +1,7 @@
 package dev.rustybite.rustygram.presentation.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarHostState
@@ -9,6 +11,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import dev.rustybite.rustygram.presentation.posts.create_post.CreatePostViewModel
+import dev.rustybite.rustygram.presentation.posts.create_post.edit_photo.EditPhotoScreen
 import dev.rustybite.rustygram.presentation.posts.create_post.image_picker.ImageScreen
 import dev.rustybite.rustygram.presentation.user_management.login_screen.LoginScreen
 import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.BirthdayScreen
@@ -20,14 +24,19 @@ import dev.rustybite.rustygram.presentation.user_management.profile.view_profile
 import dev.rustybite.rustygram.presentation.user_management.registration_screen.SignUpScreen
 import dev.rustybite.rustygram.presentation.user_management.registration_screen.UserRegistrationViewModel
 
-fun NavGraphBuilder.homeNavGraph(navHostController: NavHostController) {
+fun NavGraphBuilder.homeNavGraph(
+    navHostController: NavHostController,
+    snackBarHostState: SnackbarHostState,
+    viewModel: CreatePostViewModel
+) {
     navigation<BottomNavScreen.HomeGraph>(startDestination = BottomNavScreen.Home) {
         composable<BottomNavScreen.Home> {  }
         composable<BottomNavScreen.Search> {  }
         composable<BottomNavScreen.AddPost> {
             ImageScreen(
                 onNavigate = { event -> navHostController.navigate(event.route) },
-                onPopBack = { navHostController.popBackStack() }
+                onPopBack = { navHostController.popBackStack() },
+                viewModel = viewModel
             )
         }
         composable<BottomNavScreen.Reels> {  }
@@ -35,12 +44,21 @@ fun NavGraphBuilder.homeNavGraph(navHostController: NavHostController) {
             ProfileScreen()
         }
         composable<RustyAppRoutes.EditScreen> {
-            Text(text = "Edit Photo Screen")
+            EditPhotoScreen(
+                snackBarHostState = snackBarHostState,
+                onNavigate = { event -> navHostController.navigate(event.route)},
+                onPopBack = { navHostController.popBackStack()},
+                viewModel = viewModel
+            )
+        }
+        composable<RustyAppRoutes.FinalizePostScreen> {
+            Text(text = "Finalize Post")
         }
     }
 }
 
 
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.onBoardingGraph(
     navHostController: NavHostController,

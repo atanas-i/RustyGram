@@ -56,7 +56,7 @@ fun ImageScreen(
     onNavigate: (RustyEvents.Navigate) -> Unit,
     onPopBack: (RustyEvents.PopBackStack) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CreatePostViewModel = hiltViewModel()
+    viewModel: CreatePostViewModel
 ) {
     val galleryUiState = viewModel.galleryUiState.collectAsStateWithLifecycle().value
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value

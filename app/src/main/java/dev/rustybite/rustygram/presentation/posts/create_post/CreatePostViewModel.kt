@@ -145,4 +145,16 @@ class CreatePostViewModel @Inject constructor(
             }
         }
     }
+
+    fun goToEdit() {
+        viewModelScope.launch {
+            _events.send(RustyEvents.ShowSnackBar("Edit is not available"))
+        }
+    }
+
+    fun goToFinalizePost() {
+        viewModelScope.launch {
+            _events.send(RustyEvents.Navigate(RustyAppRoutes.FinalizePostScreen))
+        }
+    }
 }
