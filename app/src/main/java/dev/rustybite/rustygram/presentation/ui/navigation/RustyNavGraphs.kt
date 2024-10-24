@@ -9,7 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import dev.rustybite.rustygram.presentation.posts.create_post.ImageScreen
+import dev.rustybite.rustygram.presentation.posts.create_post.image_picker.ImageScreen
 import dev.rustybite.rustygram.presentation.user_management.login_screen.LoginScreen
 import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.BirthdayScreen
 import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.CreateFullNameScreen
@@ -25,11 +25,17 @@ fun NavGraphBuilder.homeNavGraph(navHostController: NavHostController) {
         composable<BottomNavScreen.Home> {  }
         composable<BottomNavScreen.Search> {  }
         composable<BottomNavScreen.AddPost> {
-            ImageScreen()
+            ImageScreen(
+                onNavigate = { event -> navHostController.navigate(event.route) },
+                onPopBack = { navHostController.popBackStack() }
+            )
         }
         composable<BottomNavScreen.Reels> {  }
         composable<BottomNavScreen.Profile> {
             ProfileScreen()
+        }
+        composable<RustyAppRoutes.EditScreen> {
+            Text(text = "Edit Photo Screen")
         }
     }
 }

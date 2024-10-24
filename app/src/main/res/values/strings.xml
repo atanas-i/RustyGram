@@ -63,4 +63,7 @@
     <string name="share_profile">Share Profile</string>
     <string name="image_screen_top_bar_title">New post</string>
     <string name="cancel_btn">Cancel button</string>
+    <string name="selected_image">Selected image</string>
+    <string name="select_multiple">Select Multiple</string>
+    <string name="recent">Recents</string>
 </resources>

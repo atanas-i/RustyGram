@@ -7,8 +7,11 @@ import com.google.gson.JsonObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.local.SessionManager
+import dev.rustybite.rustygram.data.repository.GalleryRepository
 import dev.rustybite.rustygram.data.repository.TokenManagementRepository
 import dev.rustybite.rustygram.data.repository.UserRepository
+import dev.rustybite.rustygram.presentation.posts.create_post.image_picker.MediaPickerUiState
+import dev.rustybite.rustygram.presentation.ui.navigation.RustyAppRoutes
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyEvents
 import dev.rustybite.rustygram.util.RustyResult
@@ -25,10 +28,13 @@ import javax.inject.Inject
 class CreatePostViewModel @Inject constructor(
     private val sessionManager: SessionManager,
     private val tokenRepository: TokenManagementRepository,
-    private val resProvider: ResourceProvider
+    private val resProvider: ResourceProvider,
+    private val galleryRepository: GalleryRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CreatePostUiState())
     val uiState = _uiState.asStateFlow()
+    private val _galleryUiState = MutableStateFlow(MediaPickerUiState())
+    val galleryUiState = _galleryUiState.asStateFlow()
     private val _events = Channel<RustyEvents>()
     val events = _events.receiveAsFlow()
 
@@ -40,6 +46,26 @@ class CreatePostViewModel @Inject constructor(
 
             if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
                 refreshAccessToken(refreshToken)
+            }
+        }
+    }
+
+    init {
+        viewModelScope.launch {
+            galleryRepository.images.collectLatest { result ->
+                when(result) {
+                    is RustyResult.Success -> {
+                        _galleryUiState.value = _galleryUiState.value.copy(
+                            images = result.data
+                        )
+                    }
+                    is RustyResult.Failure -> {
+                        _galleryUiState.value = _galleryUiState.value.copy(
+                            errorMessage = result.message
+                        )
+                    }
+                    is RustyResult.Loading -> {}
+                }
             }
         }
     }
@@ -70,12 +96,20 @@ class CreatePostViewModel @Inject constructor(
         )
     }
 
+    fun onImageSelected(uri: Uri) {
+
+    }
+
     fun moveToEditScreen() {
-        viewModelScope.launch {  }
+        viewModelScope.launch {
+            _events.send(RustyEvents.Navigate(RustyAppRoutes.EditScreen))
+        }
     }
 
     fun moveBack() {
-
+        viewModelScope.launch {
+            _events.send(RustyEvents.PopBackStack)
+        }
     }
 
     private fun refreshAccessToken(refreshToken: String?) {
