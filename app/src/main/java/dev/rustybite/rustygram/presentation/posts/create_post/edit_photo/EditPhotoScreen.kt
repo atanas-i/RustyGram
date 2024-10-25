@@ -78,7 +78,7 @@ fun EditPhotoScreen(
                     IconButton(onClick = {viewModel.moveBack() }) {
                         Icon(
                             painter = painterResource(R.drawable.cancel),
-                            contentDescription = stringResource(R.string.cancel_btn),
+                            contentDescription = stringResource(R.string.cancel_btn_content_description),
                             modifier = modifier
                                 .size(dimensionResource(R.dimen.icon_size_extra_small))
                         )
@@ -91,7 +91,7 @@ fun EditPhotoScreen(
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.tool_icon),
-                            contentDescription = stringResource(R.string.cancel_btn),
+                            contentDescription = stringResource(R.string.cancel_btn_content_description),
                             modifier = modifier
                                 .size(dimensionResource(R.dimen.icon_size_small)),
                             tint = MaterialTheme.colorScheme.onBackground
@@ -100,7 +100,7 @@ fun EditPhotoScreen(
                     IconButton(onClick = { }) {
                         Icon(
                             painter = painterResource(R.drawable.musical_note_icon),
-                            contentDescription = stringResource(R.string.cancel_btn),
+                            contentDescription = stringResource(R.string.cancel_btn_content_description),
                             modifier = modifier
                                 .size(dimensionResource(R.dimen.icon_size_small)),
                             tint = MaterialTheme.colorScheme.onBackground
@@ -169,7 +169,7 @@ fun EditPhotoScreen(
                         )
                     ) {
                         Text(
-                            "Edit",
+                            "Next",
                             modifier = modifier
                                 .padding(
                                     horizontal = dimensionResource(R.dimen.padding_medium),

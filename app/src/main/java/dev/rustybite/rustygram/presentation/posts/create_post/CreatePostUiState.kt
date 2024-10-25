@@ -6,6 +6,7 @@ data class CreatePostUiState(
     val loading: Boolean = false,
     val uri: Uri? = null,
     val postedAt: Long = System.currentTimeMillis(),
+    val caption: String = "",
     val postCaption: String? = null,
     val errorMessage: String? = null,
 )

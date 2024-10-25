@@ -25,7 +25,7 @@ class MediaDataSourceImpl @Inject constructor(
         val orderBy = MediaStore.Images.Media.DATE_ADDED
 
         val query = contentResolver.query(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,//.getContentUri(MediaStore.VOLUME_EXTERNAL),
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             projection,
             null,
             null,
@@ -39,7 +39,6 @@ class MediaDataSourceImpl @Inject constructor(
             val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
             val dateColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
 
-            //Log.d(TAG, "getImagePaths: Media retrieved is ${cursor.getString(nameColumn)}")
             while (cursor.moveToNext()) {
 
                 val id = cursor.getLong(idColumn)
@@ -50,11 +49,9 @@ class MediaDataSourceImpl @Inject constructor(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     id
                 )
-                Log.d(TAG, "getImagePaths: Media retrieved is ${cursor.getString(nameColumn)}")
                 images = images.plus(Image(contentUri, name, size, date)).toMutableList()
             }
         }
-        Log.d(TAG, "getImagePaths: images size is ${images.size}")
         return images
     }
 }

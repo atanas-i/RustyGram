@@ -21,13 +21,10 @@ class GalleryRepositoryImpl @Inject constructor(
             try {
                 emit(RustyResult.Loading())
                 val imagesResult = mediaDataSource.getImagePaths()
-                Log.d(TAG, "Gallery Repo: image name is ${mediaDataSource.getImagePaths().size}")
                 emit(RustyResult.Success(imagesResult.toList()))
             } catch (exception: Exception) {
-                Log.d(TAG, "Gallery Repo: Exception ${exception.localizedMessage}")
                 emit(RustyResult.Failure(exception.localizedMessage))
             } catch (exception: IOException) {
-                Log.d(TAG, "Gallery Repo: IO exception ${exception.localizedMessage}")
                 emit(RustyResult.Failure(exception.localizedMessage))
             }
         }.flowOn(Dispatchers.IO)

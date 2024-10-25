@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
@@ -25,6 +26,7 @@ import dev.rustybite.rustygram.presentation.user_management.registration_screen.
 import dev.rustybite.rustygram.presentation.ui.components.RustyBottomBar
 import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.CreateProfileViewModel
 import dev.rustybite.rustygram.util.RustyEvents
+import io.ktor.util.reflect.instanceOf
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,7 +59,7 @@ fun RustyGramNavHost(
             }
         }
     }
-
+    val isUserCreatingPost = remember { mutableStateOf(false) }
     LaunchedEffect(mainViewModel.event) {
         mainViewModel.event.collect { event ->
             when (event) {
@@ -71,10 +73,11 @@ fun RustyGramNavHost(
 
     Scaffold(
         bottomBar = {
-            if (shouldShowBottomNav) {
+            if (shouldShowBottomNav && !isUserCreatingPost.value) {
                 RustyBottomBar(
                     navHostController = navHostController,
-                    userProfilePicture = uiState.userProfilePicture
+                    userProfilePicture = uiState.userProfilePicture,
+                    isUserCreatingPost = isUserCreatingPost
                 )
             }
         },
@@ -99,6 +102,7 @@ fun RustyGramNavHost(
             homeNavGraph(
                 navHostController = navHostController,
                 snackBarHostState = snackBarHostState,
+                isUserCreatingPost = isUserCreatingPost,
                 viewModel = createPostViewModel
             )
         }

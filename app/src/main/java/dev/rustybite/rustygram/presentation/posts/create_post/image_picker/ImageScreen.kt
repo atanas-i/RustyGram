@@ -41,7 +41,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -92,7 +91,7 @@ fun ImageScreen(
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.cancel),
-                            contentDescription = stringResource(R.string.cancel_btn),
+                            contentDescription = stringResource(R.string.cancel_btn_content_description),
                             modifier = modifier
                                 .size(dimensionResource(R.dimen.icon_size_extra_small))
                         )

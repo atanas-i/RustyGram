@@ -1,6 +1,7 @@
 package dev.rustybite.rustygram.presentation.posts.create_post
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
@@ -11,10 +12,12 @@ import dev.rustybite.rustygram.data.repository.GalleryRepository
 import dev.rustybite.rustygram.data.repository.TokenManagementRepository
 import dev.rustybite.rustygram.data.repository.UserRepository
 import dev.rustybite.rustygram.presentation.posts.create_post.image_picker.MediaPickerUiState
+import dev.rustybite.rustygram.presentation.ui.navigation.BottomNavScreen
 import dev.rustybite.rustygram.presentation.ui.navigation.RustyAppRoutes
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyEvents
 import dev.rustybite.rustygram.util.RustyResult
+import dev.rustybite.rustygram.util.TAG
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -90,6 +93,12 @@ class CreatePostViewModel @Inject constructor(
         )
     }
 
+    fun onCaptionChange(caption: String) {
+        _uiState.value = _uiState.value.copy(
+            caption = caption
+        )
+    }
+
     fun onPostCaptionChange(caption: String) {
         _uiState.value = _uiState.value.copy(
             postCaption = caption
@@ -148,13 +157,55 @@ class CreatePostViewModel @Inject constructor(
 
     fun goToEdit() {
         viewModelScope.launch {
-            _events.send(RustyEvents.ShowSnackBar("Edit is not available"))
+            _events.send(RustyEvents.ShowSnackBar(resProvider.getString(R.string.unavailable_feature)))
         }
     }
 
     fun goToFinalizePost() {
         viewModelScope.launch {
             _events.send(RustyEvents.Navigate(RustyAppRoutes.FinalizePostScreen))
+        }
+    }
+
+    fun onAddLocation() {
+        viewModelScope.launch {
+            _events.send(RustyEvents.ShowSnackBar(resProvider.getString(R.string.unavailable_feature)))
+
+        }
+    }
+
+    fun onTagPeople() {
+        viewModelScope.launch {
+            _events.send(RustyEvents.ShowSnackBar(resProvider.getString(R.string.unavailable_feature)))
+
+        }
+    }
+
+    fun addMusic() {
+        viewModelScope.launch {
+            _events.send(RustyEvents.ShowSnackBar(resProvider.getString(R.string.unavailable_feature)))
+        }
+    }
+
+    fun addAudience() {
+        viewModelScope.launch {
+            _events.send(RustyEvents.ShowSnackBar(resProvider.getString(R.string.unavailable_feature)))
+        }
+    }
+
+    fun addReminder() {
+        viewModelScope.launch {
+            _events.send(RustyEvents.ShowSnackBar(resProvider.getString(R.string.unavailable_feature)))
+        }
+    }
+
+    fun share() {
+        Log.d(TAG, "share: button is clicked")
+        viewModelScope.launch {
+            val body = JsonObject()
+            body.addProperty("caption", uiState.value.caption)
+            _events.send(RustyEvents.BottomScreenNavigate(BottomNavScreen.HomeGraph))
+            _events.send(RustyEvents.ShowSnackBar(resProvider.getString(R.string.share_post_success)))
         }
     }
 }
