@@ -7,4 +7,6 @@ import java.io.File
 
 interface StorageRepository {
     suspend fun uploadProfilePicture(file: File, userId: String, fileName: String): Flow<RustyResult<String>>
+
+    suspend fun uploadPostImage(uri: Uri?): Flow<RustyResult<String>>
 }

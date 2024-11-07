@@ -1,6 +1,7 @@
 package dev.rustybite.rustygram.di
 
 import android.content.Context
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -8,6 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dev.rustybite.rustygram.data.local.MediaDataSource
 import dev.rustybite.rustygram.data.local.SessionManager
+import dev.rustybite.rustygram.data.remote.FirebaseService
 import dev.rustybite.rustygram.data.remote.RustyGramService
 import dev.rustybite.rustygram.data.repository.GalleryRepository
 import dev.rustybite.rustygram.data.repository.LoginRepository
@@ -87,8 +89,17 @@ object RustyGramModule {
 
     @Provides
     @Singleton
-    fun providesUploadRepository(supabaseClient: SupabaseClient): StorageRepository =
-        StorageRepositoryImpl(supabaseClient)
+    fun providesFirebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance()
+
+    @Provides
+    @Singleton
+    fun providesFirebaseService(storage: FirebaseStorage, resources: ResourceProvider): FirebaseService =
+        FirebaseService(storage, resources)
+
+    @Provides
+    @Singleton
+    fun providesUploadRepository(supabaseClient: SupabaseClient, firebaseService: FirebaseService): StorageRepository =
+        StorageRepositoryImpl(supabaseClient, firebaseService)
 
     @Provides
     @Singleton

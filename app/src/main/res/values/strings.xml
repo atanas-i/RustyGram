@@ -77,4 +77,6 @@
     <string name="share">Share</string>
     <string name="share_post_success">Post created successful</string>
     <string name="unavailable_feature">This feature is currently unavailable</string>
+    <string name="firebase_upload_failed">Failed to upload image</string>
+    <string name="firebase_downlaod_failed">Failed to download image</string>
 </resources>

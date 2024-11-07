@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.repository.GalleryRepository
+import dev.rustybite.rustygram.data.repository.StorageRepository
 import dev.rustybite.rustygram.data.repository.TokenManagementRepository
 import dev.rustybite.rustygram.data.repository.UserRepository
 import dev.rustybite.rustygram.presentation.posts.create_post.image_picker.MediaPickerUiState
@@ -33,6 +34,7 @@ class CreatePostViewModel @Inject constructor(
     private val tokenRepository: TokenManagementRepository,
     private val resProvider: ResourceProvider,
     private val galleryRepository: GalleryRepository,
+    private val storageRepository: StorageRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CreatePostUiState())
     val uiState = _uiState.asStateFlow()
@@ -83,7 +85,24 @@ class CreatePostViewModel @Inject constructor(
                 refreshAccessToken(refreshToken)
             }
 
-
+            storageRepository.uploadPostImage(_uiState.value.uri).collectLatest { response ->
+                when(response) {
+                    is RustyResult.Success -> {
+                        _events.send(RustyEvents.ShowSnackBar(response.data))
+                    }
+                    is RustyResult.Failure -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = false,
+                        )
+                        _events.send(RustyEvents.ShowSnackBar(response.message ?: resProvider.getString(R.string.unknown_error)))
+                    }
+                    is RustyResult.Loading -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = true
+                        )
+                    }
+                }
+            }
         }
     }
 

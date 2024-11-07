@@ -202,7 +202,7 @@ fun FinalizePostScreen(
                 RustyPrimaryButton(
                     text = stringResource(R.string.share),
                     onClick = {
-                        viewModel.share()
+                        viewModel.createPost()
                         isUserCreatingPost.value = false
                               },
                     loading = false,
