@@ -1,21 +1,29 @@
 package dev.rustybite.rustygram.di
 
 import android.content.Context
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dev.rustybite.rustygram.data.local.MediaDataSource
 import dev.rustybite.rustygram.data.local.SessionManager
+import dev.rustybite.rustygram.data.remote.FirebaseService
 import dev.rustybite.rustygram.data.remote.RustyGramService
+import dev.rustybite.rustygram.data.repository.GalleryRepository
 import dev.rustybite.rustygram.data.repository.LoginRepository
+import dev.rustybite.rustygram.data.repository.PostsRepository
 import dev.rustybite.rustygram.data.repository.ProfileRepository
 import dev.rustybite.rustygram.data.repository.StorageRepository
 import dev.rustybite.rustygram.data.repository.TokenManagementRepository
 import dev.rustybite.rustygram.data.repository.UserRegistrationRepository
 import dev.rustybite.rustygram.data.repository.UserRepository
+import dev.rustybite.rustygram.domain.local.MediaDataSourceImpl
 import dev.rustybite.rustygram.domain.local.SessionManagerImpl
+import dev.rustybite.rustygram.domain.repository.GalleryRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.LoginRepositoryImpl
+import dev.rustybite.rustygram.domain.repository.PostsRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.ProfileRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.StorageRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.TokenManagementRepositoryImpl
@@ -83,8 +91,17 @@ object RustyGramModule {
 
     @Provides
     @Singleton
-    fun providesUploadRepository(supabaseClient: SupabaseClient): StorageRepository =
-        StorageRepositoryImpl(supabaseClient)
+    fun providesFirebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance()
+
+    @Provides
+    @Singleton
+    fun providesFirebaseService(storage: FirebaseStorage, resources: ResourceProvider): FirebaseService =
+        FirebaseService(storage, resources)
+
+    @Provides
+    @Singleton
+    fun providesUploadRepository(supabaseClient: SupabaseClient, firebaseService: FirebaseService): StorageRepository =
+        StorageRepositoryImpl(supabaseClient, firebaseService)
 
     @Provides
     @Singleton
@@ -96,4 +113,17 @@ object RustyGramModule {
     @Singleton
     fun providesUserRepository(service: RustyGramService, retrofit: Retrofit, resProvider: ResourceProvider): UserRepository =
         UserRepositoryImpl(service, resProvider, retrofit)
+
+    @Provides
+    @Singleton
+    fun providesMediaDataSource(@ApplicationContext context: Context): MediaDataSource = MediaDataSourceImpl(context.contentResolver)
+
+    @Provides
+    @Singleton
+    fun providesGalleryRepository(mediaDataSource: MediaDataSource): GalleryRepository = GalleryRepositoryImpl(mediaDataSource)
+
+    @Provides
+    @Singleton
+    fun providesPostsRepository(service: RustyGramService, retrofit: Retrofit, resources: ResourceProvider): PostsRepository =
+        PostsRepositoryImpl(service, retrofit, resources)
 }

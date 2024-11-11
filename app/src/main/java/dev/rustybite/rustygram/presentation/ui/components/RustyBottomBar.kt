@@ -9,6 +9,8 @@ import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -32,6 +34,7 @@ import dev.rustybite.rustygram.presentation.ui.navigation.BottomNavScreen
 fun RustyBottomBar(
     navHostController: NavHostController,
     userProfilePicture: String,
+    isUserCreatingPost: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = MaterialTheme.colorScheme.onBackground
@@ -61,6 +64,7 @@ fun RustyBottomBar(
                         launchSingleTop = true
                         restoreState = true
                     }
+                    isUserCreatingPost.value = item.route == BottomNavScreen.AddPost
                 },
                 icon = {
                     if (userProfilePicture.isEmpty()) {

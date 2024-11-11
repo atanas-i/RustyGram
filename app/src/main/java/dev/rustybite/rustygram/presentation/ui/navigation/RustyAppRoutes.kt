@@ -1,3 +1,10 @@
 package dev.rustybite.rustygram.presentation.ui.navigation
 
-sealed class RustyAppRoutes {}
+import kotlinx.serialization.Serializable
+
+sealed class RustyAppRoutes {
+    @Serializable
+    data object EditScreen : RustyAppRoutes()
+    @Serializable
+    data object FinalizePostScreen : RustyAppRoutes()
+}

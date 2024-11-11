@@ -14,6 +14,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -50,6 +51,8 @@ class RustyGramActivity : ComponentActivity() {
             val snackBarHostState = remember { SnackbarHostState() }
             val sheetState = rememberModalBottomSheetState()
             val focusManager = LocalFocusManager.current
+            val uiState = mainViewModel.uiState.collectAsState().value
+            val profile = uiState.profile
 
             RustyGramTheme {
                 Scaffold(
@@ -60,6 +63,7 @@ class RustyGramActivity : ComponentActivity() {
                         snackBarHostState = snackBarHostState,
                         sheetState = sheetState,
                         focusManager = focusManager,
+                        profile = profile,
                         mainViewModel = mainViewModel,
                         modifier = Modifier.padding(innerPadding)
                     )
