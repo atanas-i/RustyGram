@@ -27,6 +27,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.traceEventEnd
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import dev.rustybite.rustygram.R
+import dev.rustybite.rustygram.domain.models.Profile
 import dev.rustybite.rustygram.presentation.posts.create_post.CreatePostViewModel
 import dev.rustybite.rustygram.presentation.ui.components.RustyPrimaryButton
 import dev.rustybite.rustygram.presentation.ui.components.RustyTopAppBar
@@ -52,6 +54,7 @@ fun FinalizePostScreen(
     isUserCreatingPost: MutableState<Boolean>,
     onNavigate: (RustyEvents.BottomScreenNavigate) -> Unit,
     onPopBack: (RustyEvents.PopBackStack) -> Unit,
+    profile: Profile?,
     viewModel: CreatePostViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -63,6 +66,7 @@ fun FinalizePostScreen(
             when (events) {
                 is RustyEvents.BottomScreenNavigate -> {
                     onNavigate(events)
+                    isUserCreatingPost.value = false
                 }
 
                 is RustyEvents.PopBackStack -> {
@@ -202,10 +206,12 @@ fun FinalizePostScreen(
                 RustyPrimaryButton(
                     text = stringResource(R.string.share),
                     onClick = {
-                        viewModel.createPost()
-                        isUserCreatingPost.value = false
-                              },
-                    loading = false,
+                        viewModel.createPost(
+                            profile = profile
+                        )
+                    },
+                    loading = uiState.loading,
+                    enabled = !uiState.loading,
                     modifier = modifier
                 )
             }

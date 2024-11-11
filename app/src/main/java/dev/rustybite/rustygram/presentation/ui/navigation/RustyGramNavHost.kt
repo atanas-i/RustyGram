@@ -20,6 +20,7 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import dev.rustybite.rustygram.domain.models.Profile
 import dev.rustybite.rustygram.presentation.RustyGramViewModel
 import dev.rustybite.rustygram.presentation.posts.create_post.CreatePostViewModel
 import dev.rustybite.rustygram.presentation.user_management.registration_screen.UserRegistrationViewModel
@@ -36,6 +37,7 @@ fun RustyGramNavHost(
     snackBarHostState: SnackbarHostState,
     sheetState: SheetState,
     focusManager: FocusManager,
+    profile: Profile?,
     mainViewModel: RustyGramViewModel,
     modifier: Modifier = Modifier,
     viewModel: UserRegistrationViewModel = hiltViewModel(),
@@ -103,6 +105,7 @@ fun RustyGramNavHost(
                 navHostController = navHostController,
                 snackBarHostState = snackBarHostState,
                 isUserCreatingPost = isUserCreatingPost,
+                profile = profile,
                 viewModel = createPostViewModel
             )
         }

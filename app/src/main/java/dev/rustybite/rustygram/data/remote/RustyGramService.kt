@@ -67,4 +67,11 @@ interface RustyGramService {
         @Header("Authorization") token: String
     ): Response<UserDto>
 
+    @POST("rest/v1/posts")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun createPost(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<Unit>
+
 }

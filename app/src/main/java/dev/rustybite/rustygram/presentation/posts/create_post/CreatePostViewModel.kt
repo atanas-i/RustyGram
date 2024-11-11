@@ -9,9 +9,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.repository.GalleryRepository
+import dev.rustybite.rustygram.data.repository.PostsRepository
 import dev.rustybite.rustygram.data.repository.StorageRepository
 import dev.rustybite.rustygram.data.repository.TokenManagementRepository
 import dev.rustybite.rustygram.data.repository.UserRepository
+import dev.rustybite.rustygram.domain.models.Image
+import dev.rustybite.rustygram.domain.models.Profile
 import dev.rustybite.rustygram.presentation.posts.create_post.image_picker.MediaPickerUiState
 import dev.rustybite.rustygram.presentation.ui.navigation.BottomNavScreen
 import dev.rustybite.rustygram.presentation.ui.navigation.RustyAppRoutes
@@ -26,10 +29,12 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class CreatePostViewModel @Inject constructor(
+    private val repository: PostsRepository,
     private val sessionManager: SessionManager,
     private val tokenRepository: TokenManagementRepository,
     private val resProvider: ResourceProvider,
@@ -61,7 +66,7 @@ class CreatePostViewModel @Inject constructor(
                 when(result) {
                     is RustyResult.Success -> {
                         _galleryUiState.value = _galleryUiState.value.copy(
-                            images = result.data
+                            images = result.data,
                         )
                     }
                     is RustyResult.Failure -> {
@@ -75,7 +80,9 @@ class CreatePostViewModel @Inject constructor(
         }
     }
 
-    fun createPost() {
+    fun createPost(
+        profile: Profile?
+    ) {
         viewModelScope.launch {
             val accessToken = sessionManager.accessToken.first()
             val refreshToken = sessionManager.refreshToken.first()
@@ -85,16 +92,48 @@ class CreatePostViewModel @Inject constructor(
                 refreshAccessToken(refreshToken)
             }
 
-            storageRepository.uploadPostImage(_uiState.value.uri).collectLatest { response ->
-                when(response) {
+            _uiState.value = _uiState.value.copy(
+                loading = true
+            )
+            storageRepository.uploadPostImage(_uiState.value.image).collectLatest { uploadResponse ->
+                when(uploadResponse) {
                     is RustyResult.Success -> {
-                        _events.send(RustyEvents.ShowSnackBar(response.data))
+                        val body = JsonObject()
+                        body.addProperty("post_id", UUID.randomUUID().toString())
+                        body.addProperty("caption", _uiState.value.caption)
+                        body.addProperty("photo_url", uploadResponse.data)
+                        body.addProperty("profile_id", profile?.profileId)
+                        _uiState.value = _uiState.value.copy(
+                            loading = false,
+                        )
+                        repository.createPost("Bearer $accessToken", body).collectLatest { response ->
+                            when(response) {
+                                is RustyResult.Success -> {
+                                    _uiState.value = _uiState.value.copy(
+                                        loading = false
+                                    )
+                                    _events.send(RustyEvents.BottomScreenNavigate(BottomNavScreen.HomeGraph))
+                                    _events.send(RustyEvents.ShowSnackBar(response.data.message))
+                                }
+                                is RustyResult.Failure -> {
+                                    _uiState.value = _uiState.value.copy(
+                                        loading = false,
+                                    )
+                                    _events.send(RustyEvents.ShowSnackBar(response.message ?: resProvider.getString(R.string.unknown_error)))
+                                }
+                                is RustyResult.Loading -> {
+                                    _uiState.value = _uiState.value.copy(
+                                        loading = true
+                                    )
+                                }
+                            }
+                        }
                     }
                     is RustyResult.Failure -> {
                         _uiState.value = _uiState.value.copy(
                             loading = false,
                         )
-                        _events.send(RustyEvents.ShowSnackBar(response.message ?: resProvider.getString(R.string.unknown_error)))
+                        _events.send(RustyEvents.ShowSnackBar(uploadResponse.message ?: resProvider.getString(R.string.unknown_error)))
                     }
                     is RustyResult.Loading -> {
                         _uiState.value = _uiState.value.copy(
@@ -109,6 +148,12 @@ class CreatePostViewModel @Inject constructor(
     fun onUriChange(uri: Uri) {
         _uiState.value = _uiState.value.copy(
             uri = uri
+        )
+    }
+
+    fun onImageChange(image: Image) {
+        _uiState.value = _uiState.value.copy(
+            image = image
         )
     }
 

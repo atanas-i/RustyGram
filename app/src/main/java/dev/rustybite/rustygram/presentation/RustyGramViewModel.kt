@@ -62,91 +62,61 @@ class RustyGramViewModel @Inject constructor(
             val accessToken = sessionManager.accessToken.first()
             val refreshToken = sessionManager.refreshToken.first()
             val expiresAt = sessionManager.expiresAt.first()
+
             if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
                 refreshAccessToken(refreshToken)
             }
-//            if (_uiState.value.userId.isEmpty()) {
-//                userRepository.getLoggedInUser(accessToken!!).collectLatest { result ->
-//                    when(result) {
-//                        is RustyResult.Success -> {
-//                            _uiState.value = _uiState.value.copy(
-//                                userId = result.data.userId,
-//                                loading = false
-//                            )
-//                            val body = JsonObject()
-//                            body.addProperty("user_id", _uiState.value.userId)
-//                            profileRepository.getProfile(accessToken, body).collectLatest { profileResult ->
-//                                when(profileResult) {
-//                                    is RustyResult.Success -> {
-//                                        _uiState.value = _uiState.value.copy(
-//                                            userProfilePicture = profileResult.data.userProfilePicture,
-//                                            loading = false
-//                                        )
-//                                    }
-//                                    is RustyResult.Failure -> {
-//                                        _uiState.value = _uiState.value.copy(
-//                                            loading = false,
-//                                            errorMessage = profileResult.message
-//                                                ?: resProvider.getString(R.string.unknown_error)
-//                                        )
-//                                        _event.send(RustyEvents.ShowSnackBar(profileResult.message
-//                                            ?: resProvider.getString(R.string.unknown_error)))
-//                                    }
-//                                    is RustyResult.Loading -> {
-//                                        _uiState.value = _uiState.value.copy(
-//                                            loading = true
-//                                        )
-//                                    }
-//                                }
-//                            }
-//                        }
-//                        is RustyResult.Failure -> {
-//                            _uiState.value = _uiState.value.copy(
-//                                loading = false,
-//                                errorMessage = result.message
-//                                    ?: resProvider.getString(R.string.unknown_error)
-//                            )
-//                            _event.send(RustyEvents.ShowSnackBar(result.message
-//                                ?: resProvider.getString(R.string.unknown_error)))
-//                        }
-//                        is RustyResult.Loading -> {
-//                            _uiState.value = _uiState.value.copy(
-//                                loading = true
-//                            )
-//                        }
-//                    }
-//                }
-//            } else {
-//                val body = JsonObject()
-//                body.addProperty("user_id", _uiState.value.userId)
-//                profileRepository.getProfile(refreshToken!!, body).collectLatest { result ->
-//                    when(result) {
-//                        is RustyResult.Success -> {
-//                            _uiState.value = _uiState.value.copy(
-//                                userProfilePicture = result.data.userProfilePicture,
-//                                loading = false
-//                            )
-//                        }
-//                        is RustyResult.Failure -> {
-//                            _uiState.value = _uiState.value.copy(
-//                                loading = false,
-//                                errorMessage = result.message
-//                                    ?: resProvider.getString(R.string.unknown_error)
-//                            )
-//                            _event.send(RustyEvents.ShowSnackBar(result.message
-//                                ?: resProvider.getString(R.string.unknown_error)))
-//                        }
-//                        is RustyResult.Loading -> {
-//                            _uiState.value = _uiState.value.copy(
-//                                loading = true
-//                            )
-//                        }
-//                    }
-//                }
-//            }
+            userRepository.getLoggedInUser("Bearer $accessToken").collectLatest { result ->
+                when(result) {
+                    is RustyResult.Success -> {
+                        val userId = result.data.userId
+                        _uiState.value = _uiState.value.copy(
+                            loading = false,
+                            userId = userId
+                        )
+                        getUserProfile("Bearer $accessToken", userId)
+                    }
+                    is RustyResult.Failure -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = false
+                        )
+                    }
+                    is RustyResult.Loading -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = true
+                        )
+                    }
+                }
+            }
         }
     }
 
+    private fun getUserProfile(accessToken: String, userId: String) {
+        viewModelScope.launch {
+            profileRepository.getProfile(accessToken, "eq.$userId").collectLatest { result ->
+                when(result) {
+                    is RustyResult.Success -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = false,
+                            profile = result.data.firstOrNull()
+                        )
+                    }
+                    is RustyResult.Failure -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = false,
+                            errorMessage = result.message
+                                ?: resProvider.getString(R.string.unknown_error)
+                        )
+                    }
+                    is RustyResult.Loading -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = true
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     private fun refreshAccessToken(refreshToken: String?) {
         viewModelScope.launch {

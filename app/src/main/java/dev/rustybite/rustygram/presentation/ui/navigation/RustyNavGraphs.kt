@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.get
 import androidx.navigation.navigation
+import dev.rustybite.rustygram.domain.models.Profile
 import dev.rustybite.rustygram.presentation.posts.create_post.CreatePostViewModel
 import dev.rustybite.rustygram.presentation.posts.create_post.edit_photo.EditPhotoScreen
 import dev.rustybite.rustygram.presentation.posts.create_post.finalize_post.FinalizePostScreen
@@ -32,6 +33,7 @@ fun NavGraphBuilder.homeNavGraph(
     navHostController: NavHostController,
     snackBarHostState: SnackbarHostState,
     isUserCreatingPost: MutableState<Boolean>,
+    profile: Profile?,
     viewModel: CreatePostViewModel
 ) {
     navigation<BottomNavScreen.HomeGraph>(startDestination = BottomNavScreen.Home) {
@@ -64,6 +66,7 @@ fun NavGraphBuilder.homeNavGraph(
                     navHostController.navigate(events.route)
                 },
                 onPopBack = { navHostController.popBackStack() },
+                profile = profile,
                 viewModel = viewModel
             )
         }

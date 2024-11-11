@@ -6,6 +6,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
 import dev.rustybite.rustygram.data.remote.FirebaseService
 import dev.rustybite.rustygram.data.repository.StorageRepository
+import dev.rustybite.rustygram.domain.models.Image
 import dev.rustybite.rustygram.util.RustyResult
 import dev.rustybite.rustygram.util.TAG
 import io.github.jan.supabase.SupabaseClient
@@ -55,19 +56,31 @@ class StorageRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun uploadPostImage(uri: Uri?): Flow<RustyResult<String>> = flow {
+    override suspend fun uploadPostImage(image: Image?): Flow<RustyResult<String>> = flow {
         try {
-            val imageUrl = firebaseService.uploadImage(uri)
             emit(RustyResult.Loading())
-            if (imageUrl != null) {
-                emit(RustyResult.Success(imageUrl))
-            } else {
-                Log.d(TAG, "uploadPostImage: uploading failed")
+            val imageUrl = firebaseService.uploadImage(image)
+            Log.d(TAG, "uploadPostImage: Image Url is $imageUrl")
+            imageUrl?.let { url ->
+                emit(RustyResult.Success(url))
+                Log.d(TAG, "uploadPostImage: Url is $url")
             }
-        } catch (exception: IOException) {
-            emit(RustyResult.Failure(exception.localizedMessage))
+            Log.d(TAG, "uploadPostImage: Image Url is $imageUrl")
         } catch (exception: Exception) {
-            emit(RustyResult.Failure(exception.localizedMessage))
+            when(exception) {
+                is IOException -> {
+                    emit(RustyResult.Failure(exception.localizedMessage))
+                    Log.d(TAG, "uploadPostImage: IO Exception is ${exception.localizedMessage}")
+                }
+                is StorageException -> {
+                    emit(RustyResult.Failure(exception.localizedMessage))
+                    Log.d(TAG, "uploadPostImage: Storage Exception is ${exception.localizedMessage}")
+                }
+                else -> {
+                    emit(RustyResult.Failure(exception.localizedMessage))
+                    Log.d(TAG, "uploadPostImage: Exception is ${exception.localizedMessage}")
+                }
+            }
         }
     }
 }

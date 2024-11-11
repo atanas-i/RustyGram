@@ -13,6 +13,7 @@ import dev.rustybite.rustygram.data.remote.FirebaseService
 import dev.rustybite.rustygram.data.remote.RustyGramService
 import dev.rustybite.rustygram.data.repository.GalleryRepository
 import dev.rustybite.rustygram.data.repository.LoginRepository
+import dev.rustybite.rustygram.data.repository.PostsRepository
 import dev.rustybite.rustygram.data.repository.ProfileRepository
 import dev.rustybite.rustygram.data.repository.StorageRepository
 import dev.rustybite.rustygram.data.repository.TokenManagementRepository
@@ -22,6 +23,7 @@ import dev.rustybite.rustygram.domain.local.MediaDataSourceImpl
 import dev.rustybite.rustygram.domain.local.SessionManagerImpl
 import dev.rustybite.rustygram.domain.repository.GalleryRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.LoginRepositoryImpl
+import dev.rustybite.rustygram.domain.repository.PostsRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.ProfileRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.StorageRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.TokenManagementRepositoryImpl
@@ -119,4 +121,9 @@ object RustyGramModule {
     @Provides
     @Singleton
     fun providesGalleryRepository(mediaDataSource: MediaDataSource): GalleryRepository = GalleryRepositoryImpl(mediaDataSource)
+
+    @Provides
+    @Singleton
+    fun providesPostsRepository(service: RustyGramService, retrofit: Retrofit, resources: ResourceProvider): PostsRepository =
+        PostsRepositoryImpl(service, retrofit, resources)
 }

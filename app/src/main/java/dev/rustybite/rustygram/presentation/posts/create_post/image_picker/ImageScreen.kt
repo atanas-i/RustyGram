@@ -211,6 +211,7 @@ fun ImageScreen(
                             Card(
                                 onClick = {
                                     viewModel.onUriChange(image.uri)
+                                    viewModel.onImageChange(image)
                                 },
                                 modifier = modifier
                                     .width(100.dp)
