@@ -7,8 +7,10 @@ import dev.rustybite.rustygram.data.dtos.util.DatabaseResponseErrorDto
 import dev.rustybite.rustygram.data.dtos.util.PostErrorDto
 import dev.rustybite.rustygram.data.remote.RustyGramService
 import dev.rustybite.rustygram.data.repository.PostsRepository
+import dev.rustybite.rustygram.domain.models.Post
 import dev.rustybite.rustygram.domain.models.RustyResponse
 import dev.rustybite.rustygram.domain.models.toDatabaseResponseError
+import dev.rustybite.rustygram.domain.models.toPost
 import dev.rustybite.rustygram.domain.models.toPostError
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyResult
@@ -65,6 +67,38 @@ class PostsRepositoryImpl(
                 }
                 else -> {
                     emit(RustyResult.Failure(resProvider.getString(R.string.unknown_error)))
+                }
+            }
+        }
+    }
+
+    override suspend fun getFeeds(token: String): Flow<RustyResult<List<Post>>> = flow {
+        try {
+            emit(RustyResult.Loading())
+            val response = service.getFeeds(token)
+            if (response.isSuccessful) {
+                response.body()?.let { postsDto ->
+                    val posts = postsDto.map { it.toPost() }.sortedBy { it.createdAt }
+                    emit(RustyResult.Success(posts))
+                }
+            } else {
+                val errorBody = response.errorBody()
+                if (errorBody != null) {
+                    val error = converter.convert(errorBody)?.toPostError()
+                    if (error != null) {
+                        emit(RustyResult.Failure(error.message))
+                    }
+                } else {
+                    emit(RustyResult.Failure(resProvider.getString(R.string.unknown_error)))
+                }
+            }
+        } catch (exception: Exception) {
+            when(exception) {
+                is IOException -> {
+                    emit(RustyResult.Failure(exception.localizedMessage))
+                }
+                else -> {
+                    emit(RustyResult.Failure(exception.localizedMessage))
                 }
             }
         }
