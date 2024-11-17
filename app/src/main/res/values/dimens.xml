@@ -36,4 +36,5 @@
     <dimen name="icon_size_extra_small">20dp</dimen>
     <dimen name="image_grid_cell_size">30dp</dimen>
     <dimen name="spacer_medium">32dp</dimen>
+    <dimen name="poster_profile_pic_size">40dp</dimen>
 </resources>
