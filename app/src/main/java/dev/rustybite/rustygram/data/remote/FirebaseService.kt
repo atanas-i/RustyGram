@@ -22,7 +22,8 @@ class FirebaseService @Inject constructor(
         return if (image != null) {
             val uploadTask = storageRef.child("posts/${image.imageName}").putFile(image.uri)
             val downloadTask = uploadTask.await().storage.downloadUrl.await()
-            downloadTask.path
+            Log.d(TAG, "uploadImage: Downloaded url is $downloadTask")
+            downloadTask.toString()
         } else {
             null
         }

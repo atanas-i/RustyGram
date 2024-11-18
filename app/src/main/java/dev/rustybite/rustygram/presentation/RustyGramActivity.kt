@@ -41,9 +41,7 @@ class RustyGramActivity : ComponentActivity() {
        enableEdgeToEdge()
         splashScreen.apply {
             setKeepOnScreenCondition {
-                mainViewModel.uiState.value.loading
-                //mainViewModel.isSplashScreenReleased.value
-                //!mainViewModel.uiState.value.isUserSignedIn && !mainViewModel.uiState.value.isUserOnboarded
+                !mainViewModel.uiState.value.loading
             }
         }
         setContent {
