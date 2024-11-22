@@ -49,7 +49,6 @@ class GetPostsViewModel @Inject constructor(
             repository.getFeeds("Bearer $accessToken").collectLatest { response ->
                 when(response) {
                     is RustyResult.Success -> {
-                        Log.d(TAG, "Feeds: ${response.data} ")
                         _uiState.value = _uiState.value.copy(
                             loading = false,
                             feeds = response.data

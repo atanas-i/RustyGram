@@ -80,5 +80,4 @@ interface RustyGramService {
     suspend fun getFeeds(
         @Header("Authorization") token: String,
     ): Response<List<PostDto>>
-
 }

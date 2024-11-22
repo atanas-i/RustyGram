@@ -98,7 +98,6 @@ class PostsRepositoryImpl(
                 is IOException -> {
                     emit(RustyResult.Failure(exception.localizedMessage))
                 }
-
                 else -> {
                     emit(RustyResult.Failure(exception.localizedMessage))
                 }
