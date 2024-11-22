@@ -7,6 +7,7 @@ data class Profile(
     val fullName: String,
     val profileId: String,
     val userName: String,
+    val userId: String,
     val userProfilePicture: String,
     val bio: String
 )
@@ -16,6 +17,7 @@ fun ProfileDto.toProfile(): Profile = Profile(
     fullName = fullName,
     profileId = profileId,
     userName = userName,
+    userId = userId,
     userProfilePicture = userProfilePicture,
     bio = bio
 )

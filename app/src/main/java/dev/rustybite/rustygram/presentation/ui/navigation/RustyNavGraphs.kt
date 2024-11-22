@@ -19,6 +19,7 @@ import dev.rustybite.rustygram.presentation.posts.create_post.CreatePostViewMode
 import dev.rustybite.rustygram.presentation.posts.create_post.edit_photo.EditPhotoScreen
 import dev.rustybite.rustygram.presentation.posts.create_post.finalize_post.FinalizePostScreen
 import dev.rustybite.rustygram.presentation.posts.create_post.image_picker.ImageScreen
+import dev.rustybite.rustygram.presentation.posts.fetch_posts.FeedsScreen
 import dev.rustybite.rustygram.presentation.user_management.login_screen.LoginScreen
 import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.BirthdayScreen
 import dev.rustybite.rustygram.presentation.user_management.profile.create_profile_screen.CreateFullNameScreen
@@ -37,7 +38,9 @@ fun NavGraphBuilder.homeNavGraph(
     viewModel: CreatePostViewModel
 ) {
     navigation<BottomNavScreen.HomeGraph>(startDestination = BottomNavScreen.Home) {
-        composable<BottomNavScreen.Home> { }
+        composable<BottomNavScreen.Home> {
+            FeedsScreen()
+        }
         composable<BottomNavScreen.Search> { }
         composable<BottomNavScreen.AddPost> {
             ImageScreen(

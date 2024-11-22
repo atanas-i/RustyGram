@@ -16,12 +16,14 @@ import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyEvents
 import dev.rustybite.rustygram.util.RustyResult
 import dev.rustybite.rustygram.util.TAG
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,35 +39,56 @@ class RustyGramViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
     private val _event = Channel<RustyEvents>()
     val event = _event.receiveAsFlow()
+    private var tokenJob: Job? = null
 
     private val _isSplashScreenReleased = MutableStateFlow(false)
     val isSplashScreenReleased = _isSplashScreenReleased.asStateFlow()
 
     init {
         viewModelScope.launch {
+            val accessToken = sessionManager.accessToken.first()
+            val refreshToken = sessionManager.refreshToken.first()
+            val expiresAt = sessionManager.expiresAt.first()
             val isUserSignedIn = sessionManager.isUserSignedIn.first() != null &&
                     sessionManager.isUserSignedIn.first() == true
             val isUserOnboarded = sessionManager.isUserOnboarded.first() != null &&
                     sessionManager.isUserOnboarded.first() == true
             _isSplashScreenReleased.value = sessionManager.isUserSignedIn.first() != null &&
                     sessionManager.isUserOnboarded.first() != null
+    
+            _uiState.value =  _uiState.value.copy(
+                    isUserSignedIn = isUserSignedIn,
+                    isUserOnboarded = isUserOnboarded
+                )
 
-            _uiState.value = _uiState.value.copy(
-                isUserSignedIn = isUserSignedIn,
-                isUserOnboarded = isUserOnboarded
-            )
+            if(sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
+                refreshAccessToken(refreshToken)
+                //getUser(accessToken)
+                Log.d(TAG, "Check Session Manager:  Onboarded $isUserOnboarded : Signed in $isUserSignedIn")
+                if (tokenJob!!.isCompleted) {
+                    Log.d(TAG, "Check Job:  Is Job completed ${tokenJob?.isCompleted}")
+                    getUser(accessToken)
+                }
+            }
+
         }
     }
 
-    init {
-        viewModelScope.launch {
-            val accessToken = sessionManager.accessToken.first()
-            val refreshToken = sessionManager.refreshToken.first()
-            val expiresAt = sessionManager.expiresAt.first()
+//    init {
+//        viewModelScope.launch {
+//            val accessToken = sessionManager.accessToken.first()
+//            val refreshToken = sessionManager.refreshToken.first()
+//            val expiresAt = sessionManager.expiresAt.first()
+//
+//            if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
+//                refreshAccessToken(refreshToken)
+//            }
+//
+//        }
+//    }
 
-            if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
-                refreshAccessToken(refreshToken)
-            }
+    private fun getUser(accessToken: String?) {
+        viewModelScope.launch {
             userRepository.getLoggedInUser("Bearer $accessToken").collectLatest { result ->
                 when(result) {
                     is RustyResult.Success -> {
@@ -96,9 +119,12 @@ class RustyGramViewModel @Inject constructor(
             profileRepository.getProfile(accessToken, "eq.$userId").collectLatest { result ->
                 when(result) {
                     is RustyResult.Success -> {
+                        val profile = result.data.firstOrNull()
+                        sessionManager.saveIsUserOnboarded(profile != null)
                         _uiState.value = _uiState.value.copy(
                             loading = false,
-                            profile = result.data.firstOrNull()
+                            profile = profile,
+                            isUserOnboarded = profile != null
                         )
                     }
                     is RustyResult.Failure -> {
@@ -118,8 +144,9 @@ class RustyGramViewModel @Inject constructor(
         }
     }
 
-    private fun refreshAccessToken(refreshToken: String?) {
-        viewModelScope.launch {
+    private suspend fun refreshAccessToken(refreshToken: String?) {
+        tokenJob?.cancel()
+        tokenJob = viewModelScope.launch {
             if (refreshToken != null) {
                 val body = JsonObject()
                 body.addProperty("refresh_token", refreshToken)
@@ -153,6 +180,7 @@ class RustyGramViewModel @Inject constructor(
                 Log.d(TAG, "refreshAccessToken: Token is null and cannot refresh it")
             }
         }
+        //tokenJob?.join()
     }
 
 }

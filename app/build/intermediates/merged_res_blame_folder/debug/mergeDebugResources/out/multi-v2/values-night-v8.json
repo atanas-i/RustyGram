@@ -1,0 +1,38 @@
+{
+    "logs": [
+        {
+            "outputFile": "dev.rustybite.rustygram.app-mergeDebugResources-70:/values-night-v8/values-night-v8.xml",
+            "map": [
+                {
+                    "source": "/home/tana/.gradle/caches/8.9/transforms/89dae05ca79cd7cc7e9b35326d00b9a9/transformed/core-splashscreen-1.0.0/res/values-night-v8/values-night-v8.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "85",
+                        "endOffsets": "136"
+                    }
+                },
+                {
+                    "source": "/home/tana/Code/2024/Personal/RustyGram/app/src/main/res/values-night/splash.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "7",
+                        "endColumns": "12",
+                        "endOffsets": "440"
+                    },
+                    "to": {
+                        "startLines": "3",
+                        "startColumns": "4",
+                        "startOffsets": "141",
+                        "endLines": "8",
+                        "endColumns": "12",
+                        "endOffsets": "526"
+                    }
+                }
+            ]
+        }
+    ]
+}

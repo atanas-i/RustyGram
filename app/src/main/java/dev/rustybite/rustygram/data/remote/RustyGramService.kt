@@ -3,6 +3,7 @@ package dev.rustybite.rustygram.data.remote
 import com.google.gson.JsonObject
 import dev.rustybite.rustygram.data.dtos.auth.UserDto
 import dev.rustybite.rustygram.data.dtos.auth.VerifiedUserDto
+import dev.rustybite.rustygram.data.dtos.posts.PostDto
 import dev.rustybite.rustygram.data.dtos.profile.ProfileDto
 import dev.rustybite.rustygram.domain.models.RustyResponse
 import dev.rustybite.rustygram.util.API_KEY
@@ -73,5 +74,11 @@ interface RustyGramService {
         @Header("Authorization") token: String,
         @Body body: JsonObject
     ): Response<Unit>
+
+    @GET("rest/v1/posts")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun getFeeds(
+        @Header("Authorization") token: String,
+    ): Response<List<PostDto>>
 
 }
