@@ -16,3 +16,4 @@ local.properties
 .idea
 rustybite.properties
 /app/google-services.json
+/app/build

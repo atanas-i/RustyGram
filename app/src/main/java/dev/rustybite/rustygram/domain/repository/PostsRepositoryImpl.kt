@@ -65,6 +65,7 @@ class PostsRepositoryImpl(
                 is IOException -> {
                     emit(RustyResult.Failure(exception.localizedMessage))
                 }
+
                 else -> {
                     emit(RustyResult.Failure(resProvider.getString(R.string.unknown_error)))
                 }
@@ -93,7 +94,7 @@ class PostsRepositoryImpl(
                 }
             }
         } catch (exception: Exception) {
-            when(exception) {
+            when (exception) {
                 is IOException -> {
                     emit(RustyResult.Failure(exception.localizedMessage))
                 }

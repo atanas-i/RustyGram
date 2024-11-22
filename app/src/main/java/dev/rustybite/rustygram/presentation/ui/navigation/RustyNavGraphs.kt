@@ -39,9 +39,7 @@ fun NavGraphBuilder.homeNavGraph(
 ) {
     navigation<BottomNavScreen.HomeGraph>(startDestination = BottomNavScreen.Home) {
         composable<BottomNavScreen.Home> {
-            FeedsScreen(
-
-            )
+            FeedsScreen()
         }
         composable<BottomNavScreen.Search> { }
         composable<BottomNavScreen.AddPost> {

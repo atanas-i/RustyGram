@@ -7,12 +7,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.repository.LoginRepository
+import dev.rustybite.rustygram.data.repository.ProfileRepository
 import dev.rustybite.rustygram.data.repository.TokenManagementRepository
+import dev.rustybite.rustygram.data.repository.UserRepository
 import dev.rustybite.rustygram.presentation.ui.navigation.BottomNavScreen
 import dev.rustybite.rustygram.presentation.ui.navigation.OnBoardingRoutes
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyEvents
 import dev.rustybite.rustygram.util.RustyResult
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,18 +30,22 @@ class LoginViewModel @Inject constructor(
     private val loginRepository: LoginRepository,
     private val resources: ResourceProvider,
     private val sessionManager: SessionManager,
-    private val tokenManagementRepository: TokenManagementRepository
+    private val tokenManagementRepository: TokenManagementRepository,
+    private val userRepository: UserRepository,
+    private val profileRepository: ProfileRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState = _uiState.asStateFlow()
     private val _event = Channel<RustyEvents>()
     val events = _event.receiveAsFlow()
+    private var tokenJob: Job? = null
 
     init {
         viewModelScope.launch {
             val expiresAt = sessionManager.expiresAt.first()
             val accessToken = sessionManager.accessToken.first()
             val refreshToken = sessionManager.refreshToken.first()
+
             if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
                 refreshAccessToken(refreshToken)
             }
@@ -55,19 +62,20 @@ class LoginViewModel @Inject constructor(
             loginRepository.login(body).collectLatest { result ->
                 when (result) {
                     is RustyResult.Success -> {
-                        val isUserOnboarded = sessionManager.isUserOnboarded.first()
                         sessionManager.saveIsUserSignedIn(true)
                         sessionManager.saveAccessToken(result.data.accessToken)
                         sessionManager.saveRefreshToken(result.data.refreshToken)
                         sessionManager.saveExpiresAt(result.data.expiresAt)
-                        if (isUserOnboarded != null && isUserOnboarded) {
-                            _event.send(RustyEvents.BottomScreenNavigate(BottomNavScreen.Home))
-                        } else {
-                            _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.CreateBirthDate))
-                        }
-                        _uiState.value = _uiState.value.copy(
-                            loading = false
-                        )
+                        getLoggedInUser(result.data.accessToken)
+//                        val isUserOnboarded = sessionManager.isUserOnboarded.first()
+//                        if (isUserOnboarded != null && isUserOnboarded) {
+//                            _event.send(RustyEvents.BottomScreenNavigate(BottomNavScreen.Home))
+//                        } else {
+//                            _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.CreateBirthDate))
+//                        }
+//                        _uiState.value = _uiState.value.copy(
+//                            loading = false
+//                        )
                     }
 
                     is RustyResult.Failure -> {
@@ -129,8 +137,69 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun refreshAccessToken(refreshToken: String?) {
+    private fun getLoggedInUser(accessToken: String?) {
         viewModelScope.launch {
+            userRepository.getLoggedInUser("Bearer $accessToken").collectLatest { result ->
+                when(result) {
+                    is RustyResult.Success -> {
+                        val userId = result.data.userId
+//                        _uiState.value = _uiState.value.copy(
+//                            loading = false,
+//                        )
+                        getUserProfile("Bearer $accessToken", userId)
+                    }
+                    is RustyResult.Failure -> {
+                        _uiState.value = _uiState.value.copy(
+                            errorMessage = result.message,
+                            loading = false
+                        )
+                    }
+                    is RustyResult.Loading -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = true
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getUserProfile(accessToken: String, userId: String) {
+        viewModelScope.launch {
+            val isUserOnboarded = sessionManager.isUserOnboarded.first()
+            profileRepository.getProfile(accessToken, "eq.$userId").collectLatest { result ->
+                when(result) {
+                    is RustyResult.Success -> {
+                        val profile = result.data.firstOrNull()
+                        sessionManager.saveIsUserOnboarded(profile != null)
+                        _uiState.value = _uiState.value.copy(
+                            loading = false
+                        )
+                        if (profile != null && profile.userId == userId) {
+                            _event.send(RustyEvents.BottomScreenNavigate(BottomNavScreen.Home))
+                        } else {
+                            _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.CreateBirthDate))
+                        }
+                    }
+                    is RustyResult.Failure -> {
+                        _uiState.value = _uiState.value.copy(
+                            errorMessage = result.message,
+                            loading = false
+                        )
+                    }
+                    is RustyResult.Loading -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = true
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun refreshAccessToken(refreshToken: String?) {
+        tokenJob?.cancel()
+        tokenJob = viewModelScope.launch {
             if (refreshToken != null) {
                 val body = JsonObject()
                 body.addProperty("refresh_token", refreshToken)
@@ -160,6 +229,7 @@ class LoginViewModel @Inject constructor(
                 }
             }
         }
+        tokenJob?.join()
     }
 
     fun onOpenLanguageSelection() {
