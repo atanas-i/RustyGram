@@ -44,6 +44,25 @@ fun RustyGramNavHost(
     profileViewModel: CreateProfileViewModel = hiltViewModel(),
     createPostViewModel: CreatePostViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(viewModel.event) {
+        viewModel.event.collect { event ->
+            when (event) {
+                is RustyEvents.ShowSnackBar -> {
+                    snackBarHostState.showSnackbar(event.message)
+                }
+                is RustyEvents.BottomScreenNavigate -> {
+                    navHostController.navigate(event.route)
+                }
+                is RustyEvents.OnBoardingNavigate -> {
+                    navHostController.navigate(event.route)
+                }
+                is RustyEvents.Navigate -> {
+                    navHostController.navigate(event.route)
+                }
+                else -> Unit
+            }
+        }
+    }
     val uiState = mainViewModel.uiState.collectAsState().value
     val startDestination by remember(uiState.isUserSignedIn, uiState.isUserOnboarded) {
         derivedStateOf {
