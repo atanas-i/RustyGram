@@ -1,8 +1,10 @@
 package dev.rustybite.rustygram.presentation.user_management.login_screen
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -24,9 +26,10 @@ import kotlinx.coroutines.flow.collectLatest
 fun LoginScreen(
     snackBarHostState: SnackbarHostState,
     sheetState: SheetState,
-    onNavigate: (RustyEvents.OnBoardingNavigate) -> Unit,
+    onNavigate: (RustyEvents.Navigate) -> Unit,
     onPopBackStack: (RustyEvents.PopBackStack) -> Unit,
     focusManager: FocusManager,
+    scrollState: ScrollState,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
@@ -35,12 +38,10 @@ fun LoginScreen(
     LaunchedEffect(viewModel.events) {
         viewModel.events.collectLatest { event ->
             when(event) {
-                is RustyEvents.OnBoardingNavigate -> onNavigate(event)
+                is RustyEvents.Navigate -> onNavigate(event)
                 is RustyEvents.PopBackStack -> onPopBackStack(event)
                 is RustyEvents.ShowSnackBar -> snackBarHostState.showSnackbar(event.message)
                 is RustyEvents.ShowToast -> Unit
-                is RustyEvents.BottomScreenNavigate -> Unit
-                is RustyEvents.Navigate -> Unit
             }
         }
     }
@@ -48,12 +49,13 @@ fun LoginScreen(
 
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
+
     ) { paddingValues ->
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .consumeWindowInsets(paddingValues),
+                .padding(paddingValues),
         ) {
             if (uiState.isLanguageSelectionToggled) {
                 ModalBottomSheet(
@@ -85,6 +87,7 @@ fun LoginScreen(
                 onSignUpClicked = { viewModel.onSignUpClicked() },
                 onOpenLanguageSelection = { viewModel.onOpenLanguageSelection() },
                 focusManager = focusManager,
+                scrollState = scrollState,
                 onShowPasswordClicked = { viewModel.onShowPasswordClicked() }
             )
         }

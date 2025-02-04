@@ -7,7 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.repository.UserRegistrationRepository
-import dev.rustybite.rustygram.presentation.ui.navigation.OnBoardingRoutes
+import dev.rustybite.rustygram.presentation.ui.navigation.RustyGramRoutes
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyEvents
 import dev.rustybite.rustygram.util.RustyResult
@@ -43,7 +43,7 @@ class UserRegistrationViewModel @Inject constructor(
                         sessionManager.saveAccessToken(result.data.accessToken)
                         sessionManager.saveRefreshToken(result.data.refreshToken)
                         sessionManager.saveExpiresAt(result.data.expiresAt)
-                        _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.CreateBirthDate))
+                        _event.send(RustyEvents.Navigate(RustyGramRoutes.OnBoardingRoutes.CreateBirthDate))
                         _uiState.value = _uiState.value.copy(
                             loading = false,
                         )
@@ -77,7 +77,7 @@ class UserRegistrationViewModel @Inject constructor(
 
     fun onHaveAccountClicked() {
         viewModelScope.launch {
-            _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.Login))
+            _event.send(RustyEvents.Navigate(RustyGramRoutes.OnBoardingRoutes.Login))
         }
     }
 

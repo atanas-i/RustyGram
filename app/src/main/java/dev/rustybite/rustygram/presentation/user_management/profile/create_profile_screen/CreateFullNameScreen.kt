@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun CreateFullNameScreen(
-    onNavigate: (RustyEvents.OnBoardingNavigate) -> Unit,
+    onNavigate: (RustyEvents.Navigate) -> Unit,
     onPopBackStack: (RustyEvents.PopBackStack) -> Unit,
     focusManager: FocusManager,
     modifier: Modifier = Modifier,
@@ -26,12 +26,10 @@ fun CreateFullNameScreen(
     LaunchedEffect(appEvent) {
         appEvent.collectLatest { event ->
             when(event) {
-                is RustyEvents.OnBoardingNavigate -> onNavigate(event)
+                is RustyEvents.Navigate -> onNavigate(event)
                 is RustyEvents.PopBackStack -> onPopBackStack(event)
                 is RustyEvents.ShowSnackBar -> Unit
                 is RustyEvents.ShowToast -> Unit
-                is RustyEvents.BottomScreenNavigate -> Unit
-                is RustyEvents.Navigate -> Unit
             }
         }
     }

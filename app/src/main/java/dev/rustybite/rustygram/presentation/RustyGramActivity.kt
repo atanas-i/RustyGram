@@ -1,60 +1,84 @@
 package dev.rustybite.rustygram.presentation
 
+import android.os.Build
 import android.os.Bundle
-import android.view.View
-import android.view.ViewTreeObserver
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsIgnoringVisibility
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.presentation.ui.navigation.RustyGramNavHost
+import dev.rustybite.rustygram.presentation.ui.navigation.RustyGramRoutes
 import dev.rustybite.rustygram.presentation.ui.theme.RustyGramTheme
-import io.github.jan.supabase.SupabaseClient
+import dev.rustybite.rustygram.util.TAG
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class RustyGramActivity : ComponentActivity() {
     @Inject
     lateinit var sessionManager: SessionManager
+    lateinit var navHostController: NavHostController
+    lateinit var rustySoshoStateManager: RustySoshoStateManager
     private val mainViewModel: RustyGramViewModel by viewModels()
+    //private val isUserSignedIn: Boolean? = null
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
        enableEdgeToEdge()
         splashScreen.apply {
             setKeepOnScreenCondition {
-                !mainViewModel.uiState.value.loading
+                mainViewModel.uiState.value.isSplashScreenReleased
             }
         }
         setContent {
-            val navHostController = rememberNavController()
+            navHostController = rememberNavController()
             val snackBarHostState = remember { SnackbarHostState() }
             val sheetState = rememberModalBottomSheetState()
+            val scrollState = rememberScrollState()
             val focusManager = LocalFocusManager.current
             val uiState = mainViewModel.uiState.collectAsState().value
+            val events = mainViewModel.event
             val profile = uiState.profile
+            rustySoshoStateManager = rememberRustySoshoStateManager()
+            val startDestination = rustySoshoStateManager.startDestination.collectAsStateWithLifecycle().value
 
             RustyGramTheme {
                 Scaffold(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                 ) { innerPadding ->
                     RustyGramNavHost(
                         navHostController = navHostController,
@@ -62,22 +86,40 @@ class RustyGramActivity : ComponentActivity() {
                         sheetState = sheetState,
                         focusManager = focusManager,
                         profile = profile,
-                        mainViewModel = mainViewModel,
+                        uiState = uiState,
+                        events = events,
+                        scrollState = scrollState,
+                        startDestination = startDestination,
+                        rustySoshoStateManager = rustySoshoStateManager,
                         modifier = Modifier.padding(innerPadding)
                     )
+
                 }
             }
         }
-//        val content: View = findViewById(android.R.id.content)
-//        content.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-//            override fun onPreDraw(): Boolean {
-//                if (!mainViewModel.uiState.value.isUserSignedIn && !mainViewModel.uiState.value.isUserOnboarded) {
-//                    content.viewTreeObserver.removeOnPreDrawListener(this)
-//                    return true
-//                } else {
-//                    return false
-//                }
-//            }
-//        })
+    }
+
+    override fun onStart() {
+        super.onStart()
+        lifecycleScope.launch {
+            val isUserSignedIn = sessionManager.isUserSignedIn.first()
+            val accessToken = sessionManager.accessToken.first()
+            val refreshToken = sessionManager.refreshToken.first()
+            val expiresAt = sessionManager.expiresAt.first()
+
+            if (isUserSignedIn == true) {
+                if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
+                    Log.d(TAG, "onStart: Token expired.. refreshing it")
+                    mainViewModel.refreshAccessToken(refreshToken)
+                }
+                Log.d(TAG, "onStart: User logged in.. navigating to Home")
+                rustySoshoStateManager.onShowBottomNav(isShown = true)
+                rustySoshoStateManager.onDestinationChange(RustyGramRoutes.BottomNavScreen.HomeGraph)
+            } else {
+                Log.d(TAG, "onStart: User logged out.. navigating to Login")
+                rustySoshoStateManager.onShowBottomNav(isShown = false)
+                rustySoshoStateManager.onDestinationChange(RustyGramRoutes.OnBoardingRoutes.OnBoardingGraph)
+            }
+        }
     }
 }

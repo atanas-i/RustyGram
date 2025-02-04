@@ -1,8 +1,10 @@
 package dev.rustybite.rustygram.presentation.user_management.registration_screen
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -17,8 +19,9 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun SignUpScreen(
     snackBarHostState: SnackbarHostState,
-    onNavigate: (RustyEvents.OnBoardingNavigate) -> Unit,
+    onNavigate: (RustyEvents.Navigate) -> Unit,
     popBackStack: (RustyEvents) -> Unit,
+    scrollState: ScrollState,
     viewModel: UserRegistrationViewModel,
     focusManager: FocusManager,
     modifier: Modifier = Modifier,
@@ -29,12 +32,10 @@ fun SignUpScreen(
     LaunchedEffect(viewModel.event) {
         viewModel.event.collectLatest { event ->
             when(event) {
-                is RustyEvents.OnBoardingNavigate -> onNavigate(event)
+                is RustyEvents.Navigate -> onNavigate(event)
                 is RustyEvents.PopBackStack -> popBackStack(event)
                 is RustyEvents.ShowSnackBar -> snackBarHostState.showSnackbar(event.message)
                 is  RustyEvents.ShowToast -> Unit
-                is RustyEvents.BottomScreenNavigate -> Unit
-                is RustyEvents.Navigate -> Unit
             }
         }
     }
@@ -45,7 +46,7 @@ fun SignUpScreen(
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .consumeWindowInsets(paddingValues)
+                .padding(paddingValues)
         ) {
             SignUpContent(
                 uiState = uiState,
@@ -55,7 +56,8 @@ fun SignUpScreen(
                 onHaveAccountClicked = viewModel::onHaveAccountClicked,
                 onSignUpWithPhone = viewModel::onSignUpWithPhone,
                 onShowPasswordClicked = { viewModel.onShowPasswordClicked() },
-                focusManager = focusManager
+                focusManager = focusManager,
+                scrollState = scrollState
             )
         }
     }

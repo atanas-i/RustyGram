@@ -1,14 +1,17 @@
 package dev.rustybite.rustygram.presentation.user_management.login_screen
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,12 +43,15 @@ fun LoginContent(
     onOpenLanguageSelection: () -> Unit,
     onShowPasswordClicked: () -> Unit,
     focusManager: FocusManager,
+    scrollState: ScrollState,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(dimensionResource(id = R.dimen.padding_medium)),
+            .padding(dimensionResource(id = R.dimen.padding_medium))
+            .imePadding()
+            .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {

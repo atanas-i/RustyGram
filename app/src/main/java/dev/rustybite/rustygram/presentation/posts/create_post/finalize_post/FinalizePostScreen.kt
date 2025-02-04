@@ -51,8 +51,8 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun FinalizePostScreen(
     snackbarHostState: SnackbarHostState,
-    isUserCreatingPost: MutableState<Boolean>,
-    onNavigate: (RustyEvents.BottomScreenNavigate) -> Unit,
+    onUserCreatingPost: (Boolean) -> Unit,
+    onNavigate: (RustyEvents.Navigate) -> Unit,
     onPopBack: (RustyEvents.PopBackStack) -> Unit,
     profile: Profile?,
     viewModel: CreatePostViewModel,
@@ -64,19 +64,16 @@ fun FinalizePostScreen(
     LaunchedEffect(viewModel.events) {
         viewModel.events.collectLatest { events ->
             when (events) {
-                is RustyEvents.BottomScreenNavigate -> {
+                is RustyEvents.Navigate -> {
                     onNavigate(events)
-                    isUserCreatingPost.value = false
+                    onUserCreatingPost(false)
                 }
-
                 is RustyEvents.PopBackStack -> {
                     onPopBack(events)
                 }
-
                 is RustyEvents.ShowSnackBar -> {
                     snackbarHostState.showSnackbar(events.message)
                 }
-
                 else -> Unit
             }
         }

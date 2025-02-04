@@ -44,7 +44,7 @@ import kotlinx.coroutines.flow.collectLatest
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateProfilePictureScreen(
-    onNavigate: (RustyEvents.BottomScreenNavigate) -> Unit,
+    onNavigate: (RustyEvents.Navigate) -> Unit,
     onPopBackStack: (RustyEvents.PopBackStack) -> Unit,
     sheetState: SheetState,
     snackbarHostState: SnackbarHostState,
@@ -63,16 +63,14 @@ fun CreateProfilePictureScreen(
     LaunchedEffect(appEvents) {
         appEvents.collectLatest { event ->
             when(event) {
-                is RustyEvents.OnBoardingNavigate -> Unit
                 is RustyEvents.PopBackStack -> onPopBackStack(event)
                 is RustyEvents.ShowSnackBar -> {
                     snackbarHostState.showSnackbar(event.message)
                 }
                 is RustyEvents.ShowToast -> Unit
-                is RustyEvents.BottomScreenNavigate -> {
+                is RustyEvents.Navigate -> {
                     onNavigate(event)
                 }
-                is RustyEvents.Navigate -> Unit
             }
         }
     }

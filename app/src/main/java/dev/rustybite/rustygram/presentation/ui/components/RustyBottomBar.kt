@@ -1,6 +1,13 @@
 package dev.rustybite.rustygram.presentation.ui.components
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,13 +35,13 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.presentation.ui.navigation.BottomNav
-import dev.rustybite.rustygram.presentation.ui.navigation.BottomNavScreen
+import dev.rustybite.rustygram.presentation.ui.navigation.RustyGramRoutes
 
 @Composable
 fun RustyBottomBar(
     navHostController: NavHostController,
     userProfilePicture: String,
-    isUserCreatingPost: MutableState<Boolean>,
+    onUserCreatingPost: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = MaterialTheme.colorScheme.onBackground
@@ -64,7 +71,7 @@ fun RustyBottomBar(
                         launchSingleTop = true
                         restoreState = true
                     }
-                    isUserCreatingPost.value = item.route == BottomNavScreen.AddPost
+                    onUserCreatingPost(item.route == RustyGramRoutes.BottomNavScreen.AddPost)
                 },
                 icon = {
                     if (userProfilePicture.isEmpty()) {
