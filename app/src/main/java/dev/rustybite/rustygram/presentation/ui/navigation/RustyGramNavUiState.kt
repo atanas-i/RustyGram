@@ -12,4 +12,6 @@ data class RustyGramNavUiState(
     val profile: Profile? = null,
     val errorMessage: String = "",
     val userProfilePicture: String = "",
+    val isSplashScreenReleased: Boolean = false,
+    val shouldShowBottomNav: Boolean = false
 )

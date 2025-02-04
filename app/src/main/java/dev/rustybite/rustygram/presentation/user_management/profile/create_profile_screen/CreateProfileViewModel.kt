@@ -11,8 +11,7 @@ import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.repository.ProfileRepository
 import dev.rustybite.rustygram.data.repository.StorageRepository
 import dev.rustybite.rustygram.data.repository.TokenManagementRepository
-import dev.rustybite.rustygram.presentation.ui.navigation.BottomNavScreen
-import dev.rustybite.rustygram.presentation.ui.navigation.OnBoardingRoutes
+import dev.rustybite.rustygram.presentation.ui.navigation.RustyGramRoutes
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyEvents
 import dev.rustybite.rustygram.util.RustyResult
@@ -141,7 +140,7 @@ class CreateProfileViewModel @Inject constructor(
                                                             loading = false
                                                         )
                                                         sessionManager.saveIsUserOnboarded(true)
-                                                        _event.send(RustyEvents.BottomScreenNavigate(BottomNavScreen.Home))
+                                                        _event.send(RustyEvents.Navigate(RustyGramRoutes.BottomNavScreen.Home))
                                                     }
                                                     is RustyResult.Failure -> {
                                                         _uiState.value = _uiState.value.copy(
@@ -248,7 +247,7 @@ class CreateProfileViewModel @Inject constructor(
                                 _uiState.value = _uiState.value.copy(
                                     loading = false
                                 )
-                                _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.CreateProfilePicture))
+                                _event.send(RustyEvents.Navigate(RustyGramRoutes.OnBoardingRoutes.CreateProfilePicture))
                             }
                         }
 
@@ -290,13 +289,13 @@ class CreateProfileViewModel @Inject constructor(
 
     fun navigateToFullNameScreen() {
         viewModelScope.launch {
-            _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.CreateFullName))
+            _event.send(RustyEvents.Navigate(RustyGramRoutes.OnBoardingRoutes.CreateFullName))
         }
     }
 
     fun onHaveAccountClicked() {
         viewModelScope.launch {
-            _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.Login))
+            _event.send(RustyEvents.Navigate(RustyGramRoutes.OnBoardingRoutes.Login))
         }
     }
 
@@ -308,7 +307,7 @@ class CreateProfileViewModel @Inject constructor(
 
     fun navigateToUsernameScreen() {
         viewModelScope.launch {
-            _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.CreateUsername))
+            _event.send(RustyEvents.Navigate(RustyGramRoutes.OnBoardingRoutes.CreateUsername))
         }
     }
 

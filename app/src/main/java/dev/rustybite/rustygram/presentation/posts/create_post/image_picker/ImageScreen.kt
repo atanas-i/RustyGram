@@ -54,6 +54,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun ImageScreen(
     onNavigate: (RustyEvents.Navigate) -> Unit,
     onPopBack: (RustyEvents.PopBackStack) -> Unit,
+    onUserCreatingPost: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CreatePostViewModel
 ) {
@@ -87,7 +88,10 @@ fun ImageScreen(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = { viewModel.moveBack() }
+                        onClick = {
+                            viewModel.moveBack()
+                            onUserCreatingPost(false)
+                        }
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.cancel),

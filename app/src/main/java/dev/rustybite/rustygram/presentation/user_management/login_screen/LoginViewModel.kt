@@ -10,8 +10,7 @@ import dev.rustybite.rustygram.data.repository.LoginRepository
 import dev.rustybite.rustygram.data.repository.ProfileRepository
 import dev.rustybite.rustygram.data.repository.TokenManagementRepository
 import dev.rustybite.rustygram.data.repository.UserRepository
-import dev.rustybite.rustygram.presentation.ui.navigation.BottomNavScreen
-import dev.rustybite.rustygram.presentation.ui.navigation.OnBoardingRoutes
+import dev.rustybite.rustygram.presentation.ui.navigation.RustyGramRoutes
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyEvents
 import dev.rustybite.rustygram.util.RustyResult
@@ -113,7 +112,7 @@ class LoginViewModel @Inject constructor(
                         sessionManager.saveRefreshToken("")
                         sessionManager.saveExpiresAt(0L)
                         sessionManager.saveIsUserSignedIn(false)
-                        _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.Login))
+                        _event.send(RustyEvents.Navigate(RustyGramRoutes.OnBoardingRoutes.Login))
                         _event.send(RustyEvents.ShowSnackBar(result.data.message))
                     }
 
@@ -176,9 +175,9 @@ class LoginViewModel @Inject constructor(
                             loading = false
                         )
                         if (profile != null && profile.userId == userId) {
-                            _event.send(RustyEvents.BottomScreenNavigate(BottomNavScreen.Home))
+                            _event.send(RustyEvents.Navigate(RustyGramRoutes.BottomNavScreen.Home))
                         } else {
-                            _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.CreateBirthDate))
+                            _event.send(RustyEvents.Navigate(RustyGramRoutes.OnBoardingRoutes.CreateBirthDate))
                         }
                     }
                     is RustyResult.Failure -> {
@@ -251,7 +250,7 @@ class LoginViewModel @Inject constructor(
 
     fun onSignUpClicked() {
         viewModelScope.launch {
-            _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.Registration))
+            _event.send(RustyEvents.Navigate(RustyGramRoutes.OnBoardingRoutes.Registration))
         }
     }
 
@@ -267,7 +266,7 @@ class LoginViewModel @Inject constructor(
 
     fun forgotPassword() {
         viewModelScope.launch {
-            _event.send(RustyEvents.OnBoardingNavigate(OnBoardingRoutes.ChangePassword))
+            _event.send(RustyEvents.Navigate(RustyGramRoutes.OnBoardingRoutes.ChangePassword))
 
         }
     }

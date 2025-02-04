@@ -16,8 +16,7 @@ import dev.rustybite.rustygram.data.repository.UserRepository
 import dev.rustybite.rustygram.domain.models.Image
 import dev.rustybite.rustygram.domain.models.Profile
 import dev.rustybite.rustygram.presentation.posts.create_post.image_picker.MediaPickerUiState
-import dev.rustybite.rustygram.presentation.ui.navigation.BottomNavScreen
-import dev.rustybite.rustygram.presentation.ui.navigation.RustyAppRoutes
+import dev.rustybite.rustygram.presentation.ui.navigation.RustyGramRoutes
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyEvents
 import dev.rustybite.rustygram.util.RustyResult
@@ -112,7 +111,7 @@ class CreatePostViewModel @Inject constructor(
                                     _uiState.value = _uiState.value.copy(
                                         loading = false
                                     )
-                                    _events.send(RustyEvents.BottomScreenNavigate(BottomNavScreen.HomeGraph))
+                                    _events.send(RustyEvents.Navigate(RustyGramRoutes.BottomNavScreen.HomeGraph))
                                     _events.send(RustyEvents.ShowSnackBar(response.data.message))
                                 }
                                 is RustyResult.Failure -> {
@@ -175,7 +174,7 @@ class CreatePostViewModel @Inject constructor(
 
     fun moveToEditScreen() {
         viewModelScope.launch {
-            _events.send(RustyEvents.Navigate(RustyAppRoutes.EditScreen))
+            _events.send(RustyEvents.Navigate(RustyGramRoutes.EditScreen))
         }
     }
 
@@ -227,7 +226,7 @@ class CreatePostViewModel @Inject constructor(
 
     fun goToFinalizePost() {
         viewModelScope.launch {
-            _events.send(RustyEvents.Navigate(RustyAppRoutes.FinalizePostScreen))
+            _events.send(RustyEvents.Navigate(RustyGramRoutes.FinalizePostScreen))
         }
     }
 
@@ -268,7 +267,7 @@ class CreatePostViewModel @Inject constructor(
         viewModelScope.launch {
             val body = JsonObject()
             body.addProperty("caption", uiState.value.caption)
-            _events.send(RustyEvents.BottomScreenNavigate(BottomNavScreen.HomeGraph))
+            _events.send(RustyEvents.Navigate(RustyGramRoutes.BottomNavScreen.HomeGraph))
             _events.send(RustyEvents.ShowSnackBar(resProvider.getString(R.string.share_post_success)))
         }
     }
