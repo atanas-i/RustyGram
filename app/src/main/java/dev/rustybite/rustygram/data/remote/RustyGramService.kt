@@ -3,17 +3,18 @@ package dev.rustybite.rustygram.data.remote
 import com.google.gson.JsonObject
 import dev.rustybite.rustygram.data.dtos.auth.UserDto
 import dev.rustybite.rustygram.data.dtos.auth.VerifiedUserDto
+import dev.rustybite.rustygram.data.dtos.bookmark.BookmarkDto
 import dev.rustybite.rustygram.data.dtos.posts.PostDto
 import dev.rustybite.rustygram.data.dtos.profile.ProfileDto
 import dev.rustybite.rustygram.domain.models.RustyResponse
 import dev.rustybite.rustygram.util.API_KEY
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface RustyGramService {
@@ -80,4 +81,24 @@ interface RustyGramService {
     suspend fun getFeeds(
         @Header("Authorization") token: String,
     ): Response<List<PostDto>>
+
+    @POST("/rest/v1/bookmarks")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun bookmarkPost(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<Unit>
+
+    @DELETE("/rest/v1/bookmarks}")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun unBookmarkPost(
+        @Header("Authorization") token: String,
+        @Query("post_id") postId: String
+    ): Response<Unit>
+
+    @GET("/rest/v1/bookmarks")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun getBookmarks(
+        @Header("Authorization") token: String
+    ): Response<List<BookmarkDto>>
 }
