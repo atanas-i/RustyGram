@@ -2,6 +2,7 @@ package dev.rustybite.rustygram.domain.repository
 
 import android.util.Log
 import com.google.gson.JsonObject
+import com.google.gson.JsonParseException
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.dtos.util.DatabaseResponseErrorDto
 import dev.rustybite.rustygram.data.remote.RustyGramService
@@ -10,13 +11,13 @@ import dev.rustybite.rustygram.domain.models.Bookmark
 import dev.rustybite.rustygram.domain.models.RustyResponse
 import dev.rustybite.rustygram.domain.models.toBookmark
 import dev.rustybite.rustygram.domain.models.toDatabaseResponseError
-import dev.rustybite.rustygram.domain.models.toPostError
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyResult
 import dev.rustybite.rustygram.util.TAG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Retrofit
+import java.io.EOFException
 import java.io.IOException
 import javax.inject.Inject
 
@@ -80,7 +81,7 @@ class BookmarkRepositoryImpl @Inject constructor(
                 }
             } else {
                 val errorBody = response.errorBody()
-                Log.d(TAG, "createPost: error body ${errorBody?.string()}")
+                Log.d(TAG, "bookmarkPost: error body ${errorBody?.string()}")
                 if (errorBody != null) {
                     val error = converter.convert(errorBody)?.toDatabaseResponseError()
                     if (error != null) {
@@ -117,7 +118,7 @@ class BookmarkRepositoryImpl @Inject constructor(
      * @param token The authentication token for the user. This token is typically obtained
      *              after a successful login. It's used to identify the user and verify their
      *              permissions.
-     * @param postId The ID of the post to be unbookmarked. This is a unique identifier
+     * @param bookmarkId The ID of the post to be unbookmarked. This is a unique identifier
      *               assigned to each post.
      * @return A Flow emitting a RustyResult containing a RustyResponse.
      *         - RustyResult.Success: If the unbookmarking operation is successful, the Flow will emit
@@ -134,25 +135,29 @@ class BookmarkRepositoryImpl @Inject constructor(
      */
     override suspend fun unBookmarkPost(
         token: String,
-        postId: String
+        bookmarkId: String
     ): Flow<RustyResult<RustyResponse>> = flow {
         try {
             emit(RustyResult.Loading())
-            val response = service.unBookmarkPost(token, postId)
+            val response = service.unBookmarkPost(token, bookmarkId)
             if (response.isSuccessful) {
-                response.body()?.let {
-                    val data = RustyResponse(
-                        success = true,
-                        message = resProvider.getString(R.string.post_unbookmarked_successfully)
-                    )
-                    emit(RustyResult.Success(data))
-                }
+                Log.d(TAG, "unBookmarkPost: Un Bookmarking: Responses isSuccessful ${response.isSuccessful}")
+                val data = RustyResponse(
+                    success = true,
+                    message = resProvider.getString(R.string.post_unbookmarked_successfully)
+                )
+                emit(RustyResult.Success(data))
+//                response.body()?.let {
+//                    Log.d(TAG, "unBookmarkPost: Un Bookmarking: Response Body ${response.body().toString()}")
+//
+//                }
             } else {
                 val errorBody = response.errorBody()
-                Log.d(TAG, "createPost: error body ${errorBody?.string()}")
+                Log.d(TAG, "unBookmarkPost: error body ${errorBody?.string()}")
                 if (errorBody != null) {
                     val error = converter.convert(errorBody)?.toDatabaseResponseError()
                     if (error != null) {
+                        Log.d(TAG, "unBookmarkPost: error body ${errorBody.string()}")
                         emit(RustyResult.Failure(error.message))
                     } else {
                         emit(RustyResult.Failure(resProvider.getString(R.string.unknown_error)))
@@ -162,14 +167,18 @@ class BookmarkRepositoryImpl @Inject constructor(
                 }
             }
         } catch (exception: Exception) {
+            Log.d(TAG, "unBookmarkPost: Un Bookmarking catches an exception")
             when(exception) {
-                is IllegalArgumentException -> {
+                is EOFException -> {
+                    Log.d(TAG, "unBookmark: error body ${exception.localizedMessage}")
                     emit(RustyResult.Failure(exception.localizedMessage))
                 }
                 is IOException -> {
+                    Log.d(TAG, "unBookmark: error body ${exception.localizedMessage}")
                     emit(RustyResult.Failure(exception.localizedMessage))
                 }
                 else -> {
+                    Log.d(TAG, "unBookmark: error body ${exception.localizedMessage}")
                     emit(RustyResult.Failure(resProvider.getString(R.string.unknown_error)))
                 }
             }

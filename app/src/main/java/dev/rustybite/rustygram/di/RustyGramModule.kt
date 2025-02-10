@@ -11,6 +11,7 @@ import dev.rustybite.rustygram.data.local.MediaDataSource
 import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.remote.FirebaseService
 import dev.rustybite.rustygram.data.remote.RustyGramService
+import dev.rustybite.rustygram.data.repository.BookmarkRepository
 import dev.rustybite.rustygram.data.repository.GalleryRepository
 import dev.rustybite.rustygram.data.repository.LoginRepository
 import dev.rustybite.rustygram.data.repository.PostsRepository
@@ -21,6 +22,7 @@ import dev.rustybite.rustygram.data.repository.UserRegistrationRepository
 import dev.rustybite.rustygram.data.repository.UserRepository
 import dev.rustybite.rustygram.domain.local.MediaDataSourceImpl
 import dev.rustybite.rustygram.domain.local.SessionManagerImpl
+import dev.rustybite.rustygram.domain.repository.BookmarkRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.GalleryRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.LoginRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.PostsRepositoryImpl
@@ -126,4 +128,8 @@ object RustyGramModule {
     @Singleton
     fun providesPostsRepository(service: RustyGramService, retrofit: Retrofit, resources: ResourceProvider): PostsRepository =
         PostsRepositoryImpl(service, retrofit, resources)
+
+    @Provides
+    fun provideBookmarkRepository(service: RustyGramService, retrofit: Retrofit, resProvider: ResourceProvider): BookmarkRepository =
+        BookmarkRepositoryImpl(service, retrofit, resProvider)
 }

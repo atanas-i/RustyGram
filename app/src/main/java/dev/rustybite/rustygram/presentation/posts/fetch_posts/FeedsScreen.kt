@@ -24,12 +24,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.rustybite.rustygram.domain.models.Profile
 import dev.rustybite.rustygram.util.RustyEvents
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FeedsScreen(
     snackBarHostState: SnackbarHostState,
+    profile: Profile?,
+    userId: String,
     modifier: Modifier = Modifier,
     viewModel: GetPostsViewModel = hiltViewModel()
 ) {
@@ -60,6 +63,8 @@ fun FeedsScreen(
         ) {
             FeedsContent(
                 uiState = uiState,
+                profile = profile,
+                userId = userId,
                 onCommentClicked = {},
                 onShareClicked = { viewModel.onShareClicked() },
                 onLikeClicked = viewModel::onLikeClicked,
@@ -67,7 +72,7 @@ fun FeedsScreen(
                 onOptionClicked = {},
                 loading = uiState.loading,
                 modifier = modifier
-                    .fillMaxSize()
+                    //.fillMaxSize()
             )
         }
     }

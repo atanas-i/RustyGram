@@ -89,11 +89,11 @@ interface RustyGramService {
         @Body body: JsonObject
     ): Response<Unit>
 
-    @DELETE("/rest/v1/bookmarks}")
+    @DELETE("/rest/v1/bookmarks")
     @Headers("apiKey: $API_KEY", "Content-Type: application/json")
     suspend fun unBookmarkPost(
         @Header("Authorization") token: String,
-        @Query("post_id") postId: String
+        @Query("bookmark_id") bookmarkId: String
     ): Response<Unit>
 
     @GET("/rest/v1/bookmarks")

@@ -61,14 +61,13 @@ class RustyGramViewModel @Inject constructor(
             val (isUserSignedIn, isUserOnboarded) = flags
             if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
                 refreshAccessToken(refreshToken)
-            } else {
-                getUser(accessToken)
             }
+            //getUser(accessToken)
         }
     }
 
 
-    private fun getUser(accessToken: String?) {
+    fun getUser(accessToken: String?) {
         viewModelScope.launch {
             userRepository.getLoggedInUser("Bearer $accessToken")
                 .collectLatest { result ->
