@@ -84,4 +84,6 @@
     <string name="poster_profile_pic">Poster profile picture</string>
     <string name="option_more_content_description">Option more</string>
     <string name="like_content_description">Like button</string>
+    <string name="post_bookmarked_successfully">Bookmarked successfully</string>
+    <string name="post_unbookmarked_successfully">Bookmark removed</string>
 </resources>

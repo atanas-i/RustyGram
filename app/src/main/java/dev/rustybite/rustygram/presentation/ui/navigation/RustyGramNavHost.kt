@@ -147,6 +147,7 @@ fun RustyGramNavHost(
                 onUserCreatingPost = { isUserCreatingPost ->
                     rustySoshoStateManager.onUserCreatingPost(isUserCreatingPost)
                 },
+                userId = uiState.userId,
                 profile = profile,
                 scrollState = scrollState,
                 viewModel = createPostViewModel

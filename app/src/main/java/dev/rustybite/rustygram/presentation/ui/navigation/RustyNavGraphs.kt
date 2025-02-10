@@ -35,12 +35,15 @@ fun NavGraphBuilder.homeNavGraph(
     onUserCreatingPost: (Boolean) -> Unit,
     scrollState: ScrollState,
     profile: Profile?,
+    userId: String,
     viewModel: CreatePostViewModel
 ) {
     navigation<RustyGramRoutes.BottomNavScreen.HomeGraph>(startDestination = RustyGramRoutes.BottomNavScreen.Home) {
         composable<RustyGramRoutes.BottomNavScreen.Home> {
             FeedsScreen(
-                snackBarHostState = snackBarHostState
+                snackBarHostState = snackBarHostState,
+                profile = profile,
+                userId = userId
             )
         }
         composable<RustyGramRoutes.BottomNavScreen.Search> { }

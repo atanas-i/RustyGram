@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,15 +50,19 @@ import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.domain.models.Bookmark
 import dev.rustybite.rustygram.domain.models.Like
 import dev.rustybite.rustygram.domain.models.Post
+import dev.rustybite.rustygram.domain.models.Profile
+import java.time.LocalDate
 import java.util.UUID
 
 @Composable
 fun FeedsContent(
     uiState: FetchPostsUiState,
+    profile: Profile?,
+    userId: String,
     onCommentClicked: () -> Unit,
     onShareClicked: () -> Unit,
     onLikeClicked: (Like) -> Unit,
-    onBookmarkClicked: (Bookmark) -> Unit,
+    onBookmarkClicked: (String, Boolean, String?) -> Unit,
     onOptionClicked: () -> Unit,
     loading: Boolean,
     modifier: Modifier = Modifier
@@ -69,9 +74,16 @@ fun FeedsContent(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         itemsIndexed(uiState.feeds) { index, post ->
+            var isBookmarked by remember { mutableStateOf(uiState.bookmarks.any { bookmark -> bookmark.postId == post.postId }) }
+            val bookmark = Bookmark(
+                bookmarkId = UUID.randomUUID().toString(),
+                postId = post.postId,
+                userId = post.profileId,
+            )
             PostItem(
                 post = post,
                 uiState = uiState,
+                isBookmarked = isBookmarked,
                 onCommentClicked = onCommentClicked,
                 onShareClicked = onShareClicked,
                 onLikeClicked = {
@@ -82,13 +94,10 @@ fun FeedsContent(
                     )
                     onLikeClicked(like)
                 },
-                onBookmarkClicked = {
-                    val bookmark = Bookmark(
-                        bookmarkId = UUID.randomUUID().toString(),
-                        postId = post.postId,
-                        userId = post.profileId,
-                    )
-                    onBookmarkClicked(bookmark)
+
+                onBookmarkClicked = { checked ->
+                    isBookmarked = checked
+                    onBookmarkClicked(post.postId, isBookmarked, profile?.profileId)
                 },
                 onOptionClicked = onOptionClicked,
                 loading = loading
@@ -106,10 +115,11 @@ fun FeedsContent(
 fun PostItem(
     post: Post,
     uiState: FetchPostsUiState,
+    isBookmarked: Boolean,
     onCommentClicked: () -> Unit,
     onShareClicked: () -> Unit,
     onLikeClicked: () -> Unit,
-    onBookmarkClicked: () -> Unit,
+    onBookmarkClicked: (Boolean) -> Unit,
     onOptionClicked: () -> Unit,
     loading: Boolean,
     modifier: Modifier = Modifier
@@ -139,6 +149,7 @@ fun PostItem(
         )
         PostFooter(
             uiState = uiState,
+            isBookmarked = isBookmarked,
             onLikeClicked = onLikeClicked,
             onCommentClicked = onCommentClicked,
             onShareClicked = onShareClicked,
@@ -201,13 +212,13 @@ fun PostHeader(
 @Composable
 fun PostFooter(
     uiState: FetchPostsUiState,
+    isBookmarked: Boolean,
     onLikeClicked: () -> Unit,
     onCommentClicked: () -> Unit,
     onShareClicked: () -> Unit,
-    onBookmarkClicked: () -> Unit,
+    onBookmarkClicked: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var isBookmarked by remember { mutableStateOf(false) }
     var isLiked by remember { mutableStateOf(false) }
     Row {
         Row {
@@ -280,11 +291,9 @@ fun PostFooter(
             }
         }
         Spacer(modifier = modifier.weight(1f))
-        IconButton(onClick = {
-            isBookmarked = !isBookmarked
-            onBookmarkClicked()
-            //bookmarkedState.value = !bookmarkedState.value
-        }
+        IconToggleButton(
+            checked = isBookmarked,
+            onCheckedChange = onBookmarkClicked
         ) {
             val bookmarkIcon =
                 if (isBookmarked) R.drawable.bookmark_icon else R.drawable.bookmark_outline_icon

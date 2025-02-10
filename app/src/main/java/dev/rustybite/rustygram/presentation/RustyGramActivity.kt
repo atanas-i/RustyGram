@@ -112,6 +112,9 @@ class RustyGramActivity : ComponentActivity() {
                     Log.d(TAG, "onStart: Token expired.. refreshing it")
                     mainViewModel.refreshAccessToken(refreshToken)
                 }
+                mainViewModel.getUser(accessToken)
+            }
+            if (isUserSignedIn == true) {
                 Log.d(TAG, "onStart: User logged in.. navigating to Home")
                 rustySoshoStateManager.onShowBottomNav(isShown = true)
                 rustySoshoStateManager.onDestinationChange(RustyGramRoutes.BottomNavScreen.HomeGraph)

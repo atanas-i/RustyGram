@@ -14,6 +14,8 @@ import dev.rustybite.rustygram.util.TAG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Retrofit
+import java.io.EOFException
+import java.io.IOException
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -31,22 +33,36 @@ class UserRepositoryImpl @Inject constructor(
      * @return [Flow<RustyResult<User>>] Indicating success or failure of the login operation.
      */
     override suspend fun getLoggedInUser(token: String): Flow<RustyResult<User>> = flow {
-        emit(RustyResult.Loading())
-        val response = service.getLoggedInUser(token)
-        if (response.isSuccessful) {
-            response.body()?.let { userDto ->
-                emit(RustyResult.Success(userDto.toUser()))
-            }
-        } else {
-            val errorBody = response.errorBody()
-            Log.d(TAG, "getLoggedInUser: ${errorBody?.string()}")
-            if (errorBody != null) {
-                val error = converter.convert(errorBody)?.toUserError()
-                if (error != null) {
-                    emit(RustyResult.Failure(error.msg))
+        try {
+            emit(RustyResult.Loading())
+            val response = service.getLoggedInUser(token)
+            if (response.isSuccessful) {
+                response.body()?.let { userDto ->
+                    emit(RustyResult.Success(userDto.toUser()))
                 }
             } else {
-                emit(RustyResult.Failure(resources.getString(R.string.unknown_error)))
+                val errorBody = response.errorBody()
+                Log.d(TAG, "getLoggedInUser: ${errorBody?.string()}")
+                if (errorBody != null) {
+                    val error = converter.convert(errorBody)?.toUserError()
+                    if (error != null) {
+                        emit(RustyResult.Failure(error.msg))
+                    }
+                } else {
+                    emit(RustyResult.Failure(resources.getString(R.string.unknown_error)))
+                }
+            }
+        } catch (exception: Exception) {
+            when(exception) {
+                is EOFException -> {
+                    emit(RustyResult.Failure(exception.localizedMessage))
+                }
+                is IOException -> {
+                    emit(RustyResult.Failure(exception.localizedMessage))
+                }
+                else -> {
+                    emit(RustyResult.Failure(exception.localizedMessage))
+                }
             }
         }
     }
