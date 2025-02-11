@@ -86,4 +86,6 @@
     <string name="like_content_description">Like button</string>
     <string name="post_bookmarked_successfully">Bookmarked successfully</string>
     <string name="post_unbookmarked_successfully">Bookmark removed</string>
+    <string name="post_liked_successfully">Liked</string>
+    <string name="post_unliked_successfully">Like removed</string>
 </resources>

@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import dev.rustybite.rustygram.data.dtos.auth.UserDto
 import dev.rustybite.rustygram.data.dtos.auth.VerifiedUserDto
 import dev.rustybite.rustygram.data.dtos.bookmark.BookmarkDto
+import dev.rustybite.rustygram.data.dtos.like.LikeDto
 import dev.rustybite.rustygram.data.dtos.posts.PostDto
 import dev.rustybite.rustygram.data.dtos.profile.ProfileDto
 import dev.rustybite.rustygram.domain.models.RustyResponse
@@ -120,5 +121,5 @@ interface RustyGramService {
     @Headers("apiKey: $API_KEY", "Content-Type: application/json")
     suspend fun getLikes(
         @Header("Authorization") token: String
-    ): Response<List<BookmarkDto>>
+    ): Response<List<LikeDto>>
 }
