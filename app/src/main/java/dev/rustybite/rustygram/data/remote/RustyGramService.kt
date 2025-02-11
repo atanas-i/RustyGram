@@ -101,4 +101,24 @@ interface RustyGramService {
     suspend fun getBookmarks(
         @Header("Authorization") token: String
     ): Response<List<BookmarkDto>>
+
+    @POST("/rest/v1/likes")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun likePost(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<Unit>
+
+    @DELETE("/rest/v1/likes")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun unlikePost(
+        @Header("Authorization") token: String,
+        @Query("like_id") likeId: String
+    ): Response<Unit>
+
+    @GET("/rest/v1/likes")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun getLikes(
+        @Header("Authorization") token: String
+    ): Response<List<BookmarkDto>>
 }
