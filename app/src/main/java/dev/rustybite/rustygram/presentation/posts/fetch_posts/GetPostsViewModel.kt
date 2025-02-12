@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.repository.BookmarkRepository
+import dev.rustybite.rustygram.data.repository.LikeRepository
 import dev.rustybite.rustygram.data.repository.PostsRepository
 import dev.rustybite.rustygram.data.repository.TokenManagementRepository
 import dev.rustybite.rustygram.domain.models.Bookmark
@@ -32,6 +33,7 @@ class GetPostsViewModel @Inject constructor(
     private val repository: PostsRepository,
     private val tokenRepository: TokenManagementRepository,
     private val bookmarkRepository: BookmarkRepository,
+    private val likeRepository: LikeRepository,
     private val sessionManager: SessionManager,
     private val resProvider: ResourceProvider
 ) : ViewModel() {
@@ -41,18 +43,6 @@ class GetPostsViewModel @Inject constructor(
     val event = _event.receiveAsFlow()
     private val isAlreadyBookmarked = MutableStateFlow(false)
 
-//    init {
-//        viewModelScope.launch {
-//            val accessToken = sessionManager.accessToken.first()
-//            val refreshToken = sessionManager.refreshToken.first()
-//            val expiresAt = sessionManager.expiresAt.first()
-//
-//            if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
-//                refreshAccessToken(refreshToken)
-//            }
-//
-//        }
-//    }
 
     init {
         viewModelScope.launch {
@@ -66,6 +56,7 @@ class GetPostsViewModel @Inject constructor(
             repository.getFeeds("Bearer $accessToken").collectLatest { response ->
                 when (response) {
                     is RustyResult.Success -> {
+                        getLikes(accessToken)
                         getBookmarks(accessToken)
                         _uiState.update { state ->
                             state.copy(
@@ -99,6 +90,38 @@ class GetPostsViewModel @Inject constructor(
         }
     }
 
+    private fun getLikes(accessToken: String?) {
+        viewModelScope.launch {
+            likeRepository.getLikes("Bearer $accessToken").collectLatest { response ->
+                when(response) {
+                    is RustyResult.Success -> {
+                        _uiState.value = _uiState.value.copy(
+                            loading = false,
+                            likes = response.data,
+                            likesCount = response.data.size
+                        )
+                    }
+                    is RustyResult.Failure -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                loading = false,
+                            )
+                        }
+                        _event.send(RustyEvents.ShowSnackBar(response.message ?: resProvider.getString(
+                            R.string.unknown_error)))
+                    }
+                    is RustyResult.Loading -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                loading = true
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private fun getBookmarks(accessToken: String?) {
         viewModelScope.launch {
             bookmarkRepository.getBookmarks("Bearer $accessToken").collectLatest { response ->
@@ -106,9 +129,8 @@ class GetPostsViewModel @Inject constructor(
                     is RustyResult.Success -> {
                         _uiState.value = _uiState.value.copy(
                             loading = false,
-                            bookmarks = response.data
+                            bookmarks = response.data,
                         )
-                        Log.d(TAG, "getBookmarks: Fetch bookmarks succeeded")
                     }
 
                     is RustyResult.Failure -> {
@@ -116,14 +138,12 @@ class GetPostsViewModel @Inject constructor(
                             loading = false,
                             errorMessage = response.message
                         )
-                        Log.d(TAG, "getBookmarks: Fetch bookmarks failed")
                     }
 
                     is RustyResult.Loading -> {
                         _uiState.value = _uiState.value.copy(
                             loading = true
                         )
-                        Log.d(TAG, "getBookmarks: Fetching bookmarks loading is ${_uiState.value.isBookmarked}")
                     }
                 }
             }
@@ -164,15 +184,96 @@ class GetPostsViewModel @Inject constructor(
         }
     }
 
-    fun onLikeClicked(like: Like) {
+    fun onLikeClicked(postId: String, isLiked: Boolean, userId: String?) {
         viewModelScope.launch {
+            val accessToken = sessionManager.accessToken.first()
+            val refreshToken = sessionManager.refreshToken.first()
+            val expiresAt = sessionManager.expiresAt.first()
+
+            if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
+                refreshAccessToken(refreshToken)
+            }
+            _uiState.update { state ->
+                state.copy(
+                    isLiked = isLiked,
+                )
+            }
+
             val body = JsonObject()
-            body.addProperty("like_id", like.likeId)
-            body.addProperty("post_id", like.postId)
-            body.addProperty("user_id", like.userId)
-            body.addProperty("bookmarked_at", like.likedAt)
-            Log.d(TAG, "onBookmarkClicked: Like body: $body")
+            body.addProperty("like_id", UUID.randomUUID().toString())
+            body.addProperty("post_id", postId)
+            body.addProperty("user_id", userId)
+            val like = liked(userId, postId)
+            val isAlreadyLiked = like != null
+
+            if (isAlreadyLiked) {
+                unlikePost(accessToken, like.likeId)
+            } else {
+                likePost(accessToken, body)
+            }
         }
+    }
+
+    private fun likePost(accessToken: String?, body: JsonObject) {
+        viewModelScope.launch {
+            likeRepository.likePost("Bearer $accessToken", body).collectLatest { result ->
+                when(result) {
+                    is RustyResult.Success -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                loading = false,
+                            )
+                        }
+                        getLikes(accessToken)
+                    }
+                    is RustyResult.Failure -> {
+                        _uiState.update { state ->
+                            state.copy(loading = false)
+                        }
+                        _event.send(RustyEvents.ShowSnackBar(result.message ?: resProvider.getString(
+                            R.string.unknown_error))
+                        )
+                    }
+                    is RustyResult.Loading -> {
+                        _uiState.update { state ->
+                            state.copy(loading = true)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun unlikePost(accessToken: String?, likeId: String) {
+        viewModelScope.launch {
+            likeRepository.unlikePost("Bearer $accessToken", "eq.$likeId").collectLatest { result ->
+                when(result) {
+                    is RustyResult.Success -> {
+                        _uiState.update { state ->
+                            state.copy(loading = false)
+                        }
+                        getLikes(accessToken)
+                    }
+                    is RustyResult.Failure -> {
+                        _uiState.update { state ->
+                            state.copy(loading = false)
+                        }
+                        _event.send(RustyEvents.ShowSnackBar(result.message ?: resProvider.getString(
+                            R.string.unknown_error))
+                        )
+                    }
+                    is RustyResult.Loading -> {
+                        _uiState.update { state ->
+                            state.copy(loading = true)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun liked(userId: String?, postId: String): Like? {
+        return _uiState.value.likes.find { like -> like.userId == userId && like.postId == postId }
     }
 
     fun onBookmarkClicked(postId: String, isBookmarked: Boolean, userId: String?) {
@@ -180,7 +281,6 @@ class GetPostsViewModel @Inject constructor(
             val accessToken = sessionManager.accessToken.first()
             val refreshToken = sessionManager.refreshToken.first()
             val expiresAt = sessionManager.expiresAt.first()
-
 
             if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
                 refreshAccessToken(refreshToken)
@@ -204,7 +304,6 @@ class GetPostsViewModel @Inject constructor(
     }
 
     private fun bookmarked(userId: String?, postId: String): Bookmark? {
-        Log.d(TAG, "bookmarked: User Id is $userId")
         return _uiState.value.bookmarks.find { bookmark -> bookmark.userId == userId && bookmark.postId == postId }
     }
 
@@ -225,10 +324,6 @@ class GetPostsViewModel @Inject constructor(
                     }
 
                     is RustyResult.Failure -> {
-                        Log.d(
-                            TAG,
-                            "onBookmarkClicked: bookmarking post failed with msg: ${result.message}"
-                        )
                         _uiState.update { state ->
                             state.copy(bookmarkLoading = false)
                         }
@@ -264,11 +359,8 @@ class GetPostsViewModel @Inject constructor(
                                     bookmarkLoading = false,
                                 )
                             }
-                            //Log.d(TAG, "unBookmarkPost: Removing bookmark succeeded")
                             getBookmarks(accessToken)
-                            //Log.d(TAG, "unBookmarkPost: fetch bookmarks succeeded")
                             _event.send(RustyEvents.ShowSnackBar(result.data.message))
-                            Log.d(TAG, "unBookmarkPost: ${result.data.message}")
                         }
 
                         is RustyResult.Failure -> {
@@ -277,7 +369,6 @@ class GetPostsViewModel @Inject constructor(
                                     bookmarkLoading = false
                                 )
                             }
-                            //Log.d(TAG, "unBookmarkPost: Removing bookmark failed: Error ${result.message}")
                             _event.send(
                                 RustyEvents.ShowSnackBar(
                                     result.message ?: resProvider.getString(R.string.unknown_error)
@@ -291,7 +382,6 @@ class GetPostsViewModel @Inject constructor(
                                     bookmarkLoading = true
                                 )
                             }
-                            //Log.d(TAG, "unBookmarkPost: Removing bookmark is ${_uiState.value.loading}")
                         }
                     }
                 }

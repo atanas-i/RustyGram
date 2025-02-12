@@ -13,6 +13,7 @@ import dev.rustybite.rustygram.data.remote.FirebaseService
 import dev.rustybite.rustygram.data.remote.RustyGramService
 import dev.rustybite.rustygram.data.repository.BookmarkRepository
 import dev.rustybite.rustygram.data.repository.GalleryRepository
+import dev.rustybite.rustygram.data.repository.LikeRepository
 import dev.rustybite.rustygram.data.repository.LoginRepository
 import dev.rustybite.rustygram.data.repository.PostsRepository
 import dev.rustybite.rustygram.data.repository.ProfileRepository
@@ -24,6 +25,7 @@ import dev.rustybite.rustygram.domain.local.MediaDataSourceImpl
 import dev.rustybite.rustygram.domain.local.SessionManagerImpl
 import dev.rustybite.rustygram.domain.repository.BookmarkRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.GalleryRepositoryImpl
+import dev.rustybite.rustygram.domain.repository.LikeRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.LoginRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.PostsRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.ProfileRepositoryImpl
@@ -130,6 +132,12 @@ object RustyGramModule {
         PostsRepositoryImpl(service, retrofit, resources)
 
     @Provides
+    @Singleton
     fun provideBookmarkRepository(service: RustyGramService, retrofit: Retrofit, resProvider: ResourceProvider): BookmarkRepository =
         BookmarkRepositoryImpl(service, retrofit, resProvider)
+
+    @Provides
+    @Singleton
+    fun providesLikeRepository(service: RustyGramService, retrofit: Retrofit, resProvider: ResourceProvider): LikeRepository =
+        LikeRepositoryImpl(service, retrofit, resProvider)
 }
