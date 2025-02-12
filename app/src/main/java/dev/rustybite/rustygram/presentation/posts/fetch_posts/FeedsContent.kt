@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -61,7 +62,7 @@ fun FeedsContent(
     userId: String,
     onCommentClicked: () -> Unit,
     onShareClicked: () -> Unit,
-    onLikeClicked: (Like) -> Unit,
+    onLikeClicked: (String, Boolean, String?) -> Unit,
     onBookmarkClicked: (String, Boolean, String?) -> Unit,
     onOptionClicked: () -> Unit,
     loading: Boolean,
@@ -75,26 +76,21 @@ fun FeedsContent(
     ) {
         itemsIndexed(uiState.feeds) { index, post ->
             var isBookmarked by remember { mutableStateOf(uiState.bookmarks.any { bookmark -> bookmark.postId == post.postId }) }
-            val bookmark = Bookmark(
-                bookmarkId = UUID.randomUUID().toString(),
-                postId = post.postId,
-                userId = post.profileId,
-            )
+            var isLiked by remember { mutableStateOf(uiState.likes.any { like -> like.postId == post.postId  })}
+            var likesCount by remember { mutableIntStateOf(uiState.likes.filter { like -> like.postId == post.postId }.size) }
+
             PostItem(
                 post = post,
                 uiState = uiState,
                 isBookmarked = isBookmarked,
+                isLiked = isLiked,
+                likesCount = likesCount,
                 onCommentClicked = onCommentClicked,
                 onShareClicked = onShareClicked,
-                onLikeClicked = {
-                    val like = Like(
-                        likeId = UUID.randomUUID().toString(),
-                        postId = post.postId,
-                        userId = post.profileId,
-                    )
-                    onLikeClicked(like)
+                onLikeClicked = { checked ->
+                    isLiked = checked
+                    onLikeClicked(post.postId, isLiked, profile?.profileId)
                 },
-
                 onBookmarkClicked = { checked ->
                     isBookmarked = checked
                     onBookmarkClicked(post.postId, isBookmarked, profile?.profileId)
@@ -115,10 +111,12 @@ fun FeedsContent(
 fun PostItem(
     post: Post,
     uiState: FetchPostsUiState,
+    likesCount: Int,
     isBookmarked: Boolean,
+    isLiked: Boolean,
     onCommentClicked: () -> Unit,
     onShareClicked: () -> Unit,
-    onLikeClicked: () -> Unit,
+    onLikeClicked: (Boolean) -> Unit,
     onBookmarkClicked: (Boolean) -> Unit,
     onOptionClicked: () -> Unit,
     loading: Boolean,
@@ -150,6 +148,8 @@ fun PostItem(
         PostFooter(
             uiState = uiState,
             isBookmarked = isBookmarked,
+            likesCount = likesCount,
+            isLiked = isLiked,
             onLikeClicked = onLikeClicked,
             onCommentClicked = onCommentClicked,
             onShareClicked = onShareClicked,
@@ -212,25 +212,24 @@ fun PostHeader(
 @Composable
 fun PostFooter(
     uiState: FetchPostsUiState,
+    likesCount: Int,
     isBookmarked: Boolean,
-    onLikeClicked: () -> Unit,
+    isLiked: Boolean,
+    onLikeClicked: (Boolean) -> Unit,
     onCommentClicked: () -> Unit,
     onShareClicked: () -> Unit,
     onBookmarkClicked: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var isLiked by remember { mutableStateOf(false) }
     Row {
         Row {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_extra_small))
             ) {
-                IconButton(
-                    onClick = {
-                        isLiked = !isLiked
-                        onLikeClicked()
-                    }
+                IconToggleButton(
+                    checked = isLiked,
+                    onCheckedChange = onLikeClicked,
                 ) {
                     val likeIcon =
                         if (isLiked) R.drawable.favorite_icon else R.drawable.favorite_outline_icon
@@ -243,15 +242,15 @@ fun PostFooter(
                     )
                 }
                 Text(
-                    text = uiState.likesCount.toString(),
+                    text = likesCount.toString(),
                     style = MaterialTheme.typography.bodyMedium.copy(
-                        fontWeight = FontWeight.W300,
+                        fontWeight = FontWeight.W400,
                     )
                 )
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_extra_small))
             ) {
                 IconButton(onClick = onCommentClicked) {
                     Icon(
@@ -271,7 +270,7 @@ fun PostFooter(
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_extra_small))
             ) {
                 IconButton(onClick = onShareClicked) {
                     Icon(

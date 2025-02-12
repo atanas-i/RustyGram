@@ -1,5 +1,6 @@
 package dev.rustybite.rustygram.domain.repository
 
+import android.util.Log
 import com.google.gson.JsonObject
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.dtos.util.DatabaseResponseErrorDto
@@ -11,6 +12,7 @@ import dev.rustybite.rustygram.domain.models.toDatabaseResponseError
 import dev.rustybite.rustygram.domain.models.toLike
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyResult
+import dev.rustybite.rustygram.util.TAG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Retrofit
@@ -124,15 +126,14 @@ class LikeRepositoryImpl @Inject constructor(
             emit(RustyResult.Loading())
             val response = service.unlikePost(token, likeId)
             if (response.isSuccessful) {
-                response.body()?.let {
-                    val data = RustyResponse(
-                        success = true,
-                        message = resProvider.getString(R.string.post_unliked_successfully)
-                    )
-                    emit(RustyResult.Success(data))
-                }
+                val data = RustyResponse(
+                    success = true,
+                    message = resProvider.getString(R.string.post_unliked_successfully)
+                )
+                emit(RustyResult.Success(data))
             } else {
                 val errorBody = response.errorBody()
+                Log.d(TAG, "unlikePost: errorBody: ${errorBody?.string()}")
                 if (errorBody != null) {
                     val error = converter.convert(errorBody)?.toDatabaseResponseError()
                     if (error != null) {
@@ -145,12 +146,15 @@ class LikeRepositoryImpl @Inject constructor(
         } catch (exception: Exception) {
             when(exception) {
                 is EOFException -> {
+                    Log.d(TAG, "unlikePost: EOFException: ${exception.localizedMessage}")
                     emit(RustyResult.Failure(exception.localizedMessage))
                 }
                 is IOException -> {
+                    Log.d(TAG, "unlikePost: IOException: ${exception.localizedMessage}")
                     emit(RustyResult.Failure(exception.localizedMessage))
                 }
                 else -> {
+                    Log.d(TAG, "unlikePost: Exception: ${exception.localizedMessage}")
                     emit(RustyResult.Failure(exception.localizedMessage))
                 }
             }
@@ -175,7 +179,7 @@ class LikeRepositoryImpl @Inject constructor(
      * @throws IllegalStateException If the token is invalid or empty.
      * @throws Exception Any other exception that may occur during the network request.
      */
-    override suspend fun getLikes(token: String): Flow<RustyResult<List<Like>>> = flow {
+    override suspend fun getLikes(token: String,): Flow<RustyResult<List<Like>>> = flow {
         try {
             emit(RustyResult.Loading())
             val response = service.getLikes(token)
