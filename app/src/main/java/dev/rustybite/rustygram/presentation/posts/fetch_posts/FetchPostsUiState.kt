@@ -13,6 +13,10 @@ data class FetchPostsUiState(
     val isBookmarked: Boolean = false,
     val errorMessage: String? = null,
     val likesCount: Int = 0,
+    val isCommentClicked: Boolean = false,
     val commentsCount: Int = 0,
-    val isLiked: Boolean = false
+    val isLiked: Boolean = false,
+    val comment: String = "",
+    val postId: String = "",
+    val commentingError: String? = null
 )

@@ -70,28 +70,28 @@ class CommentRepositoryImpl @Inject constructor(
     ): Flow<RustyResult<RustyResponse>> = flow {
         try {
             emit(RustyResult.Loading())
+            val response = service.createComment(token, body)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    val data = RustyResponse(
+                        success = true,
+                        message = resProvider.getString(R.string.commented_successful)
+                    )
+                    emit(RustyResult.Success(data))
+                }
+            } else {
+                val errorBody = response.errorBody()
+                if (errorBody != null) {
+                    val error = converter.convert(errorBody)?.toDatabaseResponseError()
+                    emit(RustyResult.Failure(error?.message))
+                } else {
+                    emit(RustyResult.Failure(resProvider.getString(R.string.unknown_error)))
+                }
+            }
         } catch (exception: Exception) {
             when(exception) {
                 is EOFException -> {
                     emit(RustyResult.Failure(exception.localizedMessage))
-                    val response = service.createComment(token, body)
-                    if (response.isSuccessful) {
-                        response.body()?.let {
-                            val data = RustyResponse(
-                                success = true,
-                                message = resProvider.getString(R.string.commented_successful)
-                            )
-                            emit(RustyResult.Success(data))
-                        }
-                    } else {
-                        val errorBody = response.errorBody()
-                        if (errorBody != null) {
-                            val error = converter.convert(errorBody)?.toDatabaseResponseError()
-                            emit(RustyResult.Failure(error?.message))
-                        } else {
-                            emit(RustyResult.Failure(resProvider.getString(R.string.unknown_error)))
-                        }
-                    }
                 }
                 is IOException -> {
                     emit(RustyResult.Failure(exception.localizedMessage))
@@ -129,28 +129,28 @@ class CommentRepositoryImpl @Inject constructor(
     ): Flow<RustyResult<RustyResponse>> = flow {
         try {
             emit(RustyResult.Loading())
+            val response = service.deleteComment(token, commentId)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    val data = RustyResponse(
+                        success = true,
+                        message = resProvider.getString(R.string.commented_deleted)
+                    )
+                    emit(RustyResult.Success(data))
+                }
+            } else {
+                val errorBody = response.errorBody()
+                if (errorBody != null) {
+                    val error = converter.convert(errorBody)?.toDatabaseResponseError()
+                    emit(RustyResult.Failure(error?.message))
+                } else {
+                    emit(RustyResult.Failure(resProvider.getString(R.string.unknown_error)))
+                }
+            }
         } catch (exception: Exception) {
             when(exception) {
                 is EOFException -> {
                     emit(RustyResult.Failure(exception.localizedMessage))
-                    val response = service.deleteComment(token, commentId)
-                    if (response.isSuccessful) {
-                        response.body()?.let {
-                            val data = RustyResponse(
-                                success = true,
-                                message = resProvider.getString(R.string.commented_deleted)
-                            )
-                            emit(RustyResult.Success(data))
-                        }
-                    } else {
-                        val errorBody = response.errorBody()
-                        if (errorBody != null) {
-                            val error = converter.convert(errorBody)?.toDatabaseResponseError()
-                            emit(RustyResult.Failure(error?.message))
-                        } else {
-                            emit(RustyResult.Failure(resProvider.getString(R.string.unknown_error)))
-                        }
-                    }
                 }
                 is IOException -> {
                     emit(RustyResult.Failure(exception.localizedMessage))
@@ -192,25 +192,25 @@ class CommentRepositoryImpl @Inject constructor(
     override suspend fun getComments(token: String): Flow<RustyResult<List<Comment>>> = flow {
         try {
             emit(RustyResult.Loading())
+            val response = service.getComments(token)
+            if (response.isSuccessful) {
+                response.body()?.let { commentsDto ->
+                    val data = commentsDto.map { commentDto  -> commentDto.toComment() }
+                    emit(RustyResult.Success(data))
+                }
+            } else {
+                val errorBody = response.errorBody()
+                if (errorBody != null) {
+                    val error = converter.convert(errorBody)?.toDatabaseResponseError()
+                    emit(RustyResult.Failure(error?.message))
+                } else {
+                    emit(RustyResult.Failure(resProvider.getString(R.string.unknown_error)))
+                }
+            }
         } catch (exception: Exception) {
             when(exception) {
                 is EOFException -> {
                     emit(RustyResult.Failure(exception.localizedMessage))
-                    val response = service.getComments(token)
-                    if (response.isSuccessful) {
-                        response.body()?.let { commentsDto ->
-                            val data = commentsDto.map { commentDto  -> commentDto.toComment() }
-                            emit(RustyResult.Success(data))
-                        }
-                    } else {
-                        val errorBody = response.errorBody()
-                        if (errorBody != null) {
-                            val error = converter.convert(errorBody)?.toDatabaseResponseError()
-                            emit(RustyResult.Failure(error?.message))
-                        } else {
-                            emit(RustyResult.Failure(resProvider.getString(R.string.unknown_error)))
-                        }
-                    }
                 }
                 is IOException -> {
                     emit(RustyResult.Failure(exception.localizedMessage))

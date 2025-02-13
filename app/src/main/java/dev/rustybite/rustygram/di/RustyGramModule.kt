@@ -12,6 +12,7 @@ import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.remote.FirebaseService
 import dev.rustybite.rustygram.data.remote.RustyGramService
 import dev.rustybite.rustygram.data.repository.BookmarkRepository
+import dev.rustybite.rustygram.data.repository.CommentRepository
 import dev.rustybite.rustygram.data.repository.GalleryRepository
 import dev.rustybite.rustygram.data.repository.LikeRepository
 import dev.rustybite.rustygram.data.repository.LoginRepository
@@ -24,6 +25,7 @@ import dev.rustybite.rustygram.data.repository.UserRepository
 import dev.rustybite.rustygram.domain.local.MediaDataSourceImpl
 import dev.rustybite.rustygram.domain.local.SessionManagerImpl
 import dev.rustybite.rustygram.domain.repository.BookmarkRepositoryImpl
+import dev.rustybite.rustygram.domain.repository.CommentRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.GalleryRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.LikeRepositoryImpl
 import dev.rustybite.rustygram.domain.repository.LoginRepositoryImpl
@@ -140,4 +142,10 @@ object RustyGramModule {
     @Singleton
     fun providesLikeRepository(service: RustyGramService, retrofit: Retrofit, resProvider: ResourceProvider): LikeRepository =
         LikeRepositoryImpl(service, retrofit, resProvider)
+
+    @Provides
+    @Singleton
+    fun providesCommentRepository(service: RustyGramService, retrofit: Retrofit, resProvider: ResourceProvider): CommentRepository =
+        CommentRepositoryImpl(service, retrofit, resProvider)
+
 }

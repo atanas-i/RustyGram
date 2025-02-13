@@ -37,4 +37,7 @@
     <dimen name="image_grid_cell_size">30dp</dimen>
     <dimen name="spacer_medium">32dp</dimen>
     <dimen name="poster_profile_pic_size">40dp</dimen>
+    <dimen name="comment_section_profile_picture_size">30.dp</dimen>
+    <dimen name="comment_section_send_button_width">13.dp</dimen>
+    <dimen name="comment_section_send_button_padding">2.dp</dimen>
 </resources>

@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -62,6 +63,7 @@ fun FeedsContent(
     uiState: FetchPostsUiState,
     profile: Profile?,
     userId: String,
+    onPostIdCaptured: (String) -> Unit,
     onCommentClicked: () -> Unit,
     onShareClicked: () -> Unit,
     onLikeClicked: (String, Boolean, String?) -> Unit,
@@ -78,7 +80,7 @@ fun FeedsContent(
     ) {
         itemsIndexed(uiState.feeds) { index, post ->
             var isBookmarked by remember { mutableStateOf(uiState.bookmarks.any { bookmark -> bookmark.postId == post.postId }) }
-            var isLiked by remember { mutableStateOf(uiState.likes.any { like -> like.postId == post.postId  }) }
+            var isLiked by remember { mutableStateOf(uiState.likes.any { like -> like.postId == post.postId }) }
             //var likesCount by remember { mutableIntStateOf(uiState.likes.filter { like -> like.postId == post.postId }.size) }
             //Log.d(TAG, "FeedsContent: Read like count $likesCount")
 
@@ -88,14 +90,20 @@ fun FeedsContent(
                 isBookmarked = isBookmarked,
                 isLiked = isLiked,
                 likesCount = uiState.likesCount,
-                onCommentClicked = onCommentClicked,
+                onCommentClicked = {
+                    onCommentClicked()
+                    onPostIdCaptured(post.postId)
+
+                },
                 onShareClicked = onShareClicked,
                 onLikeClicked = { checked ->
                     isLiked = checked
+                    onPostIdCaptured(post.postId)
                     onLikeClicked(post.postId, isLiked, profile?.profileId)
                 },
                 onBookmarkClicked = { checked ->
                     isBookmarked = checked
+                    onPostIdCaptured(post.postId)
                     onBookmarkClicked(post.postId, isBookmarked, profile?.profileId)
                 },
                 onOptionClicked = onOptionClicked,
@@ -260,7 +268,8 @@ fun PostFooter(
                         painter = painterResource(R.drawable.text_msg_icon),
                         contentDescription = stringResource(R.string.like_content_description),
                         modifier = modifier
-                            .size(dimensionResource(R.dimen.icon_size_small)),
+                            .size(dimensionResource(R.dimen.icon_size_small))
+                            .clickable { onCommentClicked() },
                         tint = MaterialTheme.colorScheme.onBackground
                     )
                 }

@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.repository.BookmarkRepository
+import dev.rustybite.rustygram.data.repository.CommentRepository
 import dev.rustybite.rustygram.data.repository.LikeRepository
 import dev.rustybite.rustygram.data.repository.PostsRepository
 import dev.rustybite.rustygram.data.repository.TokenManagementRepository
@@ -34,6 +35,7 @@ class GetPostsViewModel @Inject constructor(
     private val tokenRepository: TokenManagementRepository,
     private val bookmarkRepository: BookmarkRepository,
     private val likeRepository: LikeRepository,
+    private val commentRepository: CommentRepository,
     private val sessionManager: SessionManager,
     private val resProvider: ResourceProvider
 ) : ViewModel() {
@@ -387,6 +389,87 @@ class GetPostsViewModel @Inject constructor(
                         }
                     }
                 }
+        }
+    }
+
+    fun onPostIdCaptured(postId: String) {
+        _uiState.update { state ->
+            state.copy(
+                postId = postId
+            )
+        }
+    }
+
+    fun onCommentClicked(clicked: Boolean) {
+        _uiState.update { state ->
+            state.copy(
+                isCommentClicked = clicked
+            )
+        }
+    }
+
+    fun onCommentChange(comment: String) {
+        _uiState.update { state ->
+            state.copy(
+                comment = comment
+            )
+        }
+    }
+
+    fun onEmojiClick() {
+        viewModelScope.launch {
+            _event.send(
+                RustyEvents.ShowSnackBar(resProvider.getString(R.string.emoji_unavailable))
+            )
+        }
+    }
+
+    fun onSendComment(
+        comment: String,
+        postId: String,
+        userId: String,
+        parentCommentId: String? = null
+    ) {
+        viewModelScope.launch {
+            val accessToken = sessionManager.accessToken.first()
+            val refreshToken = sessionManager.refreshToken.first()
+            val expiresAt = sessionManager.expiresAt.first()
+            if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
+                refreshAccessToken(refreshToken)
+            }
+            val body = JsonObject()
+            body.addProperty("comment_id", UUID.randomUUID().toString())
+            body.addProperty("post_id", postId)
+            body.addProperty("user_id", userId)
+            body.addProperty("content", comment)
+            body.addProperty("parent_comment_id", parentCommentId)
+            Log.d(TAG, "onSendComment: $body")
+            commentRepository.createComment("Bearer $accessToken", body).collectLatest { result ->
+                when(result) {
+                    is RustyResult.Success -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                loading = false,
+                            )
+                        }
+                    }
+                    is  RustyResult.Failure -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                loading = false,
+                                commentingError = result.message
+                            )
+                        }
+                    }
+                    is RustyResult.Loading -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                loading = true
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 
