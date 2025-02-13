@@ -88,4 +88,6 @@
     <string name="post_unbookmarked_successfully">Bookmark removed</string>
     <string name="post_liked_successfully">Liked</string>
     <string name="post_unliked_successfully">Like removed</string>
+    <string name="commented_successful">Commented successful</string>
+    <string name="commented_deleted">Comment deleted successfully</string>
 </resources>
