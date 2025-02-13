@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import dev.rustybite.rustygram.data.dtos.auth.UserDto
 import dev.rustybite.rustygram.data.dtos.auth.VerifiedUserDto
 import dev.rustybite.rustygram.data.dtos.bookmark.BookmarkDto
+import dev.rustybite.rustygram.data.dtos.comments.CommentDto
 import dev.rustybite.rustygram.data.dtos.like.LikeDto
 import dev.rustybite.rustygram.data.dtos.posts.PostDto
 import dev.rustybite.rustygram.data.dtos.profile.ProfileDto
@@ -122,4 +123,25 @@ interface RustyGramService {
     suspend fun getLikes(
         @Header("Authorization") token: String
     ): Response<List<LikeDto>>
+
+    @POST("/rest/v1/comments")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun createComment(
+        @Header("Authorization") token: String,
+        @Body body: JsonObject
+    ): Response<Unit>
+
+    @DELETE("/rest/v1/comments")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun deleteComment(
+        @Header("Authorization") token: String,
+        @Query("comment_id") commentId: String
+    ): Response<Unit>
+
+    @GET("/rest/v1/comments")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun getComments(
+        @Header("Authorization") token: String,
+        @Query("post_id") postId: String
+    ): Response<List<CommentDto>>
 }

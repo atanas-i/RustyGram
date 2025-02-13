@@ -100,6 +100,8 @@ class GetPostsViewModel @Inject constructor(
                             likes = response.data,
                             likesCount = response.data.size
                         )
+                        Log.d(TAG, "getLikes: Likes got called")
+                        Log.d(TAG, "getLikes: ${_uiState.value.likes.size}")
                     }
                     is RustyResult.Failure -> {
                         _uiState.update { state ->
@@ -191,7 +193,7 @@ class GetPostsViewModel @Inject constructor(
             val expiresAt = sessionManager.expiresAt.first()
 
             if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
-                refreshAccessToken(refreshToken)
+                    refreshAccessToken(refreshToken)
             }
             _uiState.update { state ->
                 state.copy(

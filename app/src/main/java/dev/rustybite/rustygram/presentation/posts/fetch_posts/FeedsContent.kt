@@ -1,6 +1,7 @@
 package dev.rustybite.rustygram.presentation.posts.fetch_posts
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -52,6 +53,7 @@ import dev.rustybite.rustygram.domain.models.Bookmark
 import dev.rustybite.rustygram.domain.models.Like
 import dev.rustybite.rustygram.domain.models.Post
 import dev.rustybite.rustygram.domain.models.Profile
+import dev.rustybite.rustygram.util.TAG
 import java.time.LocalDate
 import java.util.UUID
 
@@ -76,15 +78,16 @@ fun FeedsContent(
     ) {
         itemsIndexed(uiState.feeds) { index, post ->
             var isBookmarked by remember { mutableStateOf(uiState.bookmarks.any { bookmark -> bookmark.postId == post.postId }) }
-            var isLiked by remember { mutableStateOf(uiState.likes.any { like -> like.postId == post.postId  })}
-            var likesCount by remember { mutableIntStateOf(uiState.likes.filter { like -> like.postId == post.postId }.size) }
+            var isLiked by remember { mutableStateOf(uiState.likes.any { like -> like.postId == post.postId  }) }
+            //var likesCount by remember { mutableIntStateOf(uiState.likes.filter { like -> like.postId == post.postId }.size) }
+            //Log.d(TAG, "FeedsContent: Read like count $likesCount")
 
             PostItem(
                 post = post,
                 uiState = uiState,
                 isBookmarked = isBookmarked,
                 isLiked = isLiked,
-                likesCount = likesCount,
+                likesCount = uiState.likesCount,
                 onCommentClicked = onCommentClicked,
                 onShareClicked = onShareClicked,
                 onLikeClicked = { checked ->
