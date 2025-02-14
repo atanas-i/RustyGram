@@ -86,8 +86,16 @@ fun FeedsScreen(
                     CommentsModalContent(
                         comment = uiState.comment,
                         loading = uiState.loading,
+                        comments = uiState.comments,
+                        profile = profile,
                         onCommentChange = viewModel::onCommentChange,
                         onEmojiClick = { viewModel.onEmojiClick() },
+                        onReply = {},
+                        onTranslate = {},
+                        onLikeComment = {},
+                        commentLikeCounts = uiState.commentLikeCounts,
+                        isCommentLiked = uiState.isLiked,
+                        isUserSharedStory = false,
                         onSendComment = {
                             viewModel.onSendComment(
                                 uiState.comment,
@@ -96,8 +104,6 @@ fun FeedsScreen(
                             )
                             viewModel.onCommentChange("")
                         },
-                        postHolderUserName = profile?.userName,
-                        postHolderProfilePicture = profile?.userProfilePicture,
                         commentingError = uiState.commentingError
                     )
                 }

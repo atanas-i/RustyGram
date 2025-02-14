@@ -96,4 +96,7 @@
     <string name="up_arrow_icon">Up button</string>
     <string name="emoji_unavailable">Emoji feature is unavailable for now</string>
     <string name="comments">Comments</string>
+    <string name="like_comment_btn" />
+    <string name="replay">Replay</string>
+    <string name="translate">See translation</string>
 </resources>
