@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.local.SessionManager
 import dev.rustybite.rustygram.data.repository.BookmarkRepository
+import dev.rustybite.rustygram.data.repository.CommentRepository
 import dev.rustybite.rustygram.data.repository.LikeRepository
 import dev.rustybite.rustygram.data.repository.PostsRepository
 import dev.rustybite.rustygram.data.repository.TokenManagementRepository
@@ -34,6 +35,7 @@ class GetPostsViewModel @Inject constructor(
     private val tokenRepository: TokenManagementRepository,
     private val bookmarkRepository: BookmarkRepository,
     private val likeRepository: LikeRepository,
+    private val commentRepository: CommentRepository,
     private val sessionManager: SessionManager,
     private val resProvider: ResourceProvider
 ) : ViewModel() {
@@ -53,11 +55,13 @@ class GetPostsViewModel @Inject constructor(
             if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
                 refreshAccessToken(refreshToken)
             }
+            Log.d(TAG, "onCommentClicked: Post Id picked ${_uiState.value.postId}")
             repository.getFeeds("Bearer $accessToken").collectLatest { response ->
                 when (response) {
                     is RustyResult.Success -> {
                         getLikes(accessToken)
                         getBookmarks(accessToken)
+                        getComments(accessToken,)
                         _uiState.update { state ->
                             state.copy(
                                 loading = true,
@@ -100,6 +104,8 @@ class GetPostsViewModel @Inject constructor(
                             likes = response.data,
                             likesCount = response.data.size
                         )
+                        Log.d(TAG, "getLikes: Likes got called")
+                        Log.d(TAG, "getLikes: ${_uiState.value.likes.size}")
                     }
                     is RustyResult.Failure -> {
                         _uiState.update { state ->
@@ -139,11 +145,81 @@ class GetPostsViewModel @Inject constructor(
                             errorMessage = response.message
                         )
                     }
-
                     is RustyResult.Loading -> {
                         _uiState.value = _uiState.value.copy(
                             loading = true
                         )
+                    }
+                }
+            }
+        }
+    }
+
+    fun getComments(accessToken: String?) {
+        viewModelScope.launch {
+            commentRepository.getComments("Bearer $accessToken").collectLatest { result ->
+                when(result) {
+                    is RustyResult.Success -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                loadingComments = false,
+                                comments = result.data,
+                            )
+                        }
+                    }
+                    is RustyResult.Failure -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                loadingComments = false,
+                                commentingError = result.message
+                            )
+                        }
+                    }
+                    is RustyResult.Loading -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                loadingComments = true
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun getPostComments(postId: String) {
+        viewModelScope.launch {
+            val accessToken = sessionManager.accessToken.first()
+            val refreshToken = sessionManager.refreshToken.first()
+            val expiresAt = sessionManager.expiresAt.first()
+
+            if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
+                refreshAccessToken(refreshToken)
+            }
+            commentRepository.getPostComments("Bearer $accessToken", "eq.$postId").collectLatest { result ->
+                when(result) {
+                    is RustyResult.Success -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                loadingComments = false,
+                                postComments = result.data,
+                            )
+                        }
+                    }
+                    is RustyResult.Failure -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                loadingComments = false,
+                                commentingError = result.message
+                            )
+                        }
+                    }
+                    is RustyResult.Loading -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                loadingComments = true
+                            )
+                        }
                     }
                 }
             }
@@ -191,7 +267,7 @@ class GetPostsViewModel @Inject constructor(
             val expiresAt = sessionManager.expiresAt.first()
 
             if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
-                refreshAccessToken(refreshToken)
+                    refreshAccessToken(refreshToken)
             }
             _uiState.update { state ->
                 state.copy(
@@ -334,7 +410,6 @@ class GetPostsViewModel @Inject constructor(
                             )
                         )
                     }
-
                     is RustyResult.Loading -> {
                         _uiState.update { state ->
                             state.copy(bookmarkLoading = true)
@@ -386,6 +461,107 @@ class GetPostsViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    fun onCommentClicked(clicked: Boolean,) {
+        viewModelScope.launch {
+            val accessToken = sessionManager.accessToken.first()
+            _uiState.update { state ->
+                state.copy(
+                    isCommentClicked = clicked,
+                )
+            }
+            //getComments(accessToken)
+            Log.d(TAG, "onCommentClicked: Post Id picked ${_uiState.value.postId}")
+        }
+    }
+
+    fun onCommentChange(comment: String) {
+        _uiState.update { state ->
+            state.copy(
+                comment = comment
+            )
+        }
+    }
+
+    fun onEmojiClick() {
+        viewModelScope.launch {
+            _event.send(
+                RustyEvents.ShowSnackBar(resProvider.getString(R.string.emoji_unavailable))
+            )
+        }
+    }
+
+    fun onSendComment(
+        comment: String,
+        postId: String,
+        userId: String,
+        parentCommentId: String? = null
+    ) {
+        viewModelScope.launch {
+            val accessToken = sessionManager.accessToken.first()
+            val refreshToken = sessionManager.refreshToken.first()
+            val expiresAt = sessionManager.expiresAt.first()
+            if (sessionManager.isAccessTokenExpired(accessToken, expiresAt)) {
+                refreshAccessToken(refreshToken)
+            }
+            val body = JsonObject()
+            body.addProperty("comment_id", UUID.randomUUID().toString())
+            body.addProperty("post_id", postId)
+            body.addProperty("user_id", userId)
+            body.addProperty("content", comment)
+            body.addProperty("parent_comment_id", parentCommentId)
+            Log.d(TAG, "onSendComment: $body")
+            commentRepository.createComment("Bearer $accessToken", body).collectLatest { result ->
+                when(result) {
+                    is RustyResult.Success -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                loading = false,
+                            )
+                        }
+                        getComments(accessToken)
+                        getPostComments(postId)
+                    }
+                    is  RustyResult.Failure -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                loading = false,
+                                commentingError = result.message
+                            )
+                        }
+                        Log.d(TAG, "onSendComment: Error ${result.message}")
+                    }
+                    is RustyResult.Loading -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                loading = true
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun onCommentingErrorChange(message: String?) {
+        _uiState.update { state ->
+            state.copy(
+                commentingError = message
+            )
+        }
+    }
+
+    fun onTranslatingComment() {
+        TODO("Not yet implemented")
+    }
+
+    fun onReplyingComment() {
+        TODO("Not yet implemented")
+    }
+
+    fun onLikingComment(liked: Boolean) {
+        TODO("Not yet implemented")
     }
 
     fun onShareClicked() {

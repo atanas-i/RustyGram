@@ -88,4 +88,15 @@
     <string name="post_unbookmarked_successfully">Bookmark removed</string>
     <string name="post_liked_successfully">Liked</string>
     <string name="post_unliked_successfully">Like removed</string>
+    <string name="commented_successful">Commented successful</string>
+    <string name="commented_deleted">Comment deleted successfully</string>
+    <string name="comment_text_field_placeholder">Add a comment for</string>
+    <string name="profile_picture">User profile picture</string>
+    <string name="emoji_icon">Emoji icon</string>
+    <string name="up_arrow_icon">Up button</string>
+    <string name="emoji_unavailable">Emoji feature is unavailable for now</string>
+    <string name="comments">Comments</string>
+    <string name="like_comment_btn" />
+    <string name="replay">Replay</string>
+    <string name="translate">See translation</string>
 </resources>
