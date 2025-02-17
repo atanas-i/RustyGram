@@ -1,5 +1,6 @@
 package dev.rustybite.rustygram.domain.repository
 
+import android.util.Log
 import com.google.gson.JsonObject
 import dev.rustybite.rustygram.R
 import dev.rustybite.rustygram.data.dtos.util.DatabaseResponseErrorDto
@@ -11,6 +12,7 @@ import dev.rustybite.rustygram.domain.models.toComment
 import dev.rustybite.rustygram.domain.models.toDatabaseResponseError
 import dev.rustybite.rustygram.util.ResourceProvider
 import dev.rustybite.rustygram.util.RustyResult
+import dev.rustybite.rustygram.util.TAG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Retrofit
@@ -162,44 +164,44 @@ class CommentRepositoryImpl @Inject constructor(
         }
     }
 
+
     /**
-     * Retrieves a list of comments from a remote data source.
+     * Retrieves a list of comments for a specific post from the remote API.
      *
-     * This function fetches comments using the provided authentication token.
-     * It returns a [Flow] that emits [RustyResult] objects. Each [RustyResult]
-     * either contains a list of [Comment] objects on success or an error
-     * state indicating a failure.
+     * This function fetches comments associated with a given `postId` using the provided
+     * `token` for authentication. It handles network requests, response parsing, and error handling.
      *
-     * The function is `suspend`, meaning it must be called within a coroutine
-     * or another suspending function. This allows for non-blocking network
-     * requests.
+     * @param token The authentication token required to access the API.
+     * @param postId The ID of the post for which to retrieve comments.
+     * @return A [Flow] emitting [RustyResult] instances, representing the asynchronous result of the operation.
+     *         The emitted values can be:
+     *         - [RustyResult.Loading]: Indicates that the request is in progress.
+     *         - [RustyResult.Success]: Contains a [List] of [Comment] objects if the request is successful.
+     *         - [RustyResult.Failure]: Contains an error message if the request fails.
      *
-     * The returned [Flow] can be collected to react to the result of the operation.
-     * It may emit multiple [RustyResult] instances, for example, if there are
-     * network retries or intermediate loading states. Typically, it will emit
-     * a single success or failure result.
+     * @throws EOFException If the server closes the connection prematurely.
+     * @throws IOException If a network error occurs during the request.
+     * @throws Exception for generic Exceptions.
      *
-     * @param token The authentication token used to authorize the request.
-     *              This should be a valid token obtained from a prior
-     *              authentication process.
-     * @return A [Flow] that emits [RustyResult] objects, each containing
-     *         either a [List] of [Comment] on success, or an error state
-     *         on failure.
-     *
-     * @throws Exception if there is an unrecoverable error during the process
-     *
+     * The function performs the following steps:
+     * 1. Emits a [RustyResult.Loading] state to indicate that the request is starting.
+     * 2. Makes a network call to retrieve comments using the provided `token` and `postId`.
+     * 3. Handles the API response:
+     *    - If the response is successful (HTTP status 200-299), it maps the received [CommentDto] objects
      */
-    override suspend fun getComments(token: String): Flow<RustyResult<List<Comment>>> = flow {
+    override suspend fun getPostComments(token: String, postId: String): Flow<RustyResult<List<Comment>>> = flow {
         try {
             emit(RustyResult.Loading())
-            val response = service.getComments(token)
+            val response = service.getPostComments(token, postId)
             if (response.isSuccessful) {
                 response.body()?.let { commentsDto ->
                     val data = commentsDto.map { commentDto  -> commentDto.toComment() }
+                    Log.d(TAG, "getComments: $data")
                     emit(RustyResult.Success(data))
                 }
             } else {
                 val errorBody = response.errorBody()
+                Log.d(TAG, "getComments: Error body ${errorBody?.string()}")
                 if (errorBody != null) {
                     val error = converter.convert(errorBody)?.toDatabaseResponseError()
                     emit(RustyResult.Failure(error?.message))
@@ -210,12 +212,53 @@ class CommentRepositoryImpl @Inject constructor(
         } catch (exception: Exception) {
             when(exception) {
                 is EOFException -> {
+                    Log.d(TAG, "getComments: EOFException ${exception.localizedMessage}")
                     emit(RustyResult.Failure(exception.localizedMessage))
                 }
                 is IOException -> {
+                    Log.d(TAG, "getComments: IOException ${exception.localizedMessage}")
                     emit(RustyResult.Failure(exception.localizedMessage))
                 }
                 else -> {
+                    Log.d(TAG, "getComments: Exception ${exception.localizedMessage}")
+                    emit(RustyResult.Failure(exception.localizedMessage))
+                }
+            }
+        }
+    }
+
+    override suspend fun getComments(token: String): Flow<RustyResult<List<Comment>>> = flow {
+        try {
+            emit(RustyResult.Loading())
+            val response = service.getComments(token)
+            if (response.isSuccessful) {
+                response.body()?.let { commentsDto ->
+                    val data = commentsDto.map { commentDto  -> commentDto.toComment() }
+                    Log.d(TAG, "getComments: $data")
+                    emit(RustyResult.Success(data))
+                }
+            } else {
+                val errorBody = response.errorBody()
+                Log.d(TAG, "getComments: Error body ${errorBody?.string()}")
+                if (errorBody != null) {
+                    val error = converter.convert(errorBody)?.toDatabaseResponseError()
+                    emit(RustyResult.Failure(error?.message))
+                } else {
+                    emit(RustyResult.Failure(resProvider.getString(R.string.unknown_error)))
+                }
+            }
+        } catch (exception: Exception) {
+            when(exception) {
+                is EOFException -> {
+                    Log.d(TAG, "getComments: EOFException ${exception.localizedMessage}")
+                    emit(RustyResult.Failure(exception.localizedMessage))
+                }
+                is IOException -> {
+                    Log.d(TAG, "getComments: IOException ${exception.localizedMessage}")
+                    emit(RustyResult.Failure(exception.localizedMessage))
+                }
+                else -> {
+                    Log.d(TAG, "getComments: Exception ${exception.localizedMessage}")
                     emit(RustyResult.Failure(exception.localizedMessage))
                 }
             }

@@ -60,6 +60,28 @@ interface CommentRepository {
      */
     suspend fun deleteComment(token: String, commentId: String): Flow<RustyResult<RustyResponse>>
 
+
+    /**
+     * Retrieves a list of comments for a specific post.
+     *
+     * This function fetches comments associated with a given post ID from the server.
+     * It operates within a coroutine context and returns a Flow that emits RustyResult objects.
+     * Each RustyResult either contains a list of Comment objects on success or an error on failure.
+     *
+     * @param token The authentication token required to access the protected API.
+     *              This token should be a valid and authorized token.
+     * @param postId The unique identifier of the post for which to retrieve comments.
+     *               This ID should correspond to an existing post on the server.
+     * @return A [Flow] that emits [RustyResult] objects.
+     *         - On success, the RustyResult will contain a [List] of [Comment] objects.
+     *         - On failure, the RustyResult will contain an error indicating the reason for failure.
+     *
+     * @throws Exception If there is a problem with network connectivity, invalid token,
+     *                   server error, or any other unexpected issue during the request.
+
+     */
+    suspend fun getPostComments(token: String, postId: String): Flow<RustyResult<List<Comment>>>
+
     /**
      * Retrieves a list of comments from a remote data source.
      *
@@ -85,7 +107,6 @@ interface CommentRepository {
      *         on failure.
      *
      * @throws Exception if there is an unrecoverable error during the process
-     *
      */
     suspend fun getComments(token: String): Flow<RustyResult<List<Comment>>>
 }

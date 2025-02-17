@@ -1,5 +1,7 @@
 package dev.rustybite.rustygram.presentation.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -7,8 +9,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -61,6 +66,7 @@ fun CommentsModalContent(
     onReply: () -> Unit,
     onTranslate: () -> Unit,
     onLikeComment: (Boolean) -> Unit,
+    onCommentingErrorChange: (String?) -> Unit,
     commentLikeCounts: Int,
     isCommentLiked: Boolean,
     isUserSharedStory: Boolean,
@@ -80,23 +86,58 @@ fun CommentsModalContent(
         ) {
             Text(
                 text = stringResource(R.string.comments),
-                style = baseline.bodyMedium.copy(
+                style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Bold
                 )
             )
-            LazyColumn {
-                items(comments) { comment ->
-                    CommentItem(
-                        profile = profile,
-                        comment = comment.comment,
-                        commentId = comment.commentId,
-                        onReply = onReply,
-                        onTranslate = onTranslate,
-                        onLikeComment = onLikeComment,
-                        commentLikeCounts = commentLikeCounts,
-                        commentedAt = "",
-                        isCommentLiked = isCommentLiked,
-                        isUserSharedStory = isUserSharedStory
+            if (loading) {
+                Box(modifier.fillMaxSize())
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
+                ) {
+                    items(comments) { comment ->
+                        CommentItem(
+                            profile = profile,
+                            comment = comment.comment,
+                            commentId = comment.commentId,
+                            onReply = onReply,
+                            onTranslate = onTranslate,
+                            onLikeComment = onLikeComment,
+                            commentLikeCounts = commentLikeCounts,
+                            commentedAt = "",
+                            isCommentLiked = isCommentLiked,
+                            isUserSharedStory = isUserSharedStory
+                        )
+                    }
+                }
+            }
+        }
+        AnimatedVisibility(
+            visible = commentingError != null,
+            modifier = modifier
+                .background(MaterialTheme.colorScheme.background.copy(.5f))
+        ) {
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = dimensionResource(R.dimen.padding_medium),
+                        vertical = dimensionResource(R.dimen.padding_extra_small)
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Absolute.SpaceBetween
+            ) {
+                Text(
+                    text = commentingError.toString()
+                )
+
+                IconButton(onClick = { onCommentingErrorChange(null)}) {
+                    Icon(
+                        painter = painterResource(R.drawable.cancel),
+                        contentDescription = stringResource(R.string.cancel_btn_content_description),
+                        modifier = modifier
+                            .size(dimensionResource(R.dimen.icon_size_small))
                     )
                 }
             }
@@ -132,6 +173,7 @@ fun CommentItem(
     Row(
         modifier = modifier
             .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -164,20 +206,21 @@ fun CommentItem(
             ) {
                 Text(
                     text = profile?.userName.toString(),
-                    style = baseline.bodyLarge.copy(fontWeight = FontWeight.W500),
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.W500),
                     modifier = modifier
                 )
                 Text(
                     text = commentedAt,
-                    style = baseline.bodySmall.copy(fontWeight = FontWeight.W500),
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.W500),
                     modifier = modifier
                 )
             }
             Text(
                 text = comment,
-                style = baseline.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 modifier = modifier
             )
+            Spacer(modifier = modifier.height(dimensionResource(R.dimen.padding_extra_small)))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
@@ -212,18 +255,18 @@ fun CommentItem(
                     }
                     Text(
                         text = commentLikeCounts.toString(),
-                        style = baseline.bodySmall
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
                 Text(
                     text = stringResource(R.string.replay),
-                    style = baseline.bodySmall.copy(fontWeight = FontWeight.W500),
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.W500),
                     modifier = modifier
                         .clickable { onReply() }
                 )
                 Text(
                     text = stringResource(R.string.translate),
-                    style = baseline.bodySmall.copy(fontWeight = FontWeight.W500),
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.W500),
                     modifier = modifier
                         .clickable { onTranslate() }
                 )

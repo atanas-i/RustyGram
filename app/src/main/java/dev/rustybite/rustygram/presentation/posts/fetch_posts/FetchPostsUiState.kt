@@ -7,10 +7,12 @@ import dev.rustybite.rustygram.domain.models.Post
 
 data class FetchPostsUiState(
     val loading: Boolean = false,
+    val loadingComments: Boolean = false,
     val bookmarkLoading: Boolean = false,
     val feeds: List<Post> = emptyList(),
     val bookmarks: List<Bookmark> = emptyList(),
     val comments: List<Comment> = emptyList(),
+    val postComments: List<Comment> = emptyList(),
     val likes: List<Like> = emptyList(),
     val isBookmarked: Boolean = false,
     val errorMessage: String? = null,

@@ -11,7 +11,7 @@ data class CommentDto(
     val userId: String,
     @SerializedName("parent_comment_id")
     val parentCommentId: String?,
-    @SerializedName("comment")
+    @SerializedName("content")
     val comment: String,
     @SerializedName("commented_at")
     val commentedAt: String

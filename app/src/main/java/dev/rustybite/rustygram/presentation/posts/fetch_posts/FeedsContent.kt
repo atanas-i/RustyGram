@@ -25,17 +25,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,24 +61,35 @@ import dev.rustybite.rustygram.domain.models.Bookmark
 import dev.rustybite.rustygram.domain.models.Like
 import dev.rustybite.rustygram.domain.models.Post
 import dev.rustybite.rustygram.domain.models.Profile
+import dev.rustybite.rustygram.presentation.ui.components.CommentsModalContent
 import dev.rustybite.rustygram.util.TAG
 import java.time.LocalDate
 import java.util.UUID
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedsContent(
     uiState: FetchPostsUiState,
     profile: Profile?,
     userId: String,
-    onPostIdCaptured: (String) -> Unit,
-    onCommentClicked: () -> Unit,
+    onCommentChange: (String) -> Unit,
+    onCommentClicked: (String) -> Unit,
+    onEmojiClick: () -> Unit,
+    onSheetDismiss: () -> Unit,
+    onCommenting: (String) -> Unit,
     onShareClicked: () -> Unit,
+    onReplyingComment: () -> Unit,
+    onTranslatingComment: () -> Unit,
+    onLikingComment: (Boolean) -> Unit,
+    onCommentingErrorChange: (String?) -> Unit,
+    sheetState: SheetState,
     onLikeClicked: (String, Boolean, String?) -> Unit,
     onBookmarkClicked: (String, Boolean, String?) -> Unit,
     onOptionClicked: () -> Unit,
     loading: Boolean,
     modifier: Modifier = Modifier
 ) {
+    var postId by remember { mutableStateOf("") }
     var feeds by remember { mutableStateOf(uiState.feeds) }
     LazyColumn(
         modifier = modifier
@@ -79,9 +97,41 @@ fun FeedsContent(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         itemsIndexed(uiState.feeds) { index, post ->
+            if (uiState.isCommentClicked) {
+                ModalBottomSheet(
+                    sheetState = sheetState,
+                    containerColor = MaterialTheme.colorScheme.background,
+                    onDismissRequest = onSheetDismiss,
+                ) {
+                    CommentsModalContent(
+                        comment = uiState.comment,
+                        loading = uiState.loadingComments,
+                        comments = uiState.postComments,
+                        profile = profile,
+                        onCommentChange = onCommentChange,
+                        onEmojiClick = onEmojiClick,
+                        onReply = onReplyingComment,
+                        onTranslate = onTranslatingComment,
+                        onLikeComment = onLikingComment,
+                        commentLikeCounts = uiState.commentLikeCounts,
+                        isCommentLiked = uiState.isLiked,
+                        isUserSharedStory = false,
+                        onSendComment = { onCommenting(postId) },
+                        onCommentingErrorChange = onCommentingErrorChange,
+                        commentingError = uiState.commentingError
+                    )
+                }
+            }
             var isBookmarked by remember { mutableStateOf(uiState.bookmarks.any { bookmark -> bookmark.postId == post.postId }) }
             var isLiked by remember { mutableStateOf(uiState.likes.any { like -> like.postId == post.postId }) }
-            //var likesCount by remember { mutableIntStateOf(uiState.likes.filter { like -> like.postId == post.postId }.size) }
+            var likesCount = remember(uiState.likes) {
+                derivedStateOf { uiState.likes.filter { like -> like.postId == post.postId }.size }
+            }
+            var commentsCount = remember(uiState.comments) {
+                derivedStateOf {
+                    uiState.comments.filter { comment -> comment.postId == post.postId }.size
+                }
+            }
             //Log.d(TAG, "FeedsContent: Read like count $likesCount")
 
             PostItem(
@@ -89,21 +139,19 @@ fun FeedsContent(
                 uiState = uiState,
                 isBookmarked = isBookmarked,
                 isLiked = isLiked,
-                likesCount = uiState.likesCount,
+                likesCount = likesCount.value,
+                commentsCount = commentsCount.value,
                 onCommentClicked = {
-                    onCommentClicked()
-                    onPostIdCaptured(post.postId)
-
+                    onCommentClicked(post.postId)
+                    postId = post.postId
                 },
                 onShareClicked = onShareClicked,
                 onLikeClicked = { checked ->
                     isLiked = checked
-                    onPostIdCaptured(post.postId)
                     onLikeClicked(post.postId, isLiked, profile?.profileId)
                 },
                 onBookmarkClicked = { checked ->
                     isBookmarked = checked
-                    onPostIdCaptured(post.postId)
                     onBookmarkClicked(post.postId, isBookmarked, profile?.profileId)
                 },
                 onOptionClicked = onOptionClicked,
@@ -123,6 +171,7 @@ fun PostItem(
     post: Post,
     uiState: FetchPostsUiState,
     likesCount: Int,
+    commentsCount: Int,
     isBookmarked: Boolean,
     isLiked: Boolean,
     onCommentClicked: () -> Unit,
@@ -160,6 +209,7 @@ fun PostItem(
             uiState = uiState,
             isBookmarked = isBookmarked,
             likesCount = likesCount,
+            commentsCount = commentsCount,
             isLiked = isLiked,
             onLikeClicked = onLikeClicked,
             onCommentClicked = onCommentClicked,
@@ -224,6 +274,7 @@ fun PostHeader(
 fun PostFooter(
     uiState: FetchPostsUiState,
     likesCount: Int,
+    commentsCount: Int,
     isBookmarked: Boolean,
     isLiked: Boolean,
     onLikeClicked: (Boolean) -> Unit,
@@ -274,7 +325,7 @@ fun PostFooter(
                     )
                 }
                 Text(
-                    text = uiState.commentsCount.toString(),
+                    text = commentsCount.toString(),
                     style = MaterialTheme.typography.bodySmall.copy(
                         fontWeight = FontWeight.W300,
                     )

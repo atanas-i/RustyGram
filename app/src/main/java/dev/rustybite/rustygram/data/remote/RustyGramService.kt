@@ -140,7 +140,14 @@ interface RustyGramService {
 
     @GET("/rest/v1/comments")
     @Headers("apiKey: $API_KEY", "Content-Type: application/json")
-    suspend fun getComments(
+    suspend fun getPostComments(
         @Header("Authorization") token: String,
+        @Query("post_id") postId: String
+    ): Response<List<CommentDto>>
+
+    @GET("/rest/v1/comments")
+    @Headers("apiKey: $API_KEY", "Content-Type: application/json")
+    suspend fun getComments(
+        @Header("Authorization") token: String
     ): Response<List<CommentDto>>
 }
